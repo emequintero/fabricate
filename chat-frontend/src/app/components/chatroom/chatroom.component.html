@@ -1,0 +1,42 @@
+<div class="display">
+    <div *ngIf="selectedRoom; then showChat"></div>
+    <ng-template #showChat>
+        <div class="section-header">
+            <span class="profile-pic"
+            style="background-image: url({{headerUser.profilePic.src}});">
+                <span class="fa fa-check"></span>
+            </span>
+            <span class="username ml-5 h3">
+                <span class="font-weight-light">{{headerUser.username}}</span>
+            </span>
+        </div>
+        <div class="section-content">
+            <div *ngFor="let message of selectedRoom.messages; let i = index" 
+            class="w-100 d-flex justify-content-start p-3"
+            [ngClass]="{'userGroupMsg':isNextMsgSameUser(message, selectedRoom.messages[i+1]), 
+            'curUserMsg':message.sentBy.username === curUser.username}">
+                <span class="profile-pic" 
+                *ngIf="message.sentBy.username !== curUser.username"
+                style="background-image: url({{message.sentBy.profilePic.src}});">
+                    <span class="fa fa-check"></span>
+                </span>
+                <span class="message" 
+                [ngClass]="{'curUserMsg':message.sentBy.username === curUser.username}">
+                    <div class="username">
+                        <span class="font-weight-bold">{{message.sentBy.username}}</span>
+                        <span>{{message.dateSent | date: determineDateFormat(message.dateSent)}}</span>
+                    </div>
+                    <p>{{message.content}}</p>
+                </span>
+            </div>
+        </div>
+        <div class="section-footer">
+            <div class="footer-content form-group">
+                <input type="text" [(ngModel)]="messageContent" class="form-control rounded-0" 
+                (keydown.enter)="sendMessage()">
+                <button class="btn btn-block bg-purple text-light rounded-0" [disabled]="!messageContent.length" 
+                (click)="sendMessage()">SEND</button>
+            </div>
+        </div>
+    </ng-template>
+</div>

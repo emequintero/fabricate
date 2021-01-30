@@ -1,0 +1,101 @@
+/* You can add global styles to this file, and also import other style files */
+$lighter-purple: #e2e2f6
+$light-purple: #9697c8
+$light-grey: #edebe9
+$purple: #474c74
+$dark-purple: #313748
+$teal: #17a2b8
+$red: #dc3545
+$green: #28a745
+$light-blue: #ebf2ff
+
+*
+    box-sizing: border-box
+body
+    width: 100vw
+    height: 100vh
+    margin: 0
+    padding: 0
+    padding-top: 80px
+    background-color: $light-grey
+    overflow: hidden
+.display
+    position: absolute
+    min-height: calc(100vh - 80px)
+    width: 100%
+    padding: 0 10rem
+    left: 3rem
+    .section-content, .section-footer .footer-content
+        min-width: 100%
+        margin: 0
+    .section-header
+        border-bottom: 1px solid rgba(0,0,0,.1)
+        display: flex
+        align-items: center
+        justify-content: flex-start
+        width: 100% !important
+        margin-top: 1rem
+        padding-left: 1rem
+        padding-right: 1rem
+    .section-content
+        top: 0
+        max-height: calc(76vh - 80px)
+        overflow-y: auto
+        max-width: 100%
+    .section-footer
+        min-width: calc(100% - 20rem)
+        position: absolute
+        bottom: 0
+.w-full-screen
+    min-width: 100vw
+.bg-light-purple
+    background-color: $light-purple
+.bg-purple
+    background-color: $purple
+.bg-dark-purple
+    background-color: $dark-purple
+.text-purple
+    color: $purple
+.profile-pic
+    position: relative
+    margin-left: 15px
+    height: 45px
+    width: 45px
+    border-radius: 50%
+    background-repeat: no-repeat
+    background-position: center
+    background-size: 100%
+    display: block
+    span
+        position: absolute
+        bottom: -5px
+        right: -5px
+        background-color: green
+        border-radius: 50%
+        color: white
+        padding: 1px
+.modal-open
+    padding-right: 0 !important
+    overflow: hidden !important
+.navbar.fixed-top
+    padding-right: 1rem !important
+hr
+    min-width: 100%
+.btn.text-purple:hover
+    color: white
+@media screen and ( max-width:  720px)
+    .display
+        left: 0
+        padding: 0
+        margin-top: 5rem
+        min-height: calc(100vh - 5rem - 80px)
+        .section-content
+            max-height: calc(76vh - 80px - 5rem) !important
+        .section-footer
+            min-width: 100% !important
+
+    
+    
+
+
+

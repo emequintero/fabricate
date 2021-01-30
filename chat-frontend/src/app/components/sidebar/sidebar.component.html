@@ -1,0 +1,40 @@
+<div class="wrapper">
+    <div id="content" [ngClass]="{'active':!sideBarHidden}">
+        <div class="bg-dark-purple h-100 d-flex p-0 flex-column" id="content-container">
+            <button type="button" id="chatBtn" class="btn btn-block rounded-0"
+                [ngClass]="sideBarHidden ? 'btn-info' : 'btn-danger p-4 text-light'" (click)="toggleSideBar()">
+                <i [ngClass]="sideBarHidden ? 'fa fa-comment' : 'fa fa-close'"></i>
+                <span class="d-block mt-1" *ngIf="sideBarHidden">Chat</span>
+            </button>
+        </div>
+    </div>
+    <nav id="sidebar" [ngClass]="{'active':sideBarHidden}" class="bg-light p-4 d-flex flex-column"
+        [ngStyle]="{'z-index': sideBarHidden ? '0' : '1000'}">
+        <div class="sidebar-header d-flex justify-content-between">
+            <h4 class="font-weight-normal text-purple">Chats</h4>
+            <div id="room-controls">
+                <button type="button" id="createRoomBtn" 
+                class="btn btn-outline-dark border-0 pl-1 pt-1 pb-0 pr-0 text-purple rounded-sm"
+                (click)="createRoom()">
+                    <i class="fa fa-pencil-square-o"></i>
+                </button>
+            </div>
+        </div>
+        <hr class="mb-3">
+        <ul class="list-unstyled components" *ngIf="!sideBarHidden">
+            <li *ngFor="let room of availableRooms" (click)="enterRoom(room.users)"
+                [ngClass]="{'active': isRoomSelected(room.users)}" class="btn py-3 px-0 m-0 user w-100" tabindex="0">
+                <div class="row align-items-center">
+                    <!-- <div class="col-md-4 col-sm-2">
+                        <span class="profile-pic" style="background-image: url({{user.profilePic.src}});">
+                            <span class="fa fa-check"></span>
+                        </span>
+                    </div> -->
+                    <div class="col-md-8 col-sm-10" *ngFor="let user of room.users">
+                        <p class="font-weight-light h4">{{user.username}}</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</div>

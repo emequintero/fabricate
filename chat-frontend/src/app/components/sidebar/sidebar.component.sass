@@ -1,0 +1,60 @@
+@import '../../../styles.sass'
+.wrapper 
+    display: flex
+    width: 100%
+    align-items: stretch
+    position: relative
+#sidebar
+    min-width: 250px
+    max-width: 250px
+    color: black
+    min-width: 250px
+    max-width: 250px
+    margin-left: 5.1rem
+#sidebar.active 
+    margin-left: -300vw
+nav
+    height: calc(100vh - 80px)
+i
+    font-size: 32px
+.user:hover
+    background-color: $light-grey
+.user.active
+    border-left: 5px $dark-purple solid
+    background-color: $light-grey
+#content 
+    top: 0
+    position: absolute
+    z-index: 1000
+    height: calc(100vh - 80px)
+    #content-container
+        justify-content: flex-start
+    button
+        padding: 1.1rem 1.5rem
+#content.active button
+    padding: 2rem 1.7rem !important
+#createRoomBtn i
+        font-size: 28px
+@media screen and ( max-width:  720px)
+    .wrapper
+        z-index: 20 !important
+        min-width: 100vw !important
+        max-height: 5.9rem
+    #content
+        width: 100%
+        height: auto
+        #content-container
+            justify-content: space-around
+    #content.active button
+        padding: 2rem 1.5rem !important
+    #sidebar
+        position: absolute
+        left: 0
+        top: 6.2rem
+        min-width: 100vw !important
+        margin-left: 0 !important
+        height: calc(100vh - 80px - 6.2rem)
+    #sidebar.active
+        position: relative
+        margin-left: -300vw !important
+            

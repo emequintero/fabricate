@@ -1,0 +1,30 @@
+@import '../../../styles.sass'
+.display
+    .section-header
+        padding-top: 0.5rem
+        padding-bottom: 1rem
+    .section-content
+        .userGroupMsg
+            padding-bottom: 0 !important
+        .userGroupMsg~div
+            padding-top: 2px !important
+        div.curUserMsg
+            justify-content: flex-end !important
+        .message
+            margin-left: 1.5rem!important
+            padding: .5rem!important
+            width: 50%!important
+            border-radius: .25rem!important
+            background-color: white
+            .username
+                margin-bottom: 0 !important
+                display: inline-flex
+                justify-content: space-between
+                width: 100%
+                color: $purple
+            p
+                overflow-wrap: break-word
+        .message.curUserMsg
+            background-color: $purple
+        .message.curUserMsg, .message.curUserMsg .username
+            color: white
