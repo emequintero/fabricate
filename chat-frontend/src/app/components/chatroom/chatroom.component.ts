@@ -16,7 +16,7 @@ export class ChatroomComponent implements OnInit {
   selectedRoom: Room = null;
   messageContent: string = "";
   curUser: User = null;
-  headerUser: User = null;
+  headerUsers: Array<User> = null;
   constructor(private roomService: RoomService, private userService: UserService, private chatService: ChatService) { }
 
   ngOnInit(): void {
@@ -26,7 +26,8 @@ export class ChatroomComponent implements OnInit {
     this.roomService.getRoom().subscribe((selectedRoom) => {
       this.selectedRoom = selectedRoom;
       if (this.selectedRoom) {
-        this.headerUser = this.selectedRoom.users.find(user => { return user.username !== this.curUser.username });
+        //filters out curUser
+        this.headerUsers = this.selectedRoom.users.filter(user => { return user.username !== this.curUser.username });
       }
     });
   }

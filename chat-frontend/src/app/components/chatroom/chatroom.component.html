@@ -2,13 +2,20 @@
     <div *ngIf="selectedRoom; then showChat"></div>
     <ng-template #showChat>
         <div class="section-header">
-            <span class="profile-pic"
-            style="background-image: url({{headerUser.profilePic.src}});">
-                <span class="fa fa-check"></span>
-            </span>
-            <span class="username ml-5 h3">
-                <span class="font-weight-light">{{headerUser.username}}</span>
-            </span>
+            <div *ngFor="let headerUser of headerUsers; let i = index" class="d-flex justify-content-around align-items-center">
+                <span *ngIf="i === 0" class="profile-pic"
+                style="background-image: url({{headerUser.profilePic.src}});">
+                    <span class="fa fa-check"></span>
+                </span>
+                <span *ngIf="2 > i" class="username h3" [ngClass]="{'ml-5':i === 0}">
+                    <span *ngIf="i > 0 && headerUsers.length > 2" class="font-weight-light mx-1">,</span>
+                    <span *ngIf="i > 0 && headerUsers.length === 2" class="font-weight-light mx-2">and</span>
+                    <span class="font-weight-light">{{headerUser.username}}</span>
+                </span>
+                <span *ngIf="headerUsers.length > 2">
+                    <span class="font-weight-light"> +{{headerUsers.length - 2}} Other(s)</span>
+                </span>
+            </div>
         </div>
         <div class="section-content">
             <div *ngFor="let message of selectedRoom.messages; let i = index" 
