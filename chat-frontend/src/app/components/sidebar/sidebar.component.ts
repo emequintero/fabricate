@@ -15,7 +15,8 @@ export class SidebarComponent implements OnInit {
   sideBarHidden = true;
   curUser:User = null;
   selectedRoom:Room = null;
-  roomsCurUser:Array<Room> = new Array<Room>();
+  roomsCurUser:Array<Room> = null;
+  formattedRoomsCurUser:Array<any> = null;
   constructor(private chatService:ChatService, private userService:UserService, 
     private roomService:RoomService, private router:Router) { }
 
@@ -25,6 +26,17 @@ export class SidebarComponent implements OnInit {
     this.chatService.join(this.curUser).subscribe(curUser=>{
       this.curUser = new User(curUser.profilePic, curUser.username, curUser.userID);
       this.userService.setUser(this.curUser);
+    });
+    //watch changes/update rooms for current user
+    this.roomService.getRoomsCurUser().subscribe(roomsCurUser=>{
+      this.roomsCurUser = roomsCurUser;
+      if(this.roomsCurUser){
+        this.formattedRoomsCurUser = this.formatRooms(this.roomsCurUser);
+      }
+    });
+    //watch changes for selected room
+    this.roomService.getRoom().subscribe(selectedRoom=>{
+      this.selectedRoom = selectedRoom;
     });
   }
 
@@ -39,35 +51,45 @@ export class SidebarComponent implements OnInit {
     this.router.navigateByUrl('main/create-room');
   }
 
-  enterRoom(user){
-    //check if room hasn't been entered
-    if(this.roomsCurUser.indexOf(this.selectedRoom) === -1){
-      //add selected user and current user to room
-      this.selectedRoom = new Room([user, this.curUser]);
-    }
+  enterRoom(roomToSwitchTo){
     //close sidebar
     this.toggleSideBar();
     //enter room
-    this.chatService.enterRoom(this.curUser, this.selectedRoom).subscribe((roomData:any)=>{
+    this.chatService.enterRoom(this.curUser, roomToSwitchTo).subscribe((roomData:any)=>{
       //update current room
-      this.selectedRoom = new Room(roomData.selectedRoom.users, roomData.selectedRoom.messages, roomData.selectedRoom.roomID);
-      //update available rooms
-      this.roomsCurUser = roomData.roomsCurUser;
+      let selectedRoom = new Room(roomData.selectedRoom.users, roomData.selectedRoom.messages, roomData.selectedRoom.roomID);
       //update room in shareable resource
-      this.roomService.setRoom(this.selectedRoom);
+      this.roomService.setRoom(selectedRoom);
+      //update available rooms
+      let roomsCurUser = roomData.roomsCurUser.map(room=>{
+        return new Room(room.users, room.messages, room.roomID);
+      });
+      //update roomsCurUser in shareable resource
+      this.roomService.setRoomsCurUser(roomsCurUser);
     });
   }
 
-  isRoomSelected(user){
+  isRoomSelected(users:Array<User>){
     if(this.selectedRoom){
-      //TODO: make work for group chats
-      let otherUserFound = this.selectedRoom.users.find(roomUser=>{return user.username === roomUser.username});
-      let curUserFound = this.selectedRoom.users.find(roomUser=>{return roomUser.username === this.curUser.username});
-      return otherUserFound !== undefined && curUserFound !== undefined;
+      return JSON.stringify(this.selectedRoom.users.sort(this.compareUsers)) === JSON.stringify(users.sort(this.compareUsers));
     }
     else{
       return false;
     }
+  }
+
+  formatRooms(rooms:Array<any>){
+    return rooms.map(room=>{
+      room.headerUsers = room.users.filter((user:User)=>{
+        return user.userID !== this.curUser.userID;
+      });
+      return room;
+    })
+  }
+
+  //sort user array by username
+  private compareUsers = (a,b) =>{
+      return a.username.localeCompare(b.username);
   }
 
 }

@@ -22,16 +22,23 @@
         </div>
         <hr class="mb-3">
         <ul class="list-unstyled components" *ngIf="!sideBarHidden">
-            <li *ngFor="let room of availableRooms" (click)="enterRoom(room.users)"
+            <li *ngFor="let room of formattedRoomsCurUser" (click)="enterRoom(room)"
                 [ngClass]="{'active': isRoomSelected(room.users)}" class="btn py-3 px-0 m-0 user w-100" tabindex="0">
                 <div class="row align-items-center">
-                    <!-- <div class="col-md-4 col-sm-2">
-                        <span class="profile-pic" style="background-image: url({{user.profilePic.src}});">
+                    <div *ngFor="let headerUser of room.headerUsers; let i = index" class="d-flex justify-content-around align-items-center">
+                        <!-- only display first user for each room and shorthand version of any remainder users in room (e.g., +1) -->
+                        <span *ngIf="i === 0" class="profile-pic"
+                        style="background-image: url({{headerUser.profilePic.src}});">
                             <span class="fa fa-check"></span>
                         </span>
-                    </div> -->
-                    <div class="col-md-8 col-sm-10" *ngFor="let user of room.users">
-                        <p class="font-weight-light h4">{{user.username}}</p>
+                        <span *ngIf="i === 0" class="username h3 ml-3">
+                            <span *ngIf="i > 0 && room.headerUsers.length > 1" class="font-weight-light mx-1">,</span>
+                            <span *ngIf="i > 0 && room.headerUsers.length === 1" class="font-weight-light mx-2">and</span>
+                            <span class="font-weight-light">{{headerUser.username}}</span>
+                            <span *ngIf="room.headerUsers.length > 1">
+                                <span class="font-weight-light h3"> +{{room.headerUsers.length - 1}} Other</span>
+                            </span>
+                        </span>
                     </div>
                 </div>
             </li>

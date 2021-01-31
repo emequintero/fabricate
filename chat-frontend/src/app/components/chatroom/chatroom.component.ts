@@ -50,7 +50,7 @@ export class ChatroomComponent implements OnInit {
 
   isNextMsgSameUser(curMsg: Message, nextMsg: Message): boolean {
     if (curMsg && nextMsg) {
-      return curMsg.sentBy.username === nextMsg.sentBy.username;
+      return curMsg.sentBy.userID === nextMsg.sentBy.userID;
     }
   }
 

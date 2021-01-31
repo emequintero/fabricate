@@ -12,8 +12,8 @@
                     <span *ngIf="i > 0 && headerUsers.length === 2" class="font-weight-light mx-2">and</span>
                     <span class="font-weight-light">{{headerUser.username}}</span>
                 </span>
-                <span *ngIf="headerUsers.length > 2">
-                    <span class="font-weight-light"> +{{headerUsers.length - 2}} Other(s)</span>
+                <span *ngIf="i === (headerUsers.length-1) && headerUsers.length > 2">
+                    <span class="font-weight-light h3 text-purple"> +{{headerUsers.length - 2}} Other(s)</span>
                 </span>
             </div>
         </div>
@@ -21,14 +21,14 @@
             <div *ngFor="let message of selectedRoom.messages; let i = index" 
             class="w-100 d-flex justify-content-start p-3"
             [ngClass]="{'userGroupMsg':isNextMsgSameUser(message, selectedRoom.messages[i+1]), 
-            'curUserMsg':message.sentBy.username === curUser.username}">
+            'curUserMsg':message.sentBy.userID === curUser.userID}">
                 <span class="profile-pic" 
-                *ngIf="message.sentBy.username !== curUser.username"
+                *ngIf="message.sentBy.userID !== curUser.userID"
                 style="background-image: url({{message.sentBy.profilePic.src}});">
                     <span class="fa fa-check"></span>
                 </span>
                 <span class="message" 
-                [ngClass]="{'curUserMsg':message.sentBy.username === curUser.username}">
+                [ngClass]="{'curUserMsg':message.sentBy.userID === curUser.userID}">
                     <div class="username">
                         <span class="font-weight-bold">{{message.sentBy.username}}</span>
                         <span>{{message.dateSent | date: determineDateFormat(message.dateSent)}}</span>

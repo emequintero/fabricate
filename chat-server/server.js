@@ -59,13 +59,6 @@ io.on('connect',(socket) => {
          * Up tp date socket rooms 'Array.from(socket.rooms)' required for each part of the following process:
          * 
         */
-        //leave previous room if entering a new one (can only be in one chat at once)
-        if(foundRoom && foundRoom.roomID && Array.from(socket.rooms).length > 1){
-            //get last room visited
-            let prevRoom = Array.from(socket.rooms).pop();
-            //leave previous room
-            socket.leave(prevRoom);
-        }
         //join room
         socket.join(foundRoom.roomID);
         //set actual roomID based on socket io hashed value (second element because first is default socket room)
@@ -74,8 +67,8 @@ io.on('connect',(socket) => {
         roomsCurUser = availableRooms.filter(room=>{
             return Array.from(socket.rooms).indexOf(room.roomID) !== -1;
         });
-        //send room with ID to frontend (only to sockets in room)
-        io.to(foundRoom.roomID).emit('roomData', {
+        //send room with ID to frontend (only to cur user so others don't get UI changes when they haven't performed actions)
+        io.to(socket.id).emit('roomData', {
             selectedRoom: foundRoom,
             roomsCurUser: roomsCurUser
         });
