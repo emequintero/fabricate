@@ -30,6 +30,10 @@ io.on('connect',(socket) => {
         userData.userID = socket.id;
         availableUsers.push(userData);
         socket.emit('join', userData);
+        //mmore than one user available, so update list in UI
+        if(availableUsers.length > 1){
+            io.sockets.emit('availableUsers', availableUsers);
+        }
     });
     //user leaving chat (remove from availableUsers)
     socket.on('leave', function(userData){
