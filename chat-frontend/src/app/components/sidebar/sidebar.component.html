@@ -1,5 +1,5 @@
 <div class="wrapper">
-    <div id="content" [ngClass]="{'active':!sideBarHidden}">
+    <div id="content" [ngClass]="{'hidden':!sideBarHidden}">
         <div class="bg-dark-purple h-100 d-flex p-0 flex-column" id="content-container">
             <button type="button" id="chatBtn" class="btn btn-block rounded-0"
                 [ngClass]="sideBarHidden ? 'btn-info' : 'btn-danger p-4 text-light'" (click)="toggleSideBar()">
@@ -8,7 +8,7 @@
             </button>
         </div>
     </div>
-    <nav id="sidebar" [ngClass]="{'active':sideBarHidden}" class="bg-light p-4 d-flex flex-column"
+    <nav id="sidebar" [ngClass]="{'hidden':sideBarHidden, 'shadow':!sideBarHidden}" class="bg-light p-4 d-flex flex-column"
         [ngStyle]="{'z-index': sideBarHidden ? '0' : '1000'}">
         <div class="sidebar-header d-flex justify-content-between">
             <h4 class="font-weight-normal text-purple">Chats</h4>
@@ -23,11 +23,11 @@
         <hr class="mb-3">
         <ul class="list-unstyled components" *ngIf="!sideBarHidden && formattedRoomsCurUser?.length">
             <li *ngFor="let room of formattedRoomsCurUser" (click)="enterRoom(room)"
-                [ngClass]="{'active': isRoomSelected(room.users)}" class="btn py-3 px-0 m-0 user w-100" tabindex="0">
+                [ngClass]="{'selected': isRoomSelected(room.users)}" class="btn py-3 px-0 m-0 user w-100" tabindex="0">
                 <div class="row align-items-center">
                     <div *ngFor="let headerUser of room.headerUsers; let i = index" class="d-flex justify-content-around align-items-center">
                         <!-- only display first user for each room and shorthand version of any remainder users in room (e.g., +1) -->
-                        <span *ngIf="i === 0" class="profile-pic"
+                        <span *ngIf="i === 0" class="profile-pic ml-4"
                         style="background-image: url({{headerUser.profilePic.src}});">
                             <span class="fa fa-check"></span>
                         </span>

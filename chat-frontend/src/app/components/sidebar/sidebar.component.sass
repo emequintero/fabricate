@@ -5,11 +5,11 @@
     align-items: stretch
     position: relative
 #sidebar
-    min-width: 280px
-    max-width: 280px
+    min-width: 300px
+    max-width: 300px
     color: black
     margin-left: 5.1rem
-#sidebar.active 
+#sidebar.hidden 
     margin-left: -300vw
 nav
     height: calc(100vh - 80px)
@@ -17,7 +17,7 @@ i
     font-size: 32px
 .user:hover
     background-color: $light-grey
-.user.active
+.user.selected
     border-left: 5px $dark-purple solid
     background-color: $light-grey
 #content 
@@ -29,7 +29,7 @@ i
         justify-content: flex-start
     button
         padding: 1.1rem 1.5rem
-#content.active button
+#content.hidden button
     padding: 2rem 1.7rem !important
 #createRoomBtn i
         font-size: 28px
@@ -43,7 +43,7 @@ i
         height: auto
         #content-container
             justify-content: space-around
-    #content.active button
+    #content.hidden button
         padding: 2rem 1.5rem !important
     #sidebar
         position: absolute
@@ -52,7 +52,7 @@ i
         min-width: 100vw !important
         margin-left: 0 !important
         height: calc(100vh - 80px - 6.2rem)
-    #sidebar.active
+    #sidebar.hidden
         position: relative
         margin-left: -300vw !important
             

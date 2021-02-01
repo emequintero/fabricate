@@ -65,7 +65,6 @@ io.on('connect',(socket) => {
         */
         //pre-join rooms for cur user
         let preJoinSocketRooms = Array.from(socket.rooms);
-        console.log(preJoinSocketRooms)
         //leave previous room if user is joining new one
         if(foundRoom && foundRoom.roomID && preJoinSocketRooms.length > 1){
             let prevRoom = preJoinSocketRooms.pop();
@@ -75,7 +74,6 @@ io.on('connect',(socket) => {
         socket.join(foundRoom.roomID);
         //post-join rooms for cur user
         let postJoinSocketRooms = Array.from(socket.rooms);
-        console.log(postJoinSocketRooms)
         //set actual roomID based on socket io hashed value (second element because first is default socket room)
         foundRoom.roomID = postJoinSocketRooms.pop();
         //get rooms with user in it
