@@ -21,7 +21,7 @@
             </div>
         </div>
         <hr class="mb-3">
-        <ul class="list-unstyled components" *ngIf="!sideBarHidden">
+        <ul class="list-unstyled components" *ngIf="!sideBarHidden && formattedRoomsCurUser?.length">
             <li *ngFor="let room of formattedRoomsCurUser" (click)="enterRoom(room)"
                 [ngClass]="{'active': isRoomSelected(room.users)}" class="btn py-3 px-0 m-0 user w-100" tabindex="0">
                 <div class="row align-items-center">
@@ -41,6 +41,11 @@
                         </span>
                     </div>
                 </div>
+            </li>
+        </ul>
+        <ul class="list-unstyled components" *ngIf="!sideBarHidden && !formattedRoomsCurUser?.length">
+            <li class="btn py-3 px-0 m-0 user w-100">
+                <span class="font-weight-light h3 no-results">No rooms available</span>
             </li>
         </ul>
     </nav>

@@ -30,6 +30,9 @@ export class ChatroomComponent implements OnInit {
         this.headerUsers = this.selectedRoom.users.filter(user => { return user.username !== this.curUser.username });
       }
     });
+    this.chatService.watchMessages().subscribe((selectedRoomMsgs:Array<Message>)=>{
+      this.selectedRoom.messages = selectedRoomMsgs;
+    });
   }
 
   sendMessage() {

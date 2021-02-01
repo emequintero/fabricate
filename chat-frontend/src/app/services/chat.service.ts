@@ -53,7 +53,13 @@ export class ChatService {
   sendMessage(room:Room){
     this.socket.emit('sendMessage', room);
   }
-  //TODO: leave room (delete room data)
+  watchMessages(){
+    return new Observable((msgObserver)=>{
+      this.socket.on('newMsg', selectedRoomMsgs=>{
+        msgObserver.next(selectedRoomMsgs);
+      });
+    });
+  }
   //leave chat
   leave(userData:User){
     this.socket.emit('leave', userData);

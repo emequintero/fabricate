@@ -2,7 +2,7 @@
     <div class="section-header pb-2">
         <h3 class="font-weight-normal text-purple">Add Participants</h3>
     </div>
-    <div class="section-content pt-3">
+    <div class="section-content pt-3" *ngIf="availableUsers?.length">
         <div *ngFor="let user of availableUsers"
             [ngClass]="{'selected':isUserSelected(user)}"
             class="d-flex align-items-center justify-content-between p-3 rounded-lg user">
@@ -13,6 +13,9 @@
             <span *ngIf="!isUserSelected(user)" (click)="handleUser(user, 'add')" class="btn btn-icon fa fa-plus-circle"></span>
             <span *ngIf="isUserSelected(user)" (click)="handleUser(user, 'remove')" class=" btn btn-icon fa fa-minus-circle"></span>
         </div>
+    </div>
+    <div class="section-content pt-3" *ngIf="!availableUsers?.length">
+        <span class="font-weight-light h3 no-results">No users available to chat</span>
     </div>
     <div class="section-footer">
         <div class="footer-content form-group">

@@ -63,16 +63,28 @@ io.on('connect',(socket) => {
          * Up tp date socket rooms 'Array.from(socket.rooms)' required for each part of the following process:
          * 
         */
+        //pre-join rooms for cur user
+        let preJoinSocketRooms = Array.from(socket.rooms);
+        console.log(preJoinSocketRooms)
+        //leave previous room if user is joining new one
+        if(foundRoom && foundRoom.roomID && preJoinSocketRooms.length > 1){
+            let prevRoom = preJoinSocketRooms.pop();
+            socket.leave(prevRoom);
+        }
         //join room
         socket.join(foundRoom.roomID);
+        //post-join rooms for cur user
+        let postJoinSocketRooms = Array.from(socket.rooms);
+        console.log(postJoinSocketRooms)
         //set actual roomID based on socket io hashed value (second element because first is default socket room)
-        foundRoom.roomID = Array.from(socket.rooms).pop();
+        foundRoom.roomID = postJoinSocketRooms.pop();
         //get rooms with user in it
         roomsCurUser = availableRooms.filter(room=>{
-            return Array.from(socket.rooms).indexOf(room.roomID) !== -1;
+            //compare using user ID
+            return room.users.find(user=>{return user.userID === enterRoomData.userEntering.userID;});
         });
         //send room with ID to frontend (only to cur user so others don't get UI changes when they haven't performed actions)
-        io.to(socket.id).emit('roomData', {
+        io.to(enterRoomData.userEntering.userID).emit('roomData', {
             selectedRoom: foundRoom,
             roomsCurUser: roomsCurUser
         });
@@ -91,10 +103,7 @@ io.on('connect',(socket) => {
             return userRooms.indexOf(room.roomID) !== -1;
         });
         //return room to allowed users
-        io.to(selectedRoom.roomID).emit('roomData', {
-            selectedRoom: selectedRoom,
-            roomsCurUser: roomsCurUser
-        });
+        io.to(selectedRoom.roomID).emit('newMsg', selectedRoom.messages);
     });
     //broadcast handle that is typing to available sockets
     //goes to all except the socket that emitted the typing event
