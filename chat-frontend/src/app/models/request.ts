@@ -3,8 +3,10 @@ import { User } from "./user";
 export class Request{
     sentBy:User;
     status:string;
-    constructor(sentBy:User){
+    requestID:string;
+    constructor(sentBy:User, status:string, requestID?:string){
         this.sentBy = sentBy;
-        this.status = 'add';
+        this.status = status;
+        this.requestID = requestID;
     }
 }

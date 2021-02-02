@@ -60,6 +60,13 @@ export class ChatService {
       });
     });
   }
+  watchRequests(){
+    return new Observable((requestObserver)=>{
+      this.socket.on('roomRequest', curUserRequests=>{
+        requestObserver.next(curUserRequests);
+      });
+    });
+  }
   //leave chat
   leave(userData:User){
     this.socket.emit('leave', userData);

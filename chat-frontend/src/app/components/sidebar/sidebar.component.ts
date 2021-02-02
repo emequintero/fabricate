@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
+import { Request } from 'src/app/models/request';
 import { ChatService } from 'src/app/services/chat.service';
 import { RoomService } from 'src/app/services/room.service';
 import { UserService } from 'src/app/services/user.service';
@@ -37,6 +38,12 @@ export class SidebarComponent implements OnInit {
     //watch changes for selected room
     this.roomService.getRoom().subscribe(selectedRoom=>{
       this.selectedRoom = selectedRoom;
+    });
+    //watch changes for requests
+    this.chatService.watchRequests().subscribe((requests:Array<Request>)=>{
+      let userRequests = requests.map((request:Request)=>{return new Request(request.sentBy, request.status, request.requestID)})
+      this.curUser = new User(this.curUser.profilePic, this.curUser.username, this.curUser.userID, userRequests);
+      this.userService.setUser(this.curUser);
     });
   }
 
