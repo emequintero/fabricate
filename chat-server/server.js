@@ -12,7 +12,7 @@ compareUsers = (a,b) =>{
 }
 
 //Generate room ID for new rooms
-generateRoomID = () =>{
+generateID = () =>{
     let text = "";
     let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
     for(let i = 0; i < 10; i++){
@@ -57,7 +57,7 @@ io.on('connect',(socket) => {
             //set foundRoom to new room (provided by front-end)
             foundRoom = enterRoomData.selectedRoom;
             //set up id for new room (needed for initial room setup, but is replaced by socket io hashed value)
-            foundRoom.roomID = generateRoomID();
+            foundRoom.roomID = generateID();
         }
         /**
          * Up tp date socket rooms 'Array.from(socket.rooms)' required for each part of the following process:
@@ -72,6 +72,7 @@ io.on('connect',(socket) => {
         }
         //join room
         socket.join(foundRoom.roomID);
+        //send room requests to other users in new room
         //post-join rooms for cur user
         let postJoinSocketRooms = Array.from(socket.rooms);
         //set actual roomID based on socket io hashed value (second element because first is default socket room)
@@ -82,10 +83,22 @@ io.on('connect',(socket) => {
             return room.users.find(user=>{return user.userID === enterRoomData.userEntering.userID;});
         });
         //send room with ID to frontend (only to cur user so others don't get UI changes when they haven't performed actions)
+        //return new room flag to determine whether to send out room requests
         io.to(enterRoomData.userEntering.userID).emit('roomData', {
             selectedRoom: foundRoom,
             roomsCurUser: roomsCurUser
         });
+    });
+    //send new request to specific user
+    socket.on('newRequest', function(newRequestData){
+        //add new request with new requestID
+        newRequestData.userTo.requests.push({
+            sentBy: newRequestData.userFrom,
+            room: newRequestData.selectedRoom,
+            status: 'pending',
+            requestID: generateID()
+        });
+        io.to(newRequestData.userTo.userID).emit('roomRequest', newRequestData.userTo.requests);
     });
     //relay chat data (handle & message) to sockets in room
     socket.on('sendMessage', function(selectedRoom){

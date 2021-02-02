@@ -3,11 +3,21 @@
         <h3 class="font-weight-normal text-purple">Chat Requests</h3>
     </div>
     <div class="section-content pt-3" *ngIf="curUser.requests?.length">
-        <p>Notifications works!</p>
+        <div *ngFor="let request of curUser.requests"
+            class="d-flex align-items-center justify-content-between p-3 rounded-lg request">
+            <span class="request-info">
+                <span class="font-weight-light h3 username">{{request.sentBy.username}}</span>
+                <span *ngIf="request.room.users.length > 2">
+                    <span class="font-weight-light h3 username">, +{{request.room.users.length - 2}} Other(s)</span>
+                </span>
+            </span>
+            <span class="request-controls">
+                <span (click)="handleRequest(request, 'accept')" class="btn btn-icon fa fa-plus-circle"></span>
+                <span (click)="handleRequest(request, 'delete')" class=" btn btn-icon fa fa-minus-circle"></span>
+            </span>
+        </div>
     </div>
     <div class="section-content pt-3" *ngIf="!curUser.requests?.length">
         <span class="font-weight-light h3 no-results ml-2">No requests found</span>
-    </div>
-    <div class="section-footer">
     </div>
 </div>

@@ -48,6 +48,12 @@ export class CreateroomComponent implements OnInit {
       this.roomService.setRoomsCurUser(roomsCurUser);
       //redirect to chat room
       this.router.navigateByUrl('main');
+      //send requests to other users added to room (not curUser)
+      this.selectedUsers.forEach((user:User)=>{
+        if(user.userID !== this.curUser.userID){
+          this.chatService.sendRequest(this.curUser, user, newRoom);
+        }
+      });
     });
   }
 

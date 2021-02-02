@@ -41,7 +41,7 @@ export class SidebarComponent implements OnInit {
     });
     //watch changes for requests
     this.chatService.watchRequests().subscribe((requests:Array<Request>)=>{
-      let userRequests = requests.map((request:Request)=>{return new Request(request.sentBy, request.status, request.requestID)})
+      let userRequests = requests.map((request:Request)=>{return new Request(request.sentBy, request.room, request.status, request.requestID)})
       this.curUser = new User(this.curUser.profilePic, this.curUser.username, this.curUser.userID, userRequests);
       this.userService.setUser(this.curUser);
     });

@@ -60,6 +60,13 @@ export class ChatService {
       });
     });
   }
+  sendRequest(userFrom:User, userTo:User, selectedRoom:Room){
+    this.socket.emit('newRequest', {
+      userFrom: userFrom,
+      userTo: userTo,
+      selectedRoom: selectedRoom
+    });
+  }
   watchRequests(){
     return new Observable((requestObserver)=>{
       this.socket.on('roomRequest', curUserRequests=>{
