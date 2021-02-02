@@ -10,6 +10,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FormsModule } from '@angular/forms';
 import { ChatroomComponent } from './components/chatroom/chatroom.component';
 import { CreateroomComponent } from './components/createroom/createroom.component';
+import { NotificationsComponent } from './components/notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { CreateroomComponent } from './components/createroom/createroom.componen
     LoginComponent,
     SidebarComponent,
     ChatroomComponent,
-    CreateroomComponent
+    CreateroomComponent,
+    NotificationsComponent
   ],
   imports: [
     FormsModule,

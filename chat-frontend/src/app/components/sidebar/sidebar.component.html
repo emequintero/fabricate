@@ -4,7 +4,7 @@
             <button type="button" id="chatBtn" class="btn btn-block rounded-0"
                 [ngClass]="sideBarHidden ? 'btn-info' : 'btn-danger p-4 text-light'" (click)="toggleSideBar()">
                 <i [ngClass]="sideBarHidden ? 'fa fa-comment' : 'fa fa-close'"></i>
-                <span class="d-block mt-1" *ngIf="sideBarHidden">Chat</span>
+                <span class="d-block mt-1" *ngIf="sideBarHidden">Menu</span>
             </button>
         </div>
     </div>
@@ -13,8 +13,13 @@
         <div class="sidebar-header d-flex justify-content-between">
             <h4 class="font-weight-normal text-purple">Chats</h4>
             <div id="room-controls">
+                <button type="button" id="notificationsBtn" 
+                class="btn btn-outline-dark border-0 text-purple rounded-sm"
+                (click)="showNotifications()">
+                    <i class="fa fa-bell-o"></i>
+                </button>
                 <button type="button" id="createRoomBtn" 
-                class="btn btn-outline-dark border-0 pl-1 pt-1 pb-0 pr-0 text-purple rounded-sm"
+                class="btn btn-outline-dark border-0 text-purple rounded-sm"
                 (click)="createRoom()">
                     <i class="fa fa-pencil-square-o"></i>
                 </button>
