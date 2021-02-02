@@ -18,6 +18,7 @@
                 (click)="showNotifications()">
                     <i class="fa fa-bell-o"></i>
                 </button>
+                <span *ngIf="curUser.requests?.length" class="badge badge-danger" id="notificationBadge">{{curUser.requests.length}}</span>
                 <button type="button" id="createRoomBtn" 
                 class="btn btn-outline-dark border-0 text-purple rounded-sm"
                 (click)="createRoom()">
