@@ -40,9 +40,9 @@
                         <span *ngIf="i === 0" class="username h3 ml-3">
                             <span *ngIf="i > 0 && room.headerUsers.length > 1" class="font-weight-light mx-1">,</span>
                             <span *ngIf="i > 0 && room.headerUsers.length === 1" class="font-weight-light mx-2">and</span>
-                            <span class="font-weight-light">{{headerUser.username}},</span>
+                            <span class="font-weight-light">{{headerUser.username}}</span>
                             <span *ngIf="room.headerUsers.length > 1">
-                                <span class="font-weight-light h3"> +{{room.headerUsers.length - 1}} Other(s)</span>
+                                <span class="font-weight-light h3">, +{{room.headerUsers.length - 1}} Other(s)</span>
                             </span>
                         </span>
                     </div>

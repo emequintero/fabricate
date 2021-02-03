@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BASE_URL } from 'src/environments/environment';
+import { Request } from '../models/request';
 import { Room } from '../models/room';
 import { User } from '../models/user';
 import { UserService } from './user.service';
@@ -72,6 +73,13 @@ export class ChatService {
       this.socket.on('roomRequest', curUserRequests=>{
         requestObserver.next(curUserRequests);
       });
+    });
+  }
+  updateRequest(request:Request, curUser:User, operation:string){
+    this.socket.emit('updateRequest', {
+      request: request,
+      curUser: curUser, 
+      operation: operation
     });
   }
   //leave chat

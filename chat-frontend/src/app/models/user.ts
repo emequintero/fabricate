@@ -5,10 +5,12 @@ export class User{
     profilePic:object;
     username:string;
     requests:Array<Request>;
-    constructor(profilePic:object, username:string, userID?:string, requests?:Array<Request>){
+    role:string;
+    constructor(profilePic:object, username:string, userID?:string, role?:string, requests?:Array<Request>){
         this.userID = userID;
         this.profilePic = profilePic;
         this.username = username;
         this.requests = requests || new Array<Request>();
+        this.role = role || "user";
     }
 }

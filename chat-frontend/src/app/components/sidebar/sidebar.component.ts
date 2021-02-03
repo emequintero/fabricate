@@ -25,7 +25,7 @@ export class SidebarComponent implements OnInit {
     //join chat
     this.curUser = this.userService.getUser().value;
     this.chatService.join(this.curUser).subscribe(curUser=>{
-      this.curUser = new User(curUser.profilePic, curUser.username, curUser.userID);
+      this.curUser = new User(curUser.profilePic, curUser.username, curUser.userID, curUser.role);
       this.userService.setUser(this.curUser);
     });
     //watch changes/update rooms for current user
@@ -42,7 +42,7 @@ export class SidebarComponent implements OnInit {
     //watch changes for requests
     this.chatService.watchRequests().subscribe((requests:Array<Request>)=>{
       let userRequests = requests.map((request:Request)=>{return new Request(request.sentBy, request.room, request.status, request.requestID)})
-      this.curUser = new User(this.curUser.profilePic, this.curUser.username, this.curUser.userID, userRequests);
+      this.curUser = new User(this.curUser.profilePic, this.curUser.username, this.curUser.userID, this.curUser.role, userRequests);
       this.userService.setUser(this.curUser);
     });
   }
@@ -80,6 +80,10 @@ export class SidebarComponent implements OnInit {
       });
       //update roomsCurUser in shareable resource
       this.roomService.setRoomsCurUser(roomsCurUser);
+      //if user is on other page take them to chat
+      if(this.router.url !== '/main'){
+        this.router.navigateByUrl('/main');
+      }
     });
   }
 

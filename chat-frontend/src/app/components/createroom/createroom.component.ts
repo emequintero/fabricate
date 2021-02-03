@@ -25,7 +25,7 @@ export class CreateroomComponent implements OnInit {
     //get online users
     this.chatService.getAvailableUsers().subscribe(users=>{
       this.availableUsers = users.map(user=>{
-        return new User(user.profilePic, user.username, user.userID);
+        return new User(user.profilePic, user.username, user.userID, user.role);
       });
     });
   }

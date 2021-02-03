@@ -20,6 +20,13 @@ generateID = () =>{
     }
     return text;
 }
+//filter rooms by userID
+getCurUserRooms = (userID) =>{
+    return availableRooms.filter(room=>{
+        //compare using user ID
+        return room.users.find(user=>{return user.userID === userID;});
+    });
+}
 
 io.on('connect',(socket) => {
     console.log('Socket: Client Connected');
@@ -78,10 +85,7 @@ io.on('connect',(socket) => {
         //set actual roomID based on socket io hashed value (second element because first is default socket room)
         foundRoom.roomID = postJoinSocketRooms.pop();
         //get rooms with user in it
-        roomsCurUser = availableRooms.filter(room=>{
-            //compare using user ID
-            return room.users.find(user=>{return user.userID === enterRoomData.userEntering.userID;});
-        });
+        roomsCurUser = getCurUserRooms(enterRoomData.userEntering.userID);
         //send room with ID to frontend (only to cur user so others don't get UI changes when they haven't performed actions)
         //return new room flag to determine whether to send out room requests
         io.to(enterRoomData.userEntering.userID).emit('roomData', {
@@ -98,7 +102,48 @@ io.on('connect',(socket) => {
             status: 'pending',
             requestID: generateID()
         });
+        //emit updated request list
         io.to(newRequestData.userTo.userID).emit('roomRequest', newRequestData.userTo.requests);
+    });
+    //update request by removing it from user's queue
+    socket.on('updateRequest', function(updateRequestData){
+        //find associated room
+        let foundRoom = availableRooms.find(room=>{
+            return room.roomID === updateRequestData.request.room.roomID;
+        });
+        //find user-who-updated in found room
+        let foundUser = foundRoom.users.find(user=>{
+            return user.userID === updateRequestData.curUser.userID;
+        });
+        //find user-who-updated's requests
+        let foundUserRequests = foundUser.requests;
+        //remove request from list
+        foundUserRequests = foundUserRequests.filter(request=>{
+            return request.requestID !== updateRequestData.request.requestID;
+        });
+        //emit updated request list (applies for any operation)
+        io.to(updateRequestData.curUser.userID).emit('roomRequest', foundUserRequests);
+        //handle denied room request
+        if(updateRequestData.operation === 'denied'){
+            //remove user from room in availableRooms
+            foundRoom.users = foundRoom.users.filter(user=>{
+                return user.userID !== updateRequestData.curUser.userID;
+            });
+            //update user list to users in room
+            io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
+            //send system message to room that user has denied request
+            foundRoom.messages.push({
+                sentBy: {
+                    profilePic: '',
+                    username: 'Fabricate',
+                    userID: '',
+                    role: 'system'
+                },
+                content: + updateRequestData.curUser.username + ' has denied the request to join.',
+                dateSent: new Date()
+            })
+            io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
+        }
     });
     //relay chat data (handle & message) to sockets in room
     socket.on('sendMessage', function(selectedRoom){
