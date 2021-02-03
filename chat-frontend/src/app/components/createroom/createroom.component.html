@@ -10,8 +10,8 @@
                 <span class="fa fa-check"></span>
             </span>
             <span class="font-weight-light h3 username">{{user.username}}</span>
-            <span *ngIf="!isUserSelected(user)" (click)="handleUser(user, 'add')" class="btn btn-icon fa fa-plus-circle"></span>
-            <span *ngIf="isUserSelected(user)" (click)="handleUser(user, 'remove')" class=" btn btn-icon fa fa-minus-circle"></span>
+            <span *ngIf="!isUserSelected(user)" (click)="handleUser(user, 'add')" class="btn btn-icon fa fa-plus-circle approve"></span>
+            <span *ngIf="isUserSelected(user)" (click)="handleUser(user, 'remove')" class=" btn btn-icon fa fa-minus-circle deny"></span>
         </div>
     </div>
     <div class="section-content pt-3" *ngIf="!availableUsers?.length">
