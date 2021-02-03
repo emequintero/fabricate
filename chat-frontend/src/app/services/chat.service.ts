@@ -45,8 +45,24 @@ export class ChatService {
       selectedRoom: room
     });
     return new Observable((roomObserver)=>{
-      this.socket.on('roomData', roomData=>{
-        roomObserver.next(roomData);
+      this.socket.on('selectedRoom', selectedRoomData=>{
+        roomObserver.next(selectedRoomData);
+      })
+    });
+  }
+  //watch users in room
+  watchRoomUsers(){
+    return new Observable((roomUsersObserver)=>{
+      this.socket.on('updatedRoomUsers', roomUsersData=>{
+        roomUsersObserver.next(roomUsersData);
+      })
+    });
+  }
+  //watch rooms for current user
+  watchCurUserRooms(){
+    return new Observable((curUserRoomsObserver)=>{
+      this.socket.on('updatedCurUserRooms', curUserRoomsData=>{
+        curUserRoomsObserver.next(curUserRoomsData);
       })
     });
   }

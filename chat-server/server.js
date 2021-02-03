@@ -31,6 +31,7 @@ getCurUserRooms = (userID) =>{
 io.on('connect',(socket) => {
     console.log('Socket: Client Connected');
     let roomsCurUser = null;
+    let roomVisitHistory = [];
     //user joining chat (add to availableUsers)
     socket.on('join', function(userData){
         //emit join event with added userID
@@ -79,7 +80,6 @@ io.on('connect',(socket) => {
         }
         //join room
         socket.join(foundRoom.roomID);
-        //send room requests to other users in new room
         //post-join rooms for cur user
         let postJoinSocketRooms = Array.from(socket.rooms);
         //set actual roomID based on socket io hashed value (second element because first is default socket room)
@@ -87,11 +87,25 @@ io.on('connect',(socket) => {
         //get rooms with user in it
         roomsCurUser = getCurUserRooms(enterRoomData.userEntering.userID);
         //send room with ID to frontend (only to cur user so others don't get UI changes when they haven't performed actions)
-        //return new room flag to determine whether to send out room requests
-        io.to(enterRoomData.userEntering.userID).emit('roomData', {
-            selectedRoom: foundRoom,
-            roomsCurUser: roomsCurUser
-        });
+        io.to(enterRoomData.userEntering.userID).emit('selectedRoom', foundRoom);
+        //send rooms for curUser to frontend to curUser
+        io.to(enterRoomData.userEntering.userID).emit('updatedCurUserRooms', roomsCurUser);
+        //send system message to room that user has joined chat and hasn't joined room before
+        if(roomVisitHistory.indexOf(foundRoom.roomID) === -1){
+            foundRoom.messages.push({
+                sentBy: {
+                    profilePic: '',
+                    username: 'Fabricate',
+                    userID: '',
+                    role: 'system'
+                },
+                content: enterRoomData.userEntering.username + ' has joined the chat.',
+                dateSent: new Date()
+            });
+            io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
+        }
+        //add to visit history
+        roomVisitHistory.push(foundRoom.roomID);
     });
     //send new request to specific user
     socket.on('newRequest', function(newRequestData){
@@ -139,10 +153,15 @@ io.on('connect',(socket) => {
                     userID: '',
                     role: 'system'
                 },
-                content: + updateRequestData.curUser.username + ' has denied the request to join.',
+                content: updateRequestData.curUser.username + ' has denied the request to join.',
                 dateSent: new Date()
-            })
+            });
             io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
+            //individually send updated user rooms to all other users in room (each belongs to unique set of rooms)
+            foundRoom.users.forEach(user=>{
+                let userUpdatedRooms = getCurUserRooms(user.userID);
+                io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
+            });
         }
     });
     //relay chat data (handle & message) to sockets in room

@@ -28,7 +28,7 @@ export class SidebarComponent implements OnInit {
       this.curUser = new User(curUser.profilePic, curUser.username, curUser.userID, curUser.role);
       this.userService.setUser(this.curUser);
     });
-    //watch changes/update rooms for current user
+    //watch changes/update rooms for current user shareable resource
     this.roomService.getRoomsCurUser().subscribe(roomsCurUser=>{
       this.roomsCurUser = roomsCurUser;
       if(this.roomsCurUser){
@@ -44,6 +44,15 @@ export class SidebarComponent implements OnInit {
       let userRequests = requests.map((request:Request)=>{return new Request(request.sentBy, request.room, request.status, request.requestID)})
       this.curUser = new User(this.curUser.profilePic, this.curUser.username, this.curUser.userID, this.curUser.role, userRequests);
       this.userService.setUser(this.curUser);
+    });
+    //watch changes for current user rooms event
+    this.chatService.watchCurUserRooms().subscribe((roomsCurUser:Array<Room>)=>{
+        //update available rooms
+        let updatedRoomsCurUser = roomsCurUser.map(room=>{
+          return new Room(room.users, room.messages, room.roomID);
+        });
+        //update roomsCurUser in shareable resource
+        this.roomService.setRoomsCurUser(updatedRoomsCurUser);
     });
   }
 
@@ -69,17 +78,11 @@ export class SidebarComponent implements OnInit {
     //close sidebar
     this.toggleSideBar();
     //enter room
-    this.chatService.enterRoom(this.curUser, roomToSwitchTo).subscribe((roomData:any)=>{
+    this.chatService.enterRoom(this.curUser, roomToSwitchTo).subscribe((selectedRoom:Room)=>{
       //update current room
-      let selectedRoom = new Room(roomData.selectedRoom.users, roomData.selectedRoom.messages, roomData.selectedRoom.roomID);
+      let updatedRoom = new Room(selectedRoom.users, selectedRoom.messages, selectedRoom.roomID);
       //update room in shareable resource
-      this.roomService.setRoom(selectedRoom);
-      //update available rooms
-      let roomsCurUser = roomData.roomsCurUser.map(room=>{
-        return new Room(room.users, room.messages, room.roomID);
-      });
-      //update roomsCurUser in shareable resource
-      this.roomService.setRoomsCurUser(roomsCurUser);
+      this.roomService.setRoom(updatedRoom);
       //if user is on other page take them to chat
       if(this.router.url !== '/main'){
         this.router.navigateByUrl('/main');
