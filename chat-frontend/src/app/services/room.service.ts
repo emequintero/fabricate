@@ -6,7 +6,7 @@ import { Room } from '../models/room';
   providedIn: 'root'
 })
 export class RoomService {
-  roomsCurUser:BehaviorSubject<Array<Room>> = new BehaviorSubject<Array<Room>>(null);
+  roomsCurUser:BehaviorSubject<Array<Room>> = new BehaviorSubject<Array<Room>>(new Array<Room>());
   selectedRoom:BehaviorSubject<Room> = new BehaviorSubject<Room>(null);
   constructor() { }
 

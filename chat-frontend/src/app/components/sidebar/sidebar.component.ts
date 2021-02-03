@@ -16,7 +16,7 @@ export class SidebarComponent implements OnInit {
   sideBarHidden = true;
   curUser:User = null;
   selectedRoom:Room = null;
-  roomsCurUser:Array<Room> = null;
+  roomsCurUser:Array<Room> = new Array<Room>();
   formattedRoomsCurUser:Array<any> = null;
   constructor(private chatService:ChatService, private userService:UserService, 
     private roomService:RoomService, private router:Router) { }
