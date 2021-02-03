@@ -164,6 +164,9 @@ io.on('connect',(socket) => {
                 let userUpdatedRooms = getCurUserRooms(user.userID);
                 io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
             });
+            //update for user rooms for curUser
+            let curUserUpdatedRooms = getCurUserRooms(updateRequestData.curUser.userID);
+            io.to(updateRequestData.curUser.userID).emit('updatedCurUserRooms', curUserUpdatedRooms);
         }
     });
     //relay chat data (handle & message) to sockets in room
