@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Message } from 'src/app/models/message';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
@@ -33,6 +33,17 @@ export class ChatroomComponent implements OnInit {
     //watch changes in messages
     this.chatService.watchMessages().subscribe((selectedRoomMsgs:Array<Message>)=>{
       this.selectedRoom.messages = selectedRoomMsgs;
+      let lastMessage = document.getElementById('lastMsg');
+      if(lastMessage){
+        //clear blur for focused element
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+        //focus on new message
+        setTimeout(() => {
+          document.getElementById('lastMsg').focus();
+        }, 100);
+      }
     });
     //watch changes for users in room
     this.chatService.watchRoomUsers().subscribe((roomUsers:Array<User>)=>{
@@ -63,6 +74,16 @@ export class ChatroomComponent implements OnInit {
     if (curMsg && nextMsg) {
       return curMsg.sentBy.userID === nextMsg.sentBy.userID;
     }
+  }
+
+  handleMsgTabIndex(){
+    //last message will be -1 initially
+    let tabIndex = '-1';
+    //switch to 0 once more messages come in
+    if(document.activeElement.id !== 'lastMsg'){
+      tabIndex = '0';
+    }
+    return tabIndex;
   }
 
 }
