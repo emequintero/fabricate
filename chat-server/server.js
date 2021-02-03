@@ -143,6 +143,8 @@ io.on('connect',(socket) => {
             foundRoom.users = foundRoom.users.filter(user=>{
                 return user.userID !== updateRequestData.curUser.userID;
             });
+            //update actual users array in availableRooms
+            availableRooms[availableRooms.indexOf(foundRoom)].users = [].concat(foundRoom.users);
             //update user list to users in room
             io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
             //send system message to room that user has denied request
