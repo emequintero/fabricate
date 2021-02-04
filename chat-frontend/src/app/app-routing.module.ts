@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ChatroomComponent } from './components/chatroom/chatroom.component';
-import { CreateroomComponent } from './components/createroom/createroom.component';
+import { HandleroomComponent } from './components/handleroom/handleroom.component';
 import { LoginComponent } from './components/login/login.component';
 import { MainComponent } from './components/main/main.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'main', component:  MainComponent, 
   children: [
     {path: '', component: ChatroomComponent},
-    {path: 'create-room', component: CreateroomComponent},
+    {path: 'create-room', component: HandleroomComponent},
     {path: 'notifications', component: NotificationsComponent}
   ]},
   { path: 'login', component:  LoginComponent}

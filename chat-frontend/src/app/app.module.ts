@@ -9,7 +9,7 @@ import { LoginComponent } from './components/login/login.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FormsModule } from '@angular/forms';
 import { ChatroomComponent } from './components/chatroom/chatroom.component';
-import { CreateroomComponent } from './components/createroom/createroom.component';
+import { HandleroomComponent } from './components/handleroom/handleroom.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 
 @NgModule({
@@ -20,7 +20,7 @@ import { NotificationsComponent } from './components/notifications/notifications
     LoginComponent,
     SidebarComponent,
     ChatroomComponent,
-    CreateroomComponent,
+    HandleroomComponent,
     NotificationsComponent
   ],
   imports: [
