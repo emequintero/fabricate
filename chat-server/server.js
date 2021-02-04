@@ -3,6 +3,43 @@ server = app.listen(5000,function(){
   console.log("server live on port 5000!");
 });
 var io = require('socket.io')(server, {cors: '*'});
+/**
+ * FRONTEND BOUND EVENTS:
+ * join: returns user object with userID (socket.id)
+ * availableUsers: returns array of online users
+ * selectedRoom: returns room object that user is currently in
+ *      -if new room it adds actual roomID (socket.io room ID) to room object
+ * updatedCurUserRooms: returns array of rooms user is currently associated with
+ * newMsg: returns array of messages within a room
+ * roomRequest: returns a request to join room
+ * updatedRoomUsers: returns array of users currently in a room (used for handling request denial)
+ * typing: returns username of user typing in a room
+ * 
+ * BACKEND BOUND EVENTS:
+ * join: assigns userID to current user and emits join event
+ *      -also emits availableUsers to all sockets if there is more than one person in the chat
+ * leave: removes current user from available users and all associated rooms
+ *      -also sends system message to all previously associated rooms saying they left
+ * availableUsers: emits availableUsers event
+ * enterRoom: gets room from availableUsers/creates a new room if none is found 
+ *      -compares by sorted user array in room to avoid duplicates
+ *      -current socket leaves previous room before joining new one (avoids emitting events to wrong room)
+ *      -emits updatedCurUserRooms and selectedRoom events
+ *      -sends system message that user has joined
+ *      -keeps track of visited room history so system message is only sent when first joining
+ * leaveRoom: makes current user leave a room and sends system message that they left
+ * newRequest: formats and adds request to designated user
+ *      -emits roomRequest event to designated user
+ * updateRequest: handles accepting/denying room request and removes request from user's queue
+ *      -if denied removes user from requested room
+ *      -if denied emits updatedRoomUsers to requested room
+ *      -if denied sends system message to requested room that they denied
+ *      -if denied emits updatedCurUserRooms to users in requested room and current user
+ * sendMessage: adds new message to associated room and emits newMsg event
+ *      -updates rooms for current user so they contain all up to date messages
+ *          -even if they're currently in a different room
+ * typing: emits typing event
+ */
 var availableUsers = [];
 var availableRooms = [];
 
