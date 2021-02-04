@@ -16,6 +16,9 @@
                     </span>
                 </span>
             </div>
+            <div id="roomControls" class="ml-auto">
+                <span (click)="addUser()" class="btn btn-icon fa fa-plus-circle approve"></span>
+            </div>
         </div>
         <div class="section-content">
             <span *ngFor="let message of selectedRoom.messages; let i = index">

@@ -29,7 +29,7 @@
         <hr class="mb-3">
         <ul class="list-unstyled components" *ngIf="!sideBarHidden && formattedRoomsCurUser?.length">
             <li *ngFor="let room of formattedRoomsCurUser" (click)="enterRoom(room)"
-                [ngClass]="{'selected': isRoomSelected(room.users)}" class="btn py-3 px-0 m-0 user w-100" tabindex="0">
+                [ngClass]="{'selected': isRoomSelected(room.roomID)}" class="btn py-3 px-0 m-0 user w-100" tabindex="0">
                 <div class="row align-items-center">
                     <div *ngFor="let headerUser of room.headerUsers; let i = index" class="d-flex justify-content-around align-items-center">
                         <!-- only display first user for each room and shorthand version of any remainder users in room (e.g., +1) -->

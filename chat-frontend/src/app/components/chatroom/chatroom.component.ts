@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Message } from 'src/app/models/message';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
@@ -17,7 +18,8 @@ export class ChatroomComponent implements OnInit {
   messageContent: string = "";
   curUser: User = null;
   headerUsers: Array<User> = null;
-  constructor(private roomService: RoomService, private userService: UserService, private chatService: ChatService) { }
+  constructor(private roomService: RoomService, private userService: UserService, private chatService: ChatService,
+    private router:Router) { }
 
   ngOnInit(): void {
     this.userService.getUser().subscribe((user) => {
@@ -60,6 +62,10 @@ export class ChatroomComponent implements OnInit {
     this.chatService.sendMessage(this.selectedRoom);
     //clear message input box text
     this.messageContent = "";
+  }
+
+  addUser(){
+    this.router.navigate(['main','handle-room', 'add']);
   }
 
   determineDateFormat(dateSent: Date): string {

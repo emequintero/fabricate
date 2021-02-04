@@ -43,11 +43,6 @@ var io = require('socket.io')(server, {cors: '*'});
 var availableUsers = [];
 var availableRooms = [];
 
-//sort user array by username
-compareUsers = (a,b) =>{
-    return a.username.localeCompare(b.username);
-}
-
 //Generate room ID for new rooms
 generateID = () =>{
     let text = "";
@@ -62,6 +57,18 @@ getCurUserRooms = (userID) =>{
     return availableRooms.filter(room=>{
         //compare using user ID
         return room.users.find(user=>{return user.userID === userID;});
+    });
+}
+
+getRoomByID = (roomID) =>{
+    return availableRooms.find(room=>{
+        return room.roomID === roomID;
+    });
+}
+
+getUserInRoom = (room, userID) =>{
+    return room.users.find(user=>{
+        return user.userID === userID;
     });
 }
 
@@ -91,18 +98,18 @@ io.on('connect',(socket) => {
     });
     //user is entering room
     socket.on('enterRoom', function(enterRoomData){
-        //check if there's already a room with the same users
-        let foundRoom = availableRooms.find(room=>{
-            //sort arrays so rooms aren't duplicated
-            return JSON.stringify(room.users.sort(compareUsers)) === JSON.stringify(enterRoomData.selectedRoom.users.sort(compareUsers))
-        });
-        //create room if one doesn't exist (unique combination of users)
-        if(!foundRoom){
+        let foundRoom = null;
+        //create room if one doesn't exist (no match for roomID)
+        if(!enterRoomData.selectedRoom.roomID){
             availableRooms.push(enterRoomData.selectedRoom);
             //set foundRoom to new room (provided by front-end)
             foundRoom = enterRoomData.selectedRoom;
             //set up id for new room (needed for initial room setup, but is replaced by socket io hashed value)
             foundRoom.roomID = generateID();
+        }
+        else{
+            //get room from availableRooms by ID
+            foundRoom = getRoomByID(enterRoomData.selectedRoom.roomID)
         }
         /**
          * Up tp date socket rooms 'Array.from(socket.rooms)' required for each part of the following process:
@@ -159,13 +166,16 @@ io.on('connect',(socket) => {
     //update request by removing it from user's queue
     socket.on('updateRequest', function(updateRequestData){
         //find associated room
-        let foundRoom = availableRooms.find(room=>{
-            return room.roomID === updateRequestData.request.room.roomID;
-        });
+        let foundRoom = getRoomByID(updateRequestData.request.room.roomID);
         //find user-who-updated in found room
-        let foundUser = foundRoom.users.find(user=>{
-            return user.userID === updateRequestData.curUser.userID;
-        });
+        let foundUser = getUserInRoom(foundRoom, updateRequestData.curUser.userID);
+        //check if current user is in selected room
+        if(!foundUser){
+            //add user to room in availableRooms if they don't exist (needed for handling add user)
+            foundRoom.users.push(updateRequestData.curUser);
+            //update found user
+            foundUser = updateRequestData.curUser;
+        }
         //find user-who-updated's requests
         let foundUserRequests = foundUser.requests;
         //remove request from list
@@ -174,8 +184,18 @@ io.on('connect',(socket) => {
         });
         //emit updated request list (applies for any operation)
         io.to(updateRequestData.curUser.userID).emit('roomRequest', foundUserRequests);
+        //handle accepted room request
+        if(updateRequestData.operation === 'accepted'){
+            //update user list to users in room
+            io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
+            //individually send updated user rooms to all other users in room (each belongs to unique set of rooms)
+            foundRoom.users.forEach(user=>{
+                let userUpdatedRooms = getCurUserRooms(user.userID);
+                io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
+            });
+        }
         //handle denied room request
-        if(updateRequestData.operation === 'denied'){
+        else if(updateRequestData.operation === 'denied'){
             //remove user from room in availableRooms
             foundRoom.users = foundRoom.users.filter(user=>{
                 return user.userID !== updateRequestData.curUser.userID;
@@ -209,16 +229,7 @@ io.on('connect',(socket) => {
     //relay chat data (handle & message) to sockets in room
     socket.on('sendMessage', function(selectedRoom){
         //add messages to room
-        availableRooms.find(room=>{
-            //sort arrays so rooms aren't duplicated
-            return JSON.stringify(room.users.sort(compareUsers)) === JSON.stringify(selectedRoom.users.sort(compareUsers))
-        }).messages = selectedRoom.messages;
-        //socket Room Set to array
-        let userRooms = Array.from(socket.rooms);
-        //get rooms with user in it
-        roomsCurUser = availableRooms.filter(room=>{
-            return userRooms.indexOf(room.roomID) !== -1;
-        });
+        getRoomByID(selectedRoom.roomID).messages = selectedRoom.messages;
         //return room to allowed users
         io.to(selectedRoom.roomID).emit('newMsg', selectedRoom.messages);
     });

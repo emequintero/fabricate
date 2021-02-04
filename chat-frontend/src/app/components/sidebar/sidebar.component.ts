@@ -64,35 +64,38 @@ export class SidebarComponent implements OnInit {
     //close sidebar
     this.toggleSideBar();
     //open create room child-view
-    this.router.navigate(['main/handle-room', 'create']);
+    this.router.navigate(['main','handle-room', 'create']);
   }
 
   showNotifications(){
     //close sidebar
     this.toggleSideBar();
     //open create room child-view
-    this.router.navigateByUrl('main/notifications');
+    this.router.navigate(['main','notifications']);
   }
 
-  enterRoom(roomToSwitchTo){
+  enterRoom(viewFriendlyRoom:any){
     //close sidebar
     this.toggleSideBar();
+    //format room properly (no view related properties)
+    let roomToSwitchTo:Room = new Room(viewFriendlyRoom.users, viewFriendlyRoom.messages, viewFriendlyRoom.roomID);
     //enter room
     this.chatService.enterRoom(this.curUser, roomToSwitchTo).subscribe((selectedRoom:Room)=>{
+      console.log("roomsCurUser", this.roomsCurUser, "enteringRoom", roomToSwitchTo, "returnedRoom", selectedRoom)
       //update current room
       let updatedRoom = new Room(selectedRoom.users, selectedRoom.messages, selectedRoom.roomID);
       //update room in shareable resource
       this.roomService.setRoom(updatedRoom);
       //if user is on other page take them to chat
       if(this.router.url !== '/main'){
-        this.router.navigateByUrl('/main');
+        this.router.navigate(['main']);
       }
     });
   }
 
-  isRoomSelected(users:Array<User>){
+  isRoomSelected(roomID:string){
     if(this.selectedRoom){
-      return JSON.stringify(this.selectedRoom.users.sort(this.compareUsers)) === JSON.stringify(users.sort(this.compareUsers));
+      return this.selectedRoom.roomID === roomID;
     }
     else{
       return false;
@@ -106,11 +109,6 @@ export class SidebarComponent implements OnInit {
       });
       return room;
     })
-  }
-
-  //sort user array by username
-  private compareUsers = (a,b) =>{
-      return a.username.localeCompare(b.username);
   }
 
 }

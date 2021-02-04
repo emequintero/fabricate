@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
 import { ChatService } from 'src/app/services/chat.service';
@@ -16,10 +16,15 @@ export class HandleroomComponent implements OnInit {
   selectedUsers:Array<User> = new Array<User>();
   curUser:User = null;
   roomsCurUser:Array<Room> = new Array<Room>();
+  selectedRoom:Room = null;
+  mode:string;
   constructor(private chatService:ChatService, private roomService:RoomService, 
-    private userService:UserService, private router:Router) { }
+    private userService:UserService, private router:Router, private route:ActivatedRoute) { }
 
   ngOnInit(): void {
+    //get handle room mode (create/add)
+    this.mode = this.route.snapshot.paramMap.get('mode');
+    
     this.userService.getUser().subscribe((user)=>{
       this.curUser = user;
     });
@@ -28,9 +33,26 @@ export class HandleroomComponent implements OnInit {
     });
     //get online users
     this.chatService.getAvailableUsers().subscribe(users=>{
-      this.availableUsers = users.map(user=>{
-        return new User(user.profilePic, user.username, user.userID, user.role);
-      });
+      //handle room mode='add' will subscribe to selectedRoom
+      if(this.mode === 'add'){
+        this.roomService.getRoom().subscribe((selectedRoom:Room)=>{
+          this.selectedRoom = selectedRoom;
+          //handle room mode='add' will filter out availableUsers that are already in room
+          let formattedUsers = users.map(user=>{
+            return new User(user.profilePic, user.username, user.userID, user.role);
+          });
+          this.availableUsers = formattedUsers.filter((user:User)=>{
+            return !this.selectedRoom.users.some((existingUser:User)=>{
+              return existingUser.userID === user.userID;
+            });
+          });
+        });
+      }
+      else if(this.mode === 'create'){
+        this.availableUsers = users.map(user=>{
+          return new User(user.profilePic, user.username, user.userID, user.role);
+        });
+      }
     });
     this.chatService.watchCurUserRooms().subscribe((roomsCurUser:Array<Room>)=>{
       //update rooms for current user in shareable resource
@@ -48,7 +70,6 @@ export class HandleroomComponent implements OnInit {
     let newRoom:Room = new Room(this.selectedUsers);
     //enter room
     this.chatService.enterRoom(this.curUser, newRoom).subscribe((selectedRoom:Room)=>{
-      console.log(this.roomsCurUser)
       //check if room already exists (users denying request can alter rooms)
       let roomAlreadyExists = this.roomsCurUser.find((room:Room)=>{
         return JSON.stringify(newRoom.users.sort(this.compareUsers)) === JSON.stringify(room.users.sort(this.compareUsers));
@@ -69,6 +90,26 @@ export class HandleroomComponent implements OnInit {
         });
       }
     });
+  }
+
+  addRoomUsers(){
+    //send requests to other users added to room (not curUser)
+    this.selectedUsers.forEach((user:User)=>{
+      if(user.userID !== this.curUser.userID){
+        this.chatService.sendRequest(this.curUser, user, this.selectedRoom);
+      }
+    });
+    //redirect to chat room
+    this.router.navigateByUrl('main');
+  }
+
+  submit(){
+    if(this.mode === 'create'){
+      this.enterRoom();
+    }
+    else if(this.mode === 'add'){
+      this.addRoomUsers();
+    }
   }
 
   handleUser(user:User, op:string){
