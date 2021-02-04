@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
@@ -18,6 +18,15 @@ export class SidebarComponent implements OnInit {
   selectedRoom:Room = null;
   roomsCurUser:Array<Room> = new Array<Room>();
   formattedRoomsCurUser:Array<any> = null;
+  @ViewChild('sideBar') sidebar:ElementRef;
+  //listens for mousedown in document and injects event to callback function
+  @HostListener('document:mousedown', ['$event'])
+  onGlobalClick(event){
+    //close sidenav if user clicks outside it and sidebar is open
+    if(!this.sidebar.nativeElement.contains(event.target) && !this.sideBarHidden){
+      this.toggleSideBar();
+    }
+  }
   constructor(private chatService:ChatService, private userService:UserService, 
     private roomService:RoomService, private router:Router) { }
 
