@@ -81,7 +81,6 @@ export class SidebarComponent implements OnInit {
     let roomToSwitchTo:Room = new Room(viewFriendlyRoom.users, viewFriendlyRoom.messages, viewFriendlyRoom.roomID);
     //enter room
     this.chatService.enterRoom(this.curUser, roomToSwitchTo).subscribe((selectedRoom:Room)=>{
-      console.log("roomsCurUser", this.roomsCurUser, "enteringRoom", roomToSwitchTo, "returnedRoom", selectedRoom)
       //update current room
       let updatedRoom = new Room(selectedRoom.users, selectedRoom.messages, selectedRoom.roomID);
       //update room in shareable resource

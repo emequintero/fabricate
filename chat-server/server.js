@@ -176,14 +176,14 @@ io.on('connect',(socket) => {
             //update found user
             foundUser = updateRequestData.curUser;
         }
-        //find user-who-updated's requests
-        let foundUserRequests = foundUser.requests;
         //remove request from list
-        foundUserRequests = foundUserRequests.filter(request=>{
+        foundUser.requests = foundUser.requests.filter(request=>{
             return request.requestID !== updateRequestData.request.requestID;
         });
+        //update actual requests
+        getUserInRoom(foundRoom, updateRequestData.curUser.userID).requests = foundUser.requests;
         //emit updated request list (applies for any operation)
-        io.to(updateRequestData.curUser.userID).emit('roomRequest', foundUserRequests);
+        io.to(updateRequestData.curUser.userID).emit('roomRequest', foundUser.requests);
         //handle accepted room request
         if(updateRequestData.operation === 'accepted'){
             //update user list to users in room
