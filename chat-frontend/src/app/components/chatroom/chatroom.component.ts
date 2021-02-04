@@ -30,22 +30,15 @@ export class ChatroomComponent implements OnInit {
       if (this.selectedRoom) {
         //filters out curUser
         this.headerUsers = this.selectedRoom.users.filter(user => { return user.username !== this.curUser.username });
+        //focus on last message on init
+        this.focusLastMsg();
       }
     });
     //watch changes in messages
     this.chatService.watchMessages().subscribe((selectedRoomMsgs:Array<Message>)=>{
       this.selectedRoom.messages = selectedRoomMsgs;
-      let lastMessage = document.getElementById('lastMsg');
-      if(lastMessage){
-        //clear blur for focused element
-        if (document.activeElement instanceof HTMLElement) {
-          document.activeElement.blur();
-        }
-        //focus on new message
-        setTimeout(() => {
-          document.getElementById('lastMsg').focus();
-        }, 100);
-      }
+      //focus on last message when it's received
+      this.focusLastMsg();
     });
     //watch changes for users in room
     this.chatService.watchRoomUsers().subscribe((roomUsers:Array<User>)=>{
@@ -90,6 +83,21 @@ export class ChatroomComponent implements OnInit {
       tabIndex = '0';
     }
     return tabIndex;
+  }
+
+  focusLastMsg(){
+    //clear blur for focused element
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    //focus on new message
+    setTimeout(() => {
+      let lastMessage = document.getElementById('lastMsg');
+      if(lastMessage){
+        console.log(lastMessage)
+        document.getElementById('lastMsg').focus();
+      }
+    }, 100);
   }
 
 }
