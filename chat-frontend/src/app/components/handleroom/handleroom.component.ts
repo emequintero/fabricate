@@ -65,7 +65,7 @@ export class HandleroomComponent implements OnInit {
   }
 
   enterRoom(){
-    //add selected user and current user to room
+    //add current user to list of included users
     this.selectedUsers.push(this.curUser);
     //pre-check if room already exists (avoids duplicates if user combination exists)
     let existingRoom = this.roomsCurUser.find((room:Room)=>{
@@ -97,6 +97,8 @@ export class HandleroomComponent implements OnInit {
   }
 
   addRoomUsers(){
+    //combine selected users and user list in selected room for complete list of included users
+    this.selectedRoom.users = [...this.selectedRoom.users, ...this.selectedUsers];
     //send requests to other users added to room (not curUser)
     this.selectedUsers.forEach((user:User)=>{
       if(user.userID !== this.curUser.userID){
