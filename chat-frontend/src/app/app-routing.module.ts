@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'main', component:  MainComponent, 
   children: [
     {path: '', component: ChatroomComponent},
-    {path: 'create-room', component: HandleroomComponent},
+    {path: 'handle-room/:mode', component: HandleroomComponent},
     {path: 'notifications', component: NotificationsComponent}
   ]},
   { path: 'login', component:  LoginComponent}

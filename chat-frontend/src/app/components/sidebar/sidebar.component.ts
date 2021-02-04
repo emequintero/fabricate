@@ -64,7 +64,7 @@ export class SidebarComponent implements OnInit {
     //close sidebar
     this.toggleSideBar();
     //open create room child-view
-    this.router.navigateByUrl('main/create-room');
+    this.router.navigate(['main/handle-room', 'create']);
   }
 
   showNotifications(){
