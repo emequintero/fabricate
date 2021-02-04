@@ -94,7 +94,6 @@ export class ChatroomComponent implements OnInit {
     setTimeout(() => {
       let lastMessage = document.getElementById('lastMsg');
       if(lastMessage){
-        console.log(lastMessage)
         document.getElementById('lastMsg').focus();
       }
     }, 100);

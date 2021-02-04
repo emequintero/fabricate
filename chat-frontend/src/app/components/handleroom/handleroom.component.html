@@ -15,7 +15,8 @@
         </div>
     </div>
     <div class="section-content pt-3" *ngIf="!availableUsers?.length">
-        <span class="font-weight-light h3 no-results ml-2">No users available to chat</span>
+        <span class="font-weight-light h3 no-results ml-2" *ngIf="mode==='create'">No users available to chat</span>
+        <span class="font-weight-light h3 no-results ml-2" *ngIf="mode==='add'">All available users added to room</span>
     </div>
     <div class="section-footer">
         <div class="footer-content form-group">
