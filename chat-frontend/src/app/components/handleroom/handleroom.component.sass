@@ -1,7 +1,12 @@
 @import ../../../styles.sass
 .section-content
-    max-height: calc(100vh - 80px)
+    position: relative
+    max-height: calc(85.6vh - 80px) !important
+    min-height: calc(85.6vh - 80px) !important
     overflow-y: auto
+    .requestMatch
+        position: absolute
+        bottom: 1.5rem
     .user
         width: 20rem
         margin: auto
@@ -13,6 +18,10 @@
             font-size: 32px
     .user.selected
         border-color: $dark-purple
+@media screen and ( max-width:  720px)
+    .section-content
+        max-height: calc(76vh - 80px - 1.5rem) !important
+        min-height: calc(76vh - 80px - 1.5rem) !important
 @media screen and ( max-width:  325px)
     .user
         width: 100% !important

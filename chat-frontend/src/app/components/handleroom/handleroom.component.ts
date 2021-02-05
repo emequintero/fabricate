@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Request } from 'src/app/models/request';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
 import { ChatService } from 'src/app/services/chat.service';
@@ -17,6 +18,7 @@ export class HandleroomComponent implements OnInit {
   curUser:User = null;
   roomsCurUser:Array<Room> = new Array<Room>();
   selectedRoom:Room = null;
+  requestMatch:boolean = false;
   mode:string;
   constructor(private chatService:ChatService, private roomService:RoomService, 
     private userService:UserService, private router:Router, private route:ActivatedRoute) { }
@@ -125,6 +127,27 @@ export class HandleroomComponent implements OnInit {
     else if(op === 'remove'){
       this.selectedUsers.splice(this.selectedUsers.indexOf(user), 1);
     }
+  }
+
+  handleDisableSubmit(){
+    //check requests to see if users match
+    let duplicateRoom = this.curUser.requests.filter((request:Request)=>{
+      //use only userIDs to compare correctly
+      let roomUserIDs:Array<string> = request.room.users.map((user:User)=>{
+        return user.userID;
+      });
+      let selectedUserIDs:Array<string> = this.selectedUsers.map((user:User)=>{
+        return user.userID;
+      });
+      selectedUserIDs.push(this.curUser.userID);
+      return JSON.stringify(roomUserIDs.sort()) === JSON.stringify(selectedUserIDs.sort());
+    });
+    //handle displaying found request message
+    this.requestMatch = duplicateRoom.length !== 0;
+    //disable if request with same users exists
+    if(this.requestMatch) return true;
+    //if no request matches check if some users are selected
+    else return !this.selectedUsers?.length;
   }
 
   isUserSelected(user:User){

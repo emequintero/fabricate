@@ -13,6 +13,10 @@
             <span *ngIf="!isUserSelected(user)" (click)="handleUser(user, 'add')" class="btn btn-icon fa fa-plus-circle approve"></span>
             <span *ngIf="isUserSelected(user)" (click)="handleUser(user, 'remove')" class=" btn btn-icon fa fa-minus-circle deny"></span>
         </div>
+        <div class="w-100 requestMatch px-2 d-flex flex-column justify-content-center" *ngIf="requestMatch">
+            <h5 class="text-purple text-center font-weight-light">These users are in a pending request</h5>
+            <a routerLink="/main/notifications" class="text-center">View Request(s)</a>
+        </div>
     </div>
     <div class="section-content pt-3" *ngIf="!availableUsers?.length">
         <span class="font-weight-light h3 no-results ml-2" *ngIf="mode==='create'">No users available to chat</span>
@@ -21,7 +25,7 @@
     <div class="section-footer">
         <div class="footer-content form-group">
             <button class="btn btn-block bg-purple text-light rounded-0" (click)="submit()" 
-            [disabled]="!selectedUsers?.length">DONE</button>
+            [disabled]="handleDisableSubmit()">DONE</button>
         </div>
     </div>
 </div>
