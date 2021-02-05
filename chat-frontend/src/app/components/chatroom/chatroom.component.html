@@ -49,10 +49,13 @@
                     </span>
                 </div>
             </span>
+            <span class="w-100 typingMsg" *ngIf="typingMessage">
+                <h5 class="text-purple text-center system-message font-weight-light">{{typingMessage}} is typing a message...</h5>
+            </span>
         </div>
         <div class="section-footer">
             <div class="footer-content form-group">
-                <input type="text" [(ngModel)]="messageContent" class="form-control rounded-0"
+                <input type="text" [(ngModel)]="messageContent" class="form-control rounded-0" (keydown)="userIsTyping()"
                     (keydown.enter)="sendMessage()">
                 <button class="btn btn-block bg-purple text-light rounded-0" [disabled]="!messageContent.length"
                     (click)="sendMessage()">SEND</button>

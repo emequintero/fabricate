@@ -235,7 +235,7 @@ io.on('connect',(socket) => {
     });
     //broadcast handle that is typing to available sockets
     //goes to all except the socket that emitted the typing event
-    socket.on('typing', function(username){
-        socket.broadcast.emit('typing', username);
+    socket.on('userIsTyping', function(typingData){
+        socket.to(typingData.roomID).emit('userIsTyping', typingData.username);
     });
 });

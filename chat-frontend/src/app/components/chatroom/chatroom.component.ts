@@ -18,6 +18,7 @@ export class ChatroomComponent implements OnInit {
   messageContent: string = "";
   curUser: User = null;
   headerUsers: Array<User> = null;
+  typingMessage:string = null;
   constructor(private roomService: RoomService, private userService: UserService, private chatService: ChatService,
     private router:Router) { }
 
@@ -39,6 +40,8 @@ export class ChatroomComponent implements OnInit {
       this.selectedRoom.messages = selectedRoomMsgs;
       //focus on last message when it's received
       this.focusLastMsg();
+      //clear typing message when new message is received
+      this.typingMessage = null;
     });
     //watch changes for users in room
     this.chatService.watchRoomUsers().subscribe((roomUsers:Array<User>)=>{
@@ -46,6 +49,10 @@ export class ChatroomComponent implements OnInit {
         return new User(user.profilePic, user.username, user.userID, user.role, user.requests);
       });
       this.roomService.setRoom(this.selectedRoom);
+    });
+    //watch for typing messages
+    this.chatService.watchForUsersTyping().subscribe((typingData:string)=>{
+      this.typingMessage = typingData;
     });
   }
 
@@ -83,6 +90,15 @@ export class ChatroomComponent implements OnInit {
       tabIndex = '0';
     }
     return tabIndex;
+  }
+
+  //broadcast username of user typing
+  userIsTyping(){
+    //emit username only if message isn't empty (sending null clears 'typingMessage' display)
+    setTimeout(() => {
+      let typingData:string = this.messageContent.length ? this.curUser.username : null;
+      this.chatService.userIsTyping(typingData, this.selectedRoom.roomID);
+    }, 50);
   }
 
   focusLastMsg(){

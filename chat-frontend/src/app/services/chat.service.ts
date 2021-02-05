@@ -98,6 +98,19 @@ export class ChatService {
       operation: operation
     });
   }
+  userIsTyping(username:string, roomID:string){
+    this.socket.emit('userIsTyping', {
+      username: username,
+      roomID: roomID
+    });
+  }
+  watchForUsersTyping(){
+    return new Observable((typingObserver)=>{
+      this.socket.on('userIsTyping', typingData=>{
+        typingObserver.next(typingData);
+      });
+    });
+  }
   //leave chat
   leave(userData:User){
     this.socket.emit('leave', userData);
