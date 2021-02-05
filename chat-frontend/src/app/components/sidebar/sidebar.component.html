@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div #sideBar class="wrapper">
     <div id="content" [ngClass]="{'hidden':!sideBarHidden}">
         <div class="bg-dark-purple h-100 d-flex p-0 flex-column" id="content-container">
             <button type="button" id="chatBtn" class="btn btn-block rounded-0"
@@ -8,7 +8,7 @@
             </button>
         </div>
     </div>
-    <nav #sideBar id="sidebar" [ngClass]="{'hidden':sideBarHidden, 'shadow':!sideBarHidden}" class="bg-light p-4 d-flex flex-column"
+    <nav id="sidebar" [ngClass]="{'hidden':sideBarHidden, 'shadow':!sideBarHidden}" class="bg-light p-4 d-flex flex-column"
         [ngStyle]="{'z-index': sideBarHidden ? '0' : '1000'}">
         <div class="sidebar-header d-flex justify-content-between">
             <h4 class="font-weight-normal text-purple">Chats</h4>
