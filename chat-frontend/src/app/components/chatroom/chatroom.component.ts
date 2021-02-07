@@ -70,6 +70,7 @@ export class ChatroomComponent implements OnInit {
 
   leaveRoom(){
     this.chatService.leaveRoom(this.curUser, this.selectedRoom);
+    //redirect to home page with prevRoomDeleted flag set to true
     this.router.navigate(['main']);
   }
 

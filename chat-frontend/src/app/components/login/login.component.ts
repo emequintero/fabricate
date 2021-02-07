@@ -40,6 +40,7 @@ export class LoginComponent implements OnInit {
   submitUser():void{
     let curUser = new User(this.selectedProfilePic,this.username);
     this.userService.setUser(curUser);
+    //redirect to home
     this.router.navigate(['main']);
   }
 

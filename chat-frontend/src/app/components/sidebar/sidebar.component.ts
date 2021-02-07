@@ -96,7 +96,7 @@ export class SidebarComponent implements OnInit {
       this.roomService.setRoom(updatedRoom);
       //if user is on other page take them to chat
       if(this.router.url !== '/main'){
-        this.router.navigate(['main']);
+        this.router.navigate(['main', 'chat-room']);
       }
     });
   }

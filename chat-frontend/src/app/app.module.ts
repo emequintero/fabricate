@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { ChatroomComponent } from './components/chatroom/chatroom.component';
 import { HandleroomComponent } from './components/handleroom/handleroom.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { NotificationsComponent } from './components/notifications/notifications
     SidebarComponent,
     ChatroomComponent,
     HandleroomComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    HomeComponent
   ],
   imports: [
     FormsModule,
