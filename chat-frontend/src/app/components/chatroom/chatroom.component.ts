@@ -121,4 +121,9 @@ export class ChatroomComponent implements OnInit {
     }, 100);
   }
 
+  allControlsDisabled(){
+    //disable all controls if only user in chat is curUser
+    return this.headerUsers.length === 0;
+  }
+
 }

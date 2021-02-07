@@ -2,23 +2,31 @@
     <div *ngIf="selectedRoom; then showChat"></div>
     <ng-template #showChat>
         <div class="section-header">
-            <div *ngFor="let headerUser of headerUsers; let i = index"
-                class="d-flex justify-content-around align-items-center">
-                <span *ngIf="i === 0" class="profile-pic mr-3" style="background-image: url({{headerUser.profilePic.src}});">
-                    <span class="fa fa-check"></span>
-                </span>
-                <span *ngIf="2 > i" class="username h3">
-                    <span *ngIf="i > 0 && headerUsers.length > 2" class="font-weight-light mx-1">,</span>
-                    <span *ngIf="i > 0 && headerUsers.length === 2" class="font-weight-light mx-2">and</span>
-                    <span class="font-weight-light">{{headerUser.username}}</span>
-                    <span *ngIf="headerUsers.length > 2 && i === 1">
-                        <span class="font-weight-light h3">, +{{headerUsers.length - 2}} Other(s)</span>
+            <div *ngIf="headerUsers.length; then showHeaderUsers"></div>
+            <ng-template #showHeaderUsers>
+                <div *ngFor="let headerUser of headerUsers; let i = index"
+                    class="d-flex justify-content-around align-items-center">
+                    <span *ngIf="i === 0" class="profile-pic mr-3" style="background-image: url({{headerUser.profilePic.src}});">
+                        <span class="fa fa-check"></span>
                     </span>
-                </span>
-            </div>
-            <div id="roomControls" class="ml-auto">
-                <span (click)="addUser()" class="btn btn-icon fa fa-plus-circle approve"></span>
-                <span (click)="leaveRoom()" class="btn btn-icon fa fa-arrow-circle-o-right deny"></span>
+                    <span *ngIf="2 > i" class="username h3">
+                        <span *ngIf="i > 0 && headerUsers.length > 2" class="font-weight-light mx-1">,</span>
+                        <span *ngIf="i > 0 && headerUsers.length === 2" class="font-weight-light mx-2">and</span>
+                        <span class="font-weight-light">{{headerUser.username}}</span>
+                        <span *ngIf="headerUsers.length > 2 && i === 1">
+                            <span class="font-weight-light h3">, +{{headerUsers.length - 2}} Other(s)</span>
+                        </span>
+                    </span>
+                </div>
+                <div id="roomControls" class="ml-auto">
+                    <span (click)="addUser()" class="btn btn-icon fa fa-plus-circle approve"></span>
+                    <span (click)="leaveRoom()" class="btn btn-icon fa fa-arrow-circle-o-right deny"></span>
+                </div>
+            </ng-template>
+            <div *ngIf="!headerUsers.length">
+                <div class="d-flex justify-content-around align-items-center">
+                    <span class="h3 text-danger font-weight-normal">No others in room</span>
+                </div>
             </div>
         </div>
         <div class="section-content">
@@ -53,12 +61,18 @@
             <span class="w-100 typingMsg" *ngIf="typingMessage">
                 <h5 class="text-purple text-center system-message font-weight-light">{{typingMessage}} is typing a message...</h5>
             </span>
+            <span id="alertContainer" class="d-flex justify-content-center w-100 px-5" *ngIf="!headerUsers.length">
+                <span class="alert alert-primary fade show mb-0" role="alert">
+                    <h4 class="alert-header font-weight-normal">All users have left the room.</h4>
+                    <p><a routerLink="/main">Return to home page</a> or <a routerLink="/main/handle-room/create">Create a new room</a></p>
+                </span>
+            </span>
         </div>
         <div class="section-footer">
             <div class="footer-content form-group">
                 <input type="text" [(ngModel)]="messageContent" class="form-control rounded-0" (keydown)="userIsTyping()"
-                    (keydown.enter)="sendMessage()">
-                <button class="btn btn-block bg-purple text-light rounded-0" [disabled]="!messageContent.length"
+                    (keydown.enter)="sendMessage()" [disabled]="allControlsDisabled()">
+                <button class="btn btn-block bg-purple text-light rounded-0" [disabled]="allControlsDisabled() || !messageContent.length"
                     (click)="sendMessage()">SEND</button>
             </div>
         </div>

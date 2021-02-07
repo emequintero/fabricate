@@ -17,7 +17,7 @@ export class SidebarComponent implements OnInit {
   curUser:User = null;
   selectedRoom:Room = null;
   roomsCurUser:Array<Room> = new Array<Room>();
-  formattedRoomsCurUser:Array<any> = null;
+  formattedRoomsCurUser:Array<any> = new Array<any>();
   @ViewChild('sideBar') sidebar:ElementRef;
   //listens for mousedown in document and injects event to callback function
   @HostListener('document:mousedown', ['$event'])
@@ -95,7 +95,7 @@ export class SidebarComponent implements OnInit {
       //update room in shareable resource
       this.roomService.setRoom(updatedRoom);
       //if user is on other page take them to chat
-      if(this.router.url !== '/main'){
+      if(this.router.url !== '/main/chat-room'){
         this.router.navigate(['main', 'chat-room']);
       }
     });
