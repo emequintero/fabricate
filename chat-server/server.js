@@ -153,7 +153,10 @@ io.on('connect',(socket) => {
     });
     //leave a room
     socket.on('leaveRoom', function(leaveRoomData){
+        //find associated room in availableRooms
         let foundRoom = getRoomByID(leaveRoomData.selectedRoom.roomID);
+        //keep copy of original room users to emit updated rooms for them
+        let roomUsersSafe = [].concat(foundRoom.users);
         //remove user from room in availableRooms
         foundRoom.users = foundRoom.users.filter(user=>{
             return user.userID !== leaveRoomData.userLeaving.userID;
@@ -180,14 +183,12 @@ io.on('connect',(socket) => {
                 return room.roomID !== leaveRoomData.selectedRoom.roomID;
             });
         }
-        //individually send updated user rooms to all other users in room (each belongs to unique set of rooms)
-        foundRoom.users.forEach(user=>{
+        //individually send updated user rooms to all users originally associated in room (each belongs to unique set of rooms)
+        roomUsersSafe.forEach(user=>{
             let userUpdatedRooms = getCurUserRooms(user.userID);
+            console.log(userUpdatedRooms)
             io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
         });
-        //update for user rooms for current user
-        let curUserUpdatedRooms = getCurUserRooms(leaveRoomData.userLeaving.userID);
-        io.to(leaveRoomData.userLeaving.userID).emit('updatedCurUserRooms', curUserUpdatedRooms);
         //leave room
         socket.leave(leaveRoomData.selectedRoom.roomID);
     });
@@ -207,6 +208,8 @@ io.on('connect',(socket) => {
     socket.on('updateRequest', function(updateRequestData){
         //find associated room
         let foundRoom = getRoomByID(updateRequestData.request.room.roomID);
+        //keep copy of original room users to emit updated rooms for them
+        let roomUsersSafe = [].concat(foundRoom.users);
         //find user-who-updated in found room
         let foundUser = getUserInRoom(foundRoom, updateRequestData.curUser.userID);
         //check if current user is in selected room
@@ -256,14 +259,17 @@ io.on('connect',(socket) => {
                 dateSent: new Date()
             });
             io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
-            //individually send updated user rooms to all other users in room (each belongs to unique set of rooms)
-            foundRoom.users.forEach(user=>{
+            //delete room from availableRooms if only one user is in it
+            if(foundRoom.users.length === 1){
+                availableRooms = availableRooms.filter(room=>{
+                    return room.roomID !== updateRequestData.request.room.roomID;
+                });
+            }
+            //individually send updated user rooms to all users originally associated in room (each belongs to unique set of rooms)
+            roomUsersSafe.forEach(user=>{
                 let userUpdatedRooms = getCurUserRooms(user.userID);
                 io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
             });
-            //update for user rooms for curUser
-            let curUserUpdatedRooms = getCurUserRooms(updateRequestData.curUser.userID);
-            io.to(updateRequestData.curUser.userID).emit('updatedCurUserRooms', curUserUpdatedRooms);
         }
     });
     //relay chat data (handle & message) to sockets in room
