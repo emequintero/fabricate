@@ -162,6 +162,18 @@ io.on('connect',(socket) => {
         availableRooms[availableRooms.indexOf(foundRoom)].users = [].concat(foundRoom.users);
         //update user list to users in room
         io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
+        //send system message to room that user has left
+        foundRoom.messages.push({
+            sentBy: {
+                profilePic: '',
+                username: 'Fabricate',
+                userID: '',
+                role: 'system'
+            },
+            content: leaveRoomData.userLeaving.username + ' has left the room.',
+            dateSent: new Date()
+        });
+        io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
         //delete room from availableRooms if only one user is in it
         if(foundRoom.users.length === 1){
             availableRooms = availableRooms.filter(room=>{
@@ -176,9 +188,8 @@ io.on('connect',(socket) => {
         //update for user rooms for current user
         let curUserUpdatedRooms = getCurUserRooms(leaveRoomData.userLeaving.userID);
         io.to(leaveRoomData.userLeaving.userID).emit('updatedCurUserRooms', curUserUpdatedRooms);
+        //leave room
         socket.leave(leaveRoomData.selectedRoom.roomID);
-        console.log(Array.from(socket.rooms))
-        console.log(availableRooms)
     });
     //send new request to specific user
     socket.on('newRequest', function(newRequestData){
