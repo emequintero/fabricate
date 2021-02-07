@@ -68,6 +68,11 @@ export class ChatroomComponent implements OnInit {
     this.router.navigate(['main','handle-room', 'add']);
   }
 
+  leaveRoom(){
+    this.chatService.leaveRoom(this.curUser, this.selectedRoom);
+    this.router.navigate(['main']);
+  }
+
   determineDateFormat(dateSent: Date): string {
     //set up end of yesterday to compare
     let endOfYesterday = new Date();

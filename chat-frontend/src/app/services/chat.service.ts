@@ -50,6 +50,13 @@ export class ChatService {
       })
     });
   }
+  //leave room
+  leaveRoom(userLeaving:User, selectedRoom:Room){
+    this.socket.emit('leaveRoom', {
+      userLeaving: userLeaving,
+      selectedRoom: selectedRoom
+    });
+  }
   //watch users in room
   watchRoomUsers(){
     return new Observable((roomUsersObserver)=>{

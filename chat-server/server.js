@@ -151,6 +151,35 @@ io.on('connect',(socket) => {
         //add to visit history
         roomVisitHistory.push(foundRoom.roomID);
     });
+    //leave a room
+    socket.on('leaveRoom', function(leaveRoomData){
+        let foundRoom = getRoomByID(leaveRoomData.selectedRoom.roomID);
+        //remove user from room in availableRooms
+        foundRoom.users = foundRoom.users.filter(user=>{
+            return user.userID !== leaveRoomData.userLeaving.userID;
+        });
+        //update actual users array in availableRooms
+        availableRooms[availableRooms.indexOf(foundRoom)].users = [].concat(foundRoom.users);
+        //update user list to users in room
+        io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
+        //delete room from availableRooms if only one user is in it
+        if(foundRoom.users.length === 1){
+            availableRooms = availableRooms.filter(room=>{
+                return room.roomID !== leaveRoomData.selectedRoom.roomID;
+            });
+        }
+        //individually send updated user rooms to all other users in room (each belongs to unique set of rooms)
+        foundRoom.users.forEach(user=>{
+            let userUpdatedRooms = getCurUserRooms(user.userID);
+            io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
+        });
+        //update for user rooms for current user
+        let curUserUpdatedRooms = getCurUserRooms(leaveRoomData.userLeaving.userID);
+        io.to(leaveRoomData.userLeaving.userID).emit('updatedCurUserRooms', curUserUpdatedRooms);
+        socket.leave(leaveRoomData.selectedRoom.roomID);
+        console.log(Array.from(socket.rooms))
+        console.log(availableRooms)
+    });
     //send new request to specific user
     socket.on('newRequest', function(newRequestData){
         //add new request with new requestID
