@@ -206,7 +206,6 @@ io.on('connect',(socket) => {
     });
     //update request by removing it from user's queue
     socket.on('updateRequest', function(updateRequestData){
-        console.log(updateRequestData.request.room.roomID)
         //find associated room
         let foundRoom = getRoomByID(updateRequestData.request.room.roomID);
         //keep copy of original room users to emit updated rooms for them
