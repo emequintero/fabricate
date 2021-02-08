@@ -4,6 +4,7 @@ import { Request } from 'src/app/models/request';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
 import { ChatService } from 'src/app/services/chat.service';
+import { NavigationService } from 'src/app/services/navigation.service';
 import { RoomService } from 'src/app/services/room.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -21,7 +22,8 @@ export class HandleroomComponent implements OnInit {
   requestMatch:boolean = false;
   mode:string;
   constructor(private chatService:ChatService, private roomService:RoomService, 
-    private userService:UserService, private router:Router, private route:ActivatedRoute) { }
+    private userService:UserService, private router:Router, private route:ActivatedRoute, 
+    private navigationService:NavigationService) { }
 
   ngOnInit(): void {
     //get handle room mode (create/add)
@@ -157,6 +159,10 @@ export class HandleroomComponent implements OnInit {
   //sort user array by username
   compareUsers = (a,b) =>{
     return a.username.localeCompare(b.username);
+  }
+
+  back(){
+    this.navigationService.back();
   }
 
 }

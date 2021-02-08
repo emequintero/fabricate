@@ -1,5 +1,8 @@
 <div class="display">
     <div class="section-header pb-2">
+        <div id="handleRoomControls">
+            <span (click)="back()" class="btn btn-icon fa fa-arrow-circle-left approve"></span>
+        </div>
         <h3 class="font-weight-normal text-purple">Add Participants</h3>
     </div>
     <div class="section-content pt-3" *ngIf="availableUsers?.length">

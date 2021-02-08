@@ -3,6 +3,7 @@ import { Request } from 'src/app/models/request';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
 import { ChatService } from 'src/app/services/chat.service';
+import { NavigationService } from 'src/app/services/navigation.service';
 import { RoomService } from 'src/app/services/room.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -13,7 +14,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class NotificationsComponent implements OnInit {
   curUser:User = null;
-  constructor(private userService:UserService, private chatService:ChatService, private roomService:RoomService) { }
+  constructor(private userService:UserService, private chatService:ChatService, private roomService:RoomService,
+    private navigationService:NavigationService) { }
 
   ngOnInit(): void {
     this.userService.getUser().subscribe((user)=>{
@@ -44,6 +46,10 @@ export class NotificationsComponent implements OnInit {
       //update room in shareable resource
       this.roomService.setRoom(updatedRoom);
     });
+  }
+
+  back(){
+    this.navigationService.back();
   }
 
 }
