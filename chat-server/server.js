@@ -155,8 +155,12 @@ io.on('connect',(socket) => {
     socket.on('leaveRoom', function(leaveRoomData){
         //find associated room in availableRooms
         let foundRoom = getRoomByID(leaveRoomData.selectedRoom.roomID);
-        //keep copy of original room users to emit updated rooms for them
-        let roomUsersSafe = [].concat(foundRoom.users);
+        //get users in room who have accepted
+        let roomUsersAccepted = foundRoom.users.filter(user=>{
+            return user.requests.some(request=>{
+                return request.room.roomID === leaveRoomData.selectedRoom.roomID;
+            });
+        });
         //remove user from room in availableRooms
         foundRoom.users = foundRoom.users.filter(user=>{
             return user.userID !== leaveRoomData.userLeaving.userID;
@@ -183,8 +187,8 @@ io.on('connect',(socket) => {
                 return room.roomID !== leaveRoomData.selectedRoom.roomID;
             });
         }
-        //individually send updated user rooms to all users originally associated in room (each belongs to unique set of rooms)
-        roomUsersSafe.forEach(user=>{
+        //individually send updated user rooms to all other users who accepted in room (each belongs to unique set of rooms)
+        roomUsersAccepted.forEach(user=>{
             let userUpdatedRooms = getCurUserRooms(user.userID);
             console.log(userUpdatedRooms)
             io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
