@@ -50,16 +50,18 @@
                     </span>
                 </div>
                 <div *ngIf="message.sentBy.role === 'system'">
-                    <span class="w-100 d-flex justify-content-center flex-column my-3"
-                    [tabindex]="handleMsgTabIndex()" 
-                    [attr.id]="i===(selectedRoom.messages.length-1) ? 'lastMsg' : undefined">
-                        <h5 class="text-purple font-weight-light text-center system-message">{{message.content}}</h5>
+                    <span class="w-100 d-flex justify-content-center flex-column my-3">
+                        <h5 class="text-purple font-weight-light text-center system-message mx-auto"
+                        [tabindex]="handleMsgTabIndex()"
+                        [attr.id]="i===(selectedRoom.messages.length-1) ? 'lastMsg' : undefined">{{message.content}}</h5>
                         <hr class="text-purple my-1">
                     </span>
                 </div>
             </span>
             <span class="w-100 typingMsg" *ngIf="typingMessage">
-                <h5 class="text-purple text-center system-message font-weight-light">{{typingMessage}} is typing a message...</h5>
+                <h5 class="text-purple text-center system-message font-weight-light mx-auto"
+                tabindex="0"
+                id="typingMessage">{{typingMessage}} is typing a message...</h5>
             </span>
             <span id="alertContainer" class="d-flex justify-content-center w-100 px-5" *ngIf="!headerUsers.length">
                 <span class="alert alert-primary fade show mb-0" role="alert">

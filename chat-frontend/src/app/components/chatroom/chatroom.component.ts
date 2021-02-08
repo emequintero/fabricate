@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Message } from 'src/app/models/message';
 import { Room } from 'src/app/models/room';
@@ -32,14 +32,14 @@ export class ChatroomComponent implements OnInit {
         //filters out curUser
         this.headerUsers = this.selectedRoom.users.filter(user => { return user.username !== this.curUser.username });
         //focus on last message on init
-        this.focusLastMsg();
+        this.focusElement('lastMsg');
       }
     });
     //watch changes in messages
     this.chatService.watchMessages().subscribe((selectedRoomMsgs:Array<Message>)=>{
       this.selectedRoom.messages = selectedRoomMsgs;
       //focus on last message when it's received
-      this.focusLastMsg();
+      this.focusElement('lastMsg');
       //clear typing message when new message is received
       this.typingMessage = null;
     });
@@ -53,6 +53,14 @@ export class ChatroomComponent implements OnInit {
     //watch for typing messages
     this.chatService.watchForUsersTyping().subscribe((typingData:string)=>{
       this.typingMessage = typingData;
+      //focus on typing display if user if typing
+      if(this.typingMessage){
+        this.focusElement('typingMessage');
+      }
+      //focus on last message if no longer typing
+      else{
+        this.focusElement('lastMsg');
+      }
     });
   }
 
@@ -104,21 +112,19 @@ export class ChatroomComponent implements OnInit {
     setTimeout(() => {
       let typingData:string = this.messageContent.length ? this.curUser.username : null;
       this.chatService.userIsTyping(typingData, this.selectedRoom.roomID);
-    }, 50);
+    }, 100);
   }
 
-  focusLastMsg(){
+  focusElement(elementId:string){
     //clear blur for focused element
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-    //focus on new message
-    setTimeout(() => {
-      let lastMessage = document.getElementById('lastMsg');
-      if(lastMessage){
-        document.getElementById('lastMsg').focus();
-      }
-    }, 100);
+    let element = document.getElementById(elementId);
+    //focus on element if exists in DOM
+    if(element){
+      document.getElementById(elementId).focus();
+    }
   }
 
   allControlsDisabled(){
