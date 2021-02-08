@@ -112,7 +112,7 @@ io.on('connect',(socket) => {
             foundRoom = getRoomByID(enterRoomData.selectedRoom.roomID)
         }
         /**
-         * Up tp date socket rooms 'Array.from(socket.rooms)' required for each part of the following process:
+         * Up to date socket rooms 'Array.from(socket.rooms)' required for each part of the following process:
          * 
         */
         //pre-join rooms for cur user
@@ -161,6 +161,10 @@ io.on('connect',(socket) => {
                 return request.room.roomID === leaveRoomData.selectedRoom.roomID;
             });
         });
+        //keep safe copy of room users
+        let roomUsersSafe = [].concat(foundRoom.users);
+        //default to updating users who accepted request
+        let usersToEmitUpdate = roomUsersAccepted;
         //remove user from room in availableRooms
         foundRoom.users = foundRoom.users.filter(user=>{
             return user.userID !== leaveRoomData.userLeaving.userID;
@@ -181,16 +185,34 @@ io.on('connect',(socket) => {
             dateSent: new Date()
         });
         io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
-        //delete room from availableRooms if only one user is in it
-        if(foundRoom.users.length === 1){
+        //check if no active users in chat (no accepted users and user who created left)
+        if(!roomUsersAccepted.length){
+            //find users in room with pending requests (difference between roomUsersAvailable and og user list)
+            let roomUsersPendingRequest = roomUsersSafe.filter(user=>{
+                return roomUsersAccepted.indexOf(user) === -1;
+            });
+            //delete request for this room for all users with pending request
+            roomUsersPendingRequest.forEach(user=>{
+                let foundRequest = user.requests.some(request=>{
+                   return request.room.roomID === leaveRoomData.selectedRoom.roomID;
+                });
+                //delete request from user's pending list
+                user.requests = user.requests.splice(user.requests.indexOf(foundRequest), 1);
+                //update request list for user
+                io.to(user.userID).emit('roomRequest', user.requests);
+            });
+            //update all original users since room will be deleted
+            usersToEmitUpdate = roomUsersSafe;
+        }
+        //delete room from availableRooms if only one user is in it or if no active users
+        if(foundRoom.users.length === 1 || !roomUsersAccepted.length){
             availableRooms = availableRooms.filter(room=>{
                 return room.roomID !== leaveRoomData.selectedRoom.roomID;
             });
         }
-        //individually send updated user rooms to all other users who accepted in room (each belongs to unique set of rooms)
-        roomUsersAccepted.forEach(user=>{
+        //individually send updated user rooms (each belongs to unique set of rooms)
+        usersToEmitUpdate.forEach(user=>{
             let userUpdatedRooms = getCurUserRooms(user.userID);
-            console.log(userUpdatedRooms)
             io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
         });
         //leave room
