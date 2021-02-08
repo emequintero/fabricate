@@ -206,6 +206,7 @@ io.on('connect',(socket) => {
     });
     //update request by removing it from user's queue
     socket.on('updateRequest', function(updateRequestData){
+        console.log(updateRequestData.request.room.roomID)
         //find associated room
         let foundRoom = getRoomByID(updateRequestData.request.room.roomID);
         //keep copy of original room users to emit updated rooms for them
@@ -231,8 +232,14 @@ io.on('connect',(socket) => {
         if(updateRequestData.operation === 'accepted'){
             //update user list to users in room
             io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
-            //individually send updated user rooms to all other users in room (each belongs to unique set of rooms)
-            foundRoom.users.forEach(user=>{
+            //get users in room who have accepted
+            let roomUsersAccepted = foundRoom.users.filter(user=>{
+                return user.requests.some(request=>{
+                    return request.requestID === updateRequestData.request.requestID;
+                });
+            });
+            //individually send updated user rooms to all other users who accepted in room (each belongs to unique set of rooms)
+            roomUsersAccepted.forEach(user=>{
                 let userUpdatedRooms = getCurUserRooms(user.userID);
                 io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
             });
