@@ -72,6 +72,20 @@ getUserInRoom = (room, userID) =>{
     });
 }
 
+sendSystemMessage = (room, content) =>{
+    room.messages.push({
+        sentBy: {
+            profilePic: '',
+            username: 'Fabricate',
+            userID: '',
+            role: 'system'
+        },
+        content: content,
+        dateSent: new Date()
+    });
+    io.to(room.roomID).emit('newMsg', room.messages);
+}
+
 io.on('connect',(socket) => {
     console.log('Socket: Client Connected');
     let roomsCurUser = null;
@@ -136,17 +150,7 @@ io.on('connect',(socket) => {
         io.to(enterRoomData.userEntering.userID).emit('updatedCurUserRooms', roomsCurUser);
         //send system message to room that user has joined chat and hasn't joined room before
         if(roomVisitHistory.indexOf(foundRoom.roomID) === -1){
-            foundRoom.messages.push({
-                sentBy: {
-                    profilePic: '',
-                    username: 'Fabricate',
-                    userID: '',
-                    role: 'system'
-                },
-                content: enterRoomData.userEntering.username + ' has joined the chat.',
-                dateSent: new Date()
-            });
-            io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
+            sendSystemMessage(foundRoom, enterRoomData.userEntering.username + ' has joined the chat.');
         }
         //add to visit history
         roomVisitHistory.push(foundRoom.roomID);
@@ -174,17 +178,7 @@ io.on('connect',(socket) => {
         //update user list to users in room
         io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
         //send system message to room that user has left
-        foundRoom.messages.push({
-            sentBy: {
-                profilePic: '',
-                username: 'Fabricate',
-                userID: '',
-                role: 'system'
-            },
-            content: leaveRoomData.userLeaving.username + ' has left the room.',
-            dateSent: new Date()
-        });
-        io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
+        sendSystemMessage(foundRoom, leaveRoomData.userLeaving.username + ' has left the room.');
         //check if no active users in chat (no accepted users and user who created left)
         if(!roomUsersAccepted.length){
             //find users in room with pending requests (difference between roomUsersAvailable and og user list)
@@ -280,17 +274,7 @@ io.on('connect',(socket) => {
             //update user list to users in room
             io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
             //send system message to room that user has denied request
-            foundRoom.messages.push({
-                sentBy: {
-                    profilePic: '',
-                    username: 'Fabricate',
-                    userID: '',
-                    role: 'system'
-                },
-                content: updateRequestData.curUser.username + ' has denied the request to join.',
-                dateSent: new Date()
-            });
-            io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
+            sendSystemMessage(foundRoom, updateRequestData.curUser.username + ' has denied the request to join.');
             //delete room from availableRooms if only one user is in it
             if(foundRoom.users.length === 1){
                 availableRooms = availableRooms.filter(room=>{
