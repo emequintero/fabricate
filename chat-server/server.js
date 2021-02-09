@@ -281,8 +281,14 @@ io.on('connect',(socket) => {
                     return room.roomID !== updateRequestData.request.room.roomID;
                 });
             }
+            //get users in room who have accepted
+            let roomUsersAccepted = foundRoom.users.filter(user=>{
+                return user.requests.some(request=>{
+                    return request.requestID === updateRequestData.request.requestID;
+                });
+            });
             //individually send updated user rooms to all users originally associated in room (each belongs to unique set of rooms)
-            roomUsersSafe.forEach(user=>{
+            roomUsersAccepted.forEach(user=>{
                 let userUpdatedRooms = getCurUserRooms(user.userID);
                 io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
             });
