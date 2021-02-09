@@ -159,14 +159,14 @@ io.on('connect',(socket) => {
     socket.on('leaveRoom', function(leaveRoomData){
         //find associated room in availableRooms
         let foundRoom = getRoomByID(leaveRoomData.selectedRoom.roomID);
+        //keep safe copy of room users
+        let roomUsersSafe = [].concat(foundRoom.users);
         //get users in room who have accepted
         let roomUsersAccepted = foundRoom.users.filter(user=>{
             return user.requests.some(request=>{
                 return request.room.roomID === leaveRoomData.selectedRoom.roomID;
             });
         });
-        //keep safe copy of room users
-        let roomUsersSafe = [].concat(foundRoom.users);
         //default to updating users who accepted request
         let usersToEmitUpdate = roomUsersAccepted;
         //remove user from room in availableRooms
@@ -199,7 +199,7 @@ io.on('connect',(socket) => {
             usersToEmitUpdate = roomUsersSafe;
         }
         //delete room from availableRooms if only one user is in it or if no active users
-        if(foundRoom.users.length === 1 || !roomUsersAccepted.length){
+        if(foundRoom.users.length === 1){
             availableRooms = availableRooms.filter(room=>{
                 return room.roomID !== leaveRoomData.selectedRoom.roomID;
             });
