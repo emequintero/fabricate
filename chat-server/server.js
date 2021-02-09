@@ -86,6 +86,17 @@ sendSystemMessage = (room, content) =>{
     io.to(room.roomID).emit('newMsg', room.messages);
 }
 
+removeUserInRoom = (room, userLeavingID) =>{
+    //remove user from room in availableRooms
+    room.users = room.users.filter(user=>{
+        return user.userID !== userLeavingID;
+    });
+    //update actual users array in availableRooms
+    availableRooms[availableRooms.indexOf(room)].users = [].concat(room.users);
+    //return updated room
+    return room;
+}
+
 io.on('connect',(socket) => {
     console.log('Socket: Client Connected');
     let roomsCurUser = null;
@@ -169,12 +180,8 @@ io.on('connect',(socket) => {
         });
         //default to updating users who accepted request
         let usersToEmitUpdate = roomUsersAccepted;
-        //remove user from room in availableRooms
-        foundRoom.users = foundRoom.users.filter(user=>{
-            return user.userID !== leaveRoomData.userLeaving.userID;
-        });
-        //update actual users array in availableRooms
-        availableRooms[availableRooms.indexOf(foundRoom)].users = [].concat(foundRoom.users);
+        //remove user from room in availableRooms and update room data
+        foundRoom = removeUserInRoom(foundRoom, leaveRoomData.userLeaving.userID);
         //update user list to users in room
         io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
         //send system message to room that user has left
@@ -228,8 +235,6 @@ io.on('connect',(socket) => {
     socket.on('updateRequest', function(updateRequestData){
         //find associated room
         let foundRoom = getRoomByID(updateRequestData.request.room.roomID);
-        //keep copy of original room users to emit updated rooms for them
-        let roomUsersSafe = [].concat(foundRoom.users);
         //find user-who-updated in found room
         let foundUser = getUserInRoom(foundRoom, updateRequestData.curUser.userID);
         //check if current user is in selected room
@@ -266,11 +271,7 @@ io.on('connect',(socket) => {
         //handle denied room request
         else if(updateRequestData.operation === 'denied'){
             //remove user from room in availableRooms
-            foundRoom.users = foundRoom.users.filter(user=>{
-                return user.userID !== updateRequestData.curUser.userID;
-            });
-            //update actual users array in availableRooms
-            availableRooms[availableRooms.indexOf(foundRoom)].users = [].concat(foundRoom.users);
+            foundRoom = removeUserInRoom(foundRoom, updateRequestData.curUser.userID);
             //update user list to users in room
             io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
             //send system message to room that user has denied request
