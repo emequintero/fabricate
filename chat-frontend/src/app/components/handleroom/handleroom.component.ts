@@ -81,7 +81,6 @@ export class HandleroomComponent implements OnInit, OnDestroy{
       let updatedRoomsCurUser = roomsCurUser.map(room=>{
         return new Room(room.users, room.messages, room.roomID);
       });
-      
       //update roomsCurUser in shareable resource
       this.roomService.setRoomsCurUser(updatedRoomsCurUser);
     });

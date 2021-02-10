@@ -25,6 +25,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
   watchMessagesSub:Subscription = new Subscription();
   watchRoomUsersSub:Subscription = new Subscription();
   watchForUsersTypingSub:Subscription = new Subscription();
+  watchRoomsCurUserSub:Subscription = new Subscription();
   constructor(private roomService: RoomService, private userService: UserService, private chatService: ChatService,
     private router:Router) { }
   ngOnDestroy(): void {
@@ -34,6 +35,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     this.watchMessagesSub.unsubscribe();
     this.watchRoomUsersSub.unsubscribe();
     this.watchForUsersTypingSub.unsubscribe();
+    this.watchRoomsCurUserSub.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -75,6 +77,15 @@ export class ChatroomComponent implements OnInit, OnDestroy {
       else{
         this.focusElement('lastMsg');
       }
+    });
+    this.watchRoomsCurUserSub = this.chatService.watchCurUserRooms().subscribe((roomsCurUser:Array<Room>)=>{
+      console.log(roomsCurUser)
+      //update rooms for current user in shareable resource
+      let updatedRoomsCurUser = roomsCurUser.map(room=>{
+        return new Room(room.users, room.messages, room.roomID);
+      });
+      //update roomsCurUser in shareable resource
+      this.roomService.setRoomsCurUser(updatedRoomsCurUser);
     });
   }
 
