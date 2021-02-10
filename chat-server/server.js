@@ -1,3 +1,5 @@
+const { request } = require('express');
+
 var app = require('express')();
 server = app.listen(5000,function(){
   console.log("server live on port 5000!");
@@ -51,7 +53,7 @@ var availableRooms = [];
 generateID = () =>{
     let text = "";
     let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-    for(let i = 0; i < 10; i++){
+    for(let i = 0; i < 50; i++){
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
@@ -72,15 +74,15 @@ getRoomByID = (roomID) =>{
 }
 
 //get a user within a room
-getUserInRoom = (room, userID) =>{
-    return room.users.find(user=>{
+getUserInRoom = (selectedRoom, userID) =>{
+    return selectedRoom.users.find(user=>{
         return user.userID === userID;
     });
 }
 
 //send system message to a room
-sendSystemMessage = (room, content) =>{
-    room.messages.push({
+sendSystemMessage = (selectedRoom, content) =>{
+    selectedRoom.messages.push({
         sentBy: {
             profilePic: '',
             username: 'Fabricate',
@@ -90,28 +92,46 @@ sendSystemMessage = (room, content) =>{
         content: content,
         dateSent: new Date()
     });
-    io.to(room.roomID).emit('newMsg', room.messages);
+    io.to(selectedRoom.roomID).emit('newMsg', selectedRoom.messages);
 }
 
 //remove user from a room
-removeUserInRoom = (room, userLeavingID) =>{
+removeUserInRoom = (selectedRoom, userLeavingID) =>{
     //remove user from room in availableRooms
-    room.users = room.users.filter(user=>{
+    selectedRoom.users = selectedRoom.users.filter(user=>{
         return user.userID !== userLeavingID;
     });
     //update actual users array in availableRooms
-    availableRooms[availableRooms.indexOf(room)].users = [].concat(room.users);
+    availableRooms[availableRooms.indexOf(selectedRoom)].users = [].concat(selectedRoom.users);
     //return updated room
-    return room;
+    return selectedRoom;
 }
 
 //get users in a room who have accepted the room request
-getAcceptedRoomUsers = (room) =>{
-    return room.users.filter(user=>{
-    return user.requests.some(request=>{
-        return request.room.roomID === room.roomID;
+getAcceptedRoomUsers = (selectedRoom) =>{
+    return selectedRoom.users.filter(user=>{
+        //request match for room should be false
+        return !user.requests.some(request=>{
+            return request.room.roomID === selectedRoom.roomID;
+        });
     });
-});
+}
+
+//delete room if empty (update all original users) or update accepted users if not empty (don't delete)
+handleRoomUserCount = (selectedRoom, acceptedUsers, originalUsers) =>{
+    if(acceptedUsers.length === 1){
+        availableRooms = availableRooms.filter(room=>{
+            return room.roomID !== selectedRoom.roomID;
+        });
+        //refresh available users after room is deleted
+        io.sockets.emit('availableUsers', availableUsers);
+        //update all original users since room was deleted
+        return originalUsers;
+    }
+    else {
+        //update only accepted users since there's still people in the room
+        return acceptedUsers;
+    }
 }
 
 io.on('connect',(socket) => {
@@ -191,39 +211,30 @@ io.on('connect',(socket) => {
         let roomUsersSafe = [].concat(foundRoom.users);
         //get users in room who have accepted
         let roomUsersAccepted = getAcceptedRoomUsers(foundRoom);
-        //default to updating users who accepted request
-        let usersToEmitUpdate = roomUsersAccepted;
         //remove user from room in availableRooms and update room data
         foundRoom = removeUserInRoom(foundRoom, leaveRoomData.userLeaving.userID);
         //update user list to users in room
         io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
         //send system message to room that user has left
         sendSystemMessage(foundRoom, leaveRoomData.userLeaving.username + ' has left the room.');
-        //check if no active users in chat (no accepted users and user who created left)
-        if(!roomUsersAccepted.length){
+        //check if no active users in chat (only one user in chat + leave event)
+        if(roomUsersAccepted.length === 1){
             //find users in room with pending requests (difference between roomUsersAvailable and og user list)
             let roomUsersPendingRequest = roomUsersSafe.filter(user=>{
                 return roomUsersAccepted.indexOf(user) === -1;
             });
             //delete request for this room for all users with pending request
             roomUsersPendingRequest.forEach(user=>{
-                let foundRequest = user.requests.some(request=>{
-                   return request.room.roomID === leaveRoomData.selectedRoom.roomID;
-                });
                 //delete request from user's pending list
-                user.requests = user.requests.splice(user.requests.indexOf(foundRequest), 1);
+                user.requests = user.requests.filter(request=>{
+                    return request.room.roomID !== leaveRoomData.selectedRoom.roomID;
+                });
                 //update request list for user
                 io.to(user.userID).emit('roomRequest', user.requests);
             });
-            //update all original users since room will be deleted
-            usersToEmitUpdate = roomUsersSafe;
         }
-        //delete room from availableRooms if only one user is in it or if no active users
-        if(foundRoom.users.length === 1){
-            availableRooms = availableRooms.filter(room=>{
-                return room.roomID !== leaveRoomData.selectedRoom.roomID;
-            });
-        }
+        //delete room if empty (update all original users) or update accepted users if not empty (don't delete)
+        let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe);
         //individually send updated user rooms (each belongs to unique set of rooms)
         usersToEmitUpdate.forEach(user=>{
             let userUpdatedRooms = getCurUserRooms(user.userID);
@@ -234,15 +245,19 @@ io.on('connect',(socket) => {
     });
     //send new request to specific user
     socket.on('newRequest', function(newRequestData){
+        //get room by id
+        let foundRoom = getRoomByID(newRequestData.selectedRoom.roomID);
+        //get user request is sent to
+        let foundUser = getUserInRoom(foundRoom, newRequestData.userTo.userID);
         //add new request with new requestID
-        newRequestData.userTo.requests.push({
+        foundUser.requests.push({
             sentBy: newRequestData.userFrom,
             room: newRequestData.selectedRoom,
             status: 'pending',
             requestID: generateID()
         });
         //emit updated request list
-        io.to(newRequestData.userTo.userID).emit('roomRequest', newRequestData.userTo.requests);
+        io.to(newRequestData.userTo.userID).emit('roomRequest', foundUser.requests);
     });
     //update request by removing it from user's queue
     socket.on('updateRequest', function(updateRequestData){
@@ -263,16 +278,12 @@ io.on('connect',(socket) => {
         foundUser.requests = foundUser.requests.filter(request=>{
             return request.requestID !== updateRequestData.request.requestID;
         });
-        //update actual requests
-        getUserInRoom(foundRoom, updateRequestData.curUser.userID).requests = foundUser.requests;
         //emit updated request list (applies for any operation)
         io.to(updateRequestData.curUser.userID).emit('roomRequest', foundUser.requests);
-        //get users in room who have accepted the request (for emitting update events)
-        let roomUsersAccepted = getAcceptedRoomUsers(foundRoom);
-        //default to updating users who accepted request
-        let usersToEmitUpdate = roomUsersAccepted;
         //handle accepted room request
         if(updateRequestData.operation === 'accepted'){
+            //get users in room who have accepted the request (for emitting update events)
+            let roomUsersAccepted = getAcceptedRoomUsers(foundRoom);
             //update user list to users in room
             io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
             //individually send updated user rooms to all other users who accepted in room (each belongs to unique set of rooms)
@@ -289,14 +300,10 @@ io.on('connect',(socket) => {
             io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
             //send system message to room that user has denied request
             sendSystemMessage(foundRoom, updateRequestData.curUser.username + ' has denied the request to join.');
-            //delete room from availableRooms if only one user is in it
-            if(foundRoom.users.length === 1){
-                availableRooms = availableRooms.filter(room=>{
-                    return room.roomID !== updateRequestData.request.room.roomID;
-                });
-                //update all original users since room will be deleted
-                usersToEmitUpdate = roomUsersSafe;
-            }
+            //get users in room who have accepted the request (for emitting update events)
+            let roomUsersAccepted = getAcceptedRoomUsers(foundRoom);
+            //delete room if empty (update all original users) or update accepted users if not empty (don't delete)
+            let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe);
             //individually send updated user rooms to all users originally associated in room (each belongs to unique set of rooms)
             usersToEmitUpdate.forEach(user=>{
                 let userUpdatedRooms = getCurUserRooms(user.userID);

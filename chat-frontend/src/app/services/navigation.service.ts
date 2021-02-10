@@ -1,21 +1,27 @@
 import { Location } from '@angular/common';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NavigationService {
+export class NavigationService implements OnDestroy{
   //keep track of navigation history
   history:Array<string> = new Array<string>();
+  routerEventsSub:Subscription = new Subscription();
   constructor(private router:Router, private location:Location) {
-    this.router.events.subscribe(event=>{
+    this.routerEventsSub = this.router.events.subscribe(event=>{
       //chec if event is for navigation ending successfully
       if(event instanceof NavigationEnd){
         //add actual url accessed
         this.history.push(event.urlAfterRedirects);
       }
     });
+  }
+  ngOnDestroy(): void {
+    //unsubscribe to events
+    this.routerEventsSub.unsubscribe();
   }
 
   back(){

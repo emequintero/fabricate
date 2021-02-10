@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Request } from 'src/app/models/request';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
@@ -13,7 +14,7 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './handleroom.component.html',
   styleUrls: ['./handleroom.component.sass']
 })
-export class HandleroomComponent implements OnInit {
+export class HandleroomComponent implements OnInit, OnDestroy{
   availableUsers:Array<User> = null;
   selectedUsers:Array<User> = new Array<User>();
   curUser:User = null;
@@ -21,25 +22,42 @@ export class HandleroomComponent implements OnInit {
   selectedRoom:Room = null;
   requestMatch:boolean = false;
   mode:string;
+  enterRoomSub:Subscription = new Subscription();
+  curUserSub:Subscription = new Subscription();
+  roomsCurUserSub:Subscription = new Subscription();
+  watchRoomsCurUserSub:Subscription = new Subscription();
+  availableUsersSub:Subscription = new Subscription();
+  selectedRoomSub = new Subscription();
   constructor(private chatService:ChatService, private roomService:RoomService, 
     private userService:UserService, private router:Router, private route:ActivatedRoute, 
     private navigationService:NavigationService) { }
+  ngOnDestroy(): void {
+    //unsubscribe to events/updates
+    this.enterRoomSub.unsubscribe();
+    this.curUserSub.unsubscribe();
+    this.roomsCurUserSub.unsubscribe();
+    this.watchRoomsCurUserSub.unsubscribe();
+    this.availableUsersSub.unsubscribe();
+    this.selectedRoomSub.unsubscribe();
+  }
 
   ngOnInit(): void {
+    //reset selected users on load
+    this.selectedUsers = new Array<User>();
     //get handle room mode (create/add)
     this.mode = this.route.snapshot.paramMap.get('mode');
     
-    this.userService.getUser().subscribe((user)=>{
+    this.curUserSub = this.userService.getUser().subscribe((user)=>{
       this.curUser = user;
     });
-    this.roomService.getRoomsCurUser().subscribe((roomsCurUser:Array<Room>)=>{
+    this.roomsCurUserSub = this.roomService.getRoomsCurUser().subscribe((roomsCurUser:Array<Room>)=>{
       this.roomsCurUser = roomsCurUser;
     });
     //get online users
-    this.chatService.getAvailableUsers().subscribe(users=>{
+    this.availableUsersSub = this.chatService.getAvailableUsers().subscribe(users=>{
       //handle room mode='add' will subscribe to selectedRoom
       if(this.mode === 'add'){
-        this.roomService.getRoom().subscribe((selectedRoom:Room)=>{
+        this.selectedRoomSub = this.roomService.getRoom().subscribe((selectedRoom:Room)=>{
           this.selectedRoom = selectedRoom;
           //handle room mode='add' will filter out availableUsers that are already in room
           let formattedUsers = users.map(user=>{
@@ -58,11 +76,12 @@ export class HandleroomComponent implements OnInit {
         });
       }
     });
-    this.chatService.watchCurUserRooms().subscribe((roomsCurUser:Array<Room>)=>{
+    this.watchRoomsCurUserSub = this.chatService.watchCurUserRooms().subscribe((roomsCurUser:Array<Room>)=>{
       //update rooms for current user in shareable resource
       let updatedRoomsCurUser = roomsCurUser.map(room=>{
         return new Room(room.users, room.messages, room.roomID);
       });
+      
       //update roomsCurUser in shareable resource
       this.roomService.setRoomsCurUser(updatedRoomsCurUser);
     });
@@ -77,7 +96,7 @@ export class HandleroomComponent implements OnInit {
     });
     let selectedRoom = existingRoom ? new Room(existingRoom.users,existingRoom.messages,existingRoom.roomID) : new Room(this.selectedUsers);
     //enter room
-    this.chatService.enterRoom(this.curUser, selectedRoom).subscribe((updatedSelectedRoom:Room)=>{
+    this.enterRoomSub = this.chatService.enterRoom(this.curUser, selectedRoom).subscribe((updatedSelectedRoom:Room)=>{
       //check if room already exists (users denying request can alter rooms)
       let roomAlreadyExists = this.roomsCurUser.find((room:Room)=>{
         return updatedSelectedRoom.roomID === room.roomID;

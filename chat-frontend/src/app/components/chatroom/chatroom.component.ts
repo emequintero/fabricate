@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Message } from 'src/app/models/message';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
@@ -12,21 +13,34 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './chatroom.component.html',
   styleUrls: ['./chatroom.component.sass']
 })
-export class ChatroomComponent implements OnInit {
+export class ChatroomComponent implements OnInit, OnDestroy {
 
   selectedRoom: Room = null;
   messageContent: string = "";
   curUser: User = null;
   headerUsers: Array<User> = null;
   typingMessage:string = null;
+  curUserSub:Subscription = new Subscription();
+  selectedRoomSub:Subscription = new Subscription();
+  watchMessagesSub:Subscription = new Subscription();
+  watchRoomUsersSub:Subscription = new Subscription();
+  watchForUsersTypingSub:Subscription = new Subscription();
   constructor(private roomService: RoomService, private userService: UserService, private chatService: ChatService,
     private router:Router) { }
+  ngOnDestroy(): void {
+    //unsubscribe to events/updates
+    this.curUserSub.unsubscribe();
+    this.selectedRoomSub.unsubscribe();
+    this.watchMessagesSub.unsubscribe();
+    this.watchRoomUsersSub.unsubscribe();
+    this.watchForUsersTypingSub.unsubscribe();
+  }
 
   ngOnInit(): void {
-    this.userService.getUser().subscribe((user) => {
+    this.curUserSub = this.userService.getUser().subscribe((user) => {
       this.curUser = user;
     });
-    this.roomService.getRoom().subscribe((selectedRoom) => {
+    this.selectedRoomSub = this.roomService.getRoom().subscribe((selectedRoom) => {
       this.selectedRoom = selectedRoom;
       if (this.selectedRoom) {
         //filters out curUser
@@ -36,7 +50,7 @@ export class ChatroomComponent implements OnInit {
       }
     });
     //watch changes in messages
-    this.chatService.watchMessages().subscribe((selectedRoomMsgs:Array<Message>)=>{
+    this.watchMessagesSub = this.chatService.watchMessages().subscribe((selectedRoomMsgs:Array<Message>)=>{
       this.selectedRoom.messages = selectedRoomMsgs;
       //focus on last message when it's received
       this.focusElement('lastMsg');
@@ -44,14 +58,14 @@ export class ChatroomComponent implements OnInit {
       this.typingMessage = null;
     });
     //watch changes for users in room
-    this.chatService.watchRoomUsers().subscribe((roomUsers:Array<User>)=>{
+    this.watchRoomUsersSub = this.chatService.watchRoomUsers().subscribe((roomUsers:Array<User>)=>{
       this.selectedRoom.users = roomUsers.map(user=>{
         return new User(user.profilePic, user.username, user.userID, user.role, user.requests);
       });
       this.roomService.setRoom(this.selectedRoom);
     });
     //watch for typing messages
-    this.chatService.watchForUsersTyping().subscribe((typingData:string)=>{
+    this.watchForUsersTypingSub = this.chatService.watchForUsersTyping().subscribe((typingData:string)=>{
       this.typingMessage = typingData;
       //focus on typing display if user if typing
       if(this.typingMessage){

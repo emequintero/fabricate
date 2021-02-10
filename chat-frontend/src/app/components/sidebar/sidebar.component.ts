@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Room } from 'src/app/models/room';
 import { User } from 'src/app/models/user';
@@ -6,18 +6,25 @@ import { Request } from 'src/app/models/request';
 import { ChatService } from 'src/app/services/chat.service';
 import { RoomService } from 'src/app/services/room.service';
 import { UserService } from 'src/app/services/user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.sass']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy{
   sideBarHidden = true;
   curUser:User = null;
   selectedRoom:Room = null;
   roomsCurUser:Array<Room> = new Array<Room>();
   formattedRoomsCurUser:Array<any> = new Array<any>();
+  joinSub:Subscription = new Subscription();
+  roomsCurUserSub:Subscription = new Subscription();
+  watchRoomsCurUserSub:Subscription = new Subscription();
+  requestsSub:Subscription = new Subscription();
+  enterRoomSub:Subscription = new Subscription();
+  selectedRoomSub:Subscription = new Subscription();
   @ViewChild('sideBar') sidebar:ElementRef;
   //listens for mousedown in document and injects event to callback function
   @HostListener('document:mousedown', ['$event'])
@@ -29,33 +36,42 @@ export class SidebarComponent implements OnInit {
   }
   constructor(private chatService:ChatService, private userService:UserService, 
     private roomService:RoomService, private router:Router) { }
+  ngOnDestroy(): void {
+    //unsubscribe from events/updates
+    this.joinSub.unsubscribe();
+    this.roomsCurUserSub.unsubscribe();
+    this.watchRoomsCurUserSub.unsubscribe();
+    this.requestsSub.unsubscribe();
+    this.enterRoomSub.unsubscribe();
+    this.selectedRoomSub.unsubscribe();
+  }
 
   ngOnInit(): void {
     //join chat
     this.curUser = this.userService.getUser().value;
-    this.chatService.join(this.curUser).subscribe(curUser=>{
+    this.joinSub = this.chatService.join(this.curUser).subscribe(curUser=>{
       this.curUser = new User(curUser.profilePic, curUser.username, curUser.userID, curUser.role);
       this.userService.setUser(this.curUser);
     });
     //watch changes/update rooms for current user shareable resource
-    this.roomService.getRoomsCurUser().subscribe(roomsCurUser=>{
+    this.roomsCurUserSub = this.roomService.getRoomsCurUser().subscribe(roomsCurUser=>{
       this.roomsCurUser = roomsCurUser;
       if(this.roomsCurUser){
         this.formattedRoomsCurUser = this.formatRooms(this.roomsCurUser);
       }
     });
     //watch changes for selected room
-    this.roomService.getRoom().subscribe(selectedRoom=>{
+    this.selectedRoomSub = this.roomService.getRoom().subscribe(selectedRoom=>{
       this.selectedRoom = selectedRoom;
     });
     //watch changes for requests
-    this.chatService.watchRequests().subscribe((requests:Array<Request>)=>{
+    this.requestsSub = this.chatService.watchRequests().subscribe((requests:Array<Request>)=>{
       let userRequests = requests.map((request:Request)=>{return new Request(request.sentBy, request.room, request.status, request.requestID)})
       this.curUser = new User(this.curUser.profilePic, this.curUser.username, this.curUser.userID, this.curUser.role, userRequests);
       this.userService.setUser(this.curUser);
     });
     //watch changes for current user rooms event
-    this.chatService.watchCurUserRooms().subscribe((roomsCurUser:Array<Room>)=>{
+    this.watchRoomsCurUserSub = this.chatService.watchCurUserRooms().subscribe((roomsCurUser:Array<Room>)=>{
         //update available rooms
         let updatedRoomsCurUser = roomsCurUser.map(room=>{
           return new Room(room.users, room.messages, room.roomID);
@@ -89,7 +105,7 @@ export class SidebarComponent implements OnInit {
     //format room properly (no view related properties)
     let roomToSwitchTo:Room = new Room(viewFriendlyRoom.users, viewFriendlyRoom.messages, viewFriendlyRoom.roomID);
     //enter room
-    this.chatService.enterRoom(this.curUser, roomToSwitchTo).subscribe((selectedRoom:Room)=>{
+    this.enterRoomSub = this.chatService.enterRoom(this.curUser, roomToSwitchTo).subscribe((selectedRoom:Room)=>{
       //update current room
       let updatedRoom = new Room(selectedRoom.users, selectedRoom.messages, selectedRoom.roomID);
       //update room in shareable resource
