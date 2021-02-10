@@ -143,15 +143,17 @@ io.on('connect',(socket) => {
         userData.userID = socket.id;
         availableUsers.push(userData);
         socket.emit('join', userData);
-        //mmore than one user available, so update list in UI
+        //more than one user available, so update list in UI
         if(availableUsers.length > 1){
             io.sockets.emit('availableUsers', availableUsers);
         }
     });
     //user leaving chat (remove from availableUsers)
-    socket.on('leave', function(userData){
+    socket.on('leaveApp', function(userData){
         let userToRemove = availableUsers.find(user=>{return user.username === userData.username;});
         availableUsers.splice(availableUsers.indexOf(userToRemove), 1);
+        //more than one user available, so update list in UI
+        io.sockets.emit('availableUsers', availableUsers);
     });
     //show available users
     socket.on('availableUsers', function(){

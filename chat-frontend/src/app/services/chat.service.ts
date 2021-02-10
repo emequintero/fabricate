@@ -120,6 +120,6 @@ export class ChatService {
   }
   //leave chat
   leave(userData:User){
-    this.socket.emit('leave', userData);
+    this.socket.emit('leaveApp', userData);
   }
 }
