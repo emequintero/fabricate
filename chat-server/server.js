@@ -118,9 +118,9 @@ getAcceptedRoomUsers = (selectedRoom) =>{
 }
 
 //delete room if empty (update all original users) or update accepted users if not empty (don't delete)
-handleRoomUserCount = (selectedRoom, acceptedUsers, originalUsers) =>{
-    console.log(acceptedUsers.length, selectedRoom.users.length)
-    if(selectedRoom.users.length === 1){
+handleRoomUserCount = (selectedRoom, acceptedUsers, originalUsers, op) =>{
+    //check if only one user is in room or if no one has accepted and user who created is leaving
+    if(selectedRoom.users.length === 1 || (acceptedUsers.length === 1 && op === 'leave')){
         availableRooms = availableRooms.filter(room=>{
             return room.roomID !== selectedRoom.roomID;
         });
@@ -233,10 +233,9 @@ io.on('connect',(socket) => {
             });
         }
         //delete room if empty (update all original users) or update accepted users if not empty (don't delete)
-        let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe);
+        let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe, 'leave');
         //individually send updated user rooms (each belongs to unique set of rooms)
         usersToEmitUpdate.forEach(user=>{
-            console.log(user.username)
             let userUpdatedRooms = getCurUserRooms(user.userID);
             io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
         });
@@ -303,7 +302,7 @@ io.on('connect',(socket) => {
             //get users in room who have accepted the request (for emitting update events)
             let roomUsersAccepted = getAcceptedRoomUsers(foundRoom);
             //delete room if empty (update all original users) or update accepted users if not empty (don't delete)
-            let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe);
+            let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe, 'deniedRequest');
             //individually send updated user rooms to all users originally associated in room (each belongs to unique set of rooms)
             usersToEmitUpdate.forEach(user=>{
                 let userUpdatedRooms = getCurUserRooms(user.userID);
