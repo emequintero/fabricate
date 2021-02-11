@@ -1,7 +1,5 @@
-const { request } = require('express');
-
 var app = require('express')();
-server = app.listen(5000,function(){
+server = app.listen(5000, ()=>{
   console.log("server live on port 5000!");
 });
 var io = require('socket.io')(server, {cors: '*'});
@@ -179,7 +177,7 @@ io.on('connect',(socket) => {
     let roomsCurUser = null;
     let roomVisitHistory = [];
     //user joining chat (add to availableUsers)
-    socket.on('join', function(userData){
+    socket.on('join', (userData)=>{
         //emit join event with added userID
         userData.userID = socket.id;
         availableUsers.push(userData);
@@ -190,14 +188,13 @@ io.on('connect',(socket) => {
         }
     });
     //user leaving chat
-    socket.on('leaveApp', function(userData){
+    socket.on('leaveApp', (userData)=>{
         //remove from all associated rooms
         let roomsCurUser = getCurUserRooms(userData.userID);
         roomsCurUser.forEach(selectedRoom=>{
             //handle leaving each room
             handleLeaveRoom(selectedRoom, userData, socket);
         });
-        console.log(availableRooms);
         //remove from available users
         let userToRemove = availableUsers.find(user=>{return user.username === userData.username;});
         availableUsers.splice(availableUsers.indexOf(userToRemove), 1);
@@ -205,11 +202,11 @@ io.on('connect',(socket) => {
         io.sockets.emit('availableUsers', availableUsers);
     });
     //show available users
-    socket.on('availableUsers', function(){
+    socket.on('availableUsers', ()=>{
         io.sockets.emit('availableUsers', availableUsers);
     });
     //user is entering room
-    socket.on('enterRoom', function(enterRoomData){
+    socket.on('enterRoom', (enterRoomData)=>{
         let foundRoom = null;
         //create room if one doesn't exist (no match for roomID)
         if(!enterRoomData.selectedRoom.roomID){
@@ -254,12 +251,12 @@ io.on('connect',(socket) => {
         roomVisitHistory.push(foundRoom.roomID);
     });
     //leave a room
-    socket.on('leaveRoom', function(leaveRoomData){
+    socket.on('leaveRoom', (leaveRoomData)=>{
         //handle leaving room
         handleLeaveRoom(leaveRoomData.selectedRoom, leaveRoomData.userLeaving, socket);
     });
     //send new request to specific user
-    socket.on('newRequest', function(newRequestData){
+    socket.on('newRequest', (newRequestData)=>{
         //get room by id
         let foundRoom = getRoomByID(newRequestData.selectedRoom.roomID);
         //get user request is sent to
@@ -282,7 +279,7 @@ io.on('connect',(socket) => {
         io.to(newRequestData.userTo.userID).emit('roomRequest', foundUser.requests);
     });
     //update request by removing it from user's queue
-    socket.on('updateRequest', function(updateRequestData){
+    socket.on('updateRequest', (updateRequestData)=>{
         //find associated room
         let foundRoom = getRoomByID(updateRequestData.request.room.roomID);
         //find user-who-updated in found room
@@ -327,7 +324,7 @@ io.on('connect',(socket) => {
         }
     });
     //relay chat data (handle & message) to sockets in room
-    socket.on('sendMessage', function(selectedRoom){
+    socket.on('sendMessage', (selectedRoom)=>{
         //add messages to room
         getRoomByID(selectedRoom.roomID).messages = selectedRoom.messages;
         //return room to allowed users
@@ -335,7 +332,7 @@ io.on('connect',(socket) => {
     });
     //broadcast handle that is typing to available sockets
     //goes to all except the socket that emitted the typing event
-    socket.on('userIsTyping', function(typingData){
+    socket.on('userIsTyping', (typingData)=>{
         socket.to(typingData.roomID).emit('userIsTyping', typingData.username);
     });
 });
