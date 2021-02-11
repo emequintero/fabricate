@@ -152,7 +152,7 @@ io.on('connect',(socket) => {
     socket.on('leaveApp', function(userData){
         let userToRemove = availableUsers.find(user=>{return user.username === userData.username;});
         availableUsers.splice(availableUsers.indexOf(userToRemove), 1);
-        //more than one user available, so update list in UI
+        //update available user list after leaving
         io.sockets.emit('availableUsers', availableUsers);
     });
     //show available users
@@ -250,6 +250,13 @@ io.on('connect',(socket) => {
         let foundRoom = getRoomByID(newRequestData.selectedRoom.roomID);
         //get user request is sent to
         let foundUser = getUserInRoom(foundRoom, newRequestData.userTo.userID);
+        //check if current user is in selected room
+        if(!foundUser){
+            //add user to room in availableRooms if they don't exist (needed for handling add user)
+            foundRoom.users.push(newRequestData.userTo);
+            //update found user
+            foundUser = newRequestData.userTo;
+        }
         //add new request with new requestID
         foundUser.requests.push({
             sentBy: newRequestData.userFrom,
@@ -268,13 +275,6 @@ io.on('connect',(socket) => {
         let foundUser = getUserInRoom(foundRoom, updateRequestData.curUser.userID);
         //keep safe copy of room users
         let roomUsersSafe = [].concat(foundRoom.users);
-        //check if current user is in selected room
-        if(!foundUser){
-            //add user to room in availableRooms if they don't exist (needed for handling add user)
-            foundRoom.users.push(updateRequestData.curUser);
-            //update found user
-            foundUser = updateRequestData.curUser;
-        }
         //remove request from list
         foundUser.requests = foundUser.requests.filter(request=>{
             return request.requestID !== updateRequestData.request.requestID;
