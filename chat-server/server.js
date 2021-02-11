@@ -133,6 +133,47 @@ handleRoomUserCount = (selectedRoom, acceptedUsers, originalUsers, op) =>{
     }
 }
 
+//handle user leaving a room
+handleLeaveRoom = (selectedRoom, userLeaving, socket) =>{
+    //find associated room in availableRooms
+    let foundRoom = getRoomByID(selectedRoom.roomID);
+    //keep safe copy of room users
+    let roomUsersSafe = [].concat(foundRoom.users);
+    //get users in room who have accepted
+    let roomUsersAccepted = getAcceptedRoomUsers(foundRoom);
+    //remove user from room in availableRooms and update room data
+    foundRoom = removeUserInRoom(foundRoom, userLeaving.userID);
+    //update user list to users in room
+    io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
+    //send system message to room that user has left
+    sendSystemMessage(foundRoom, userLeaving.username + ' has left the room.');
+    //check if no active users in chat (only one user in chat + leave event)
+    if(roomUsersAccepted.length === 1){
+        //find users in room with pending requests (difference between roomUsersAvailable and og user list)
+        let roomUsersPendingRequest = roomUsersSafe.filter(user=>{
+            return roomUsersAccepted.indexOf(user) === -1;
+        });
+        //delete request for this room for all users with pending request
+        roomUsersPendingRequest.forEach(user=>{
+            //delete request from user's pending list
+            user.requests = user.requests.filter(request=>{
+                return request.room.roomID !== selectedRoom.roomID;
+            });
+            //update request list for user
+            io.to(user.userID).emit('roomRequest', user.requests);
+        });
+    }
+    //delete room if empty (update all original users) or update accepted users if not empty (don't delete)
+    let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe, 'leave');
+    //individually send updated user rooms (each belongs to unique set of rooms)
+    usersToEmitUpdate.forEach(user=>{
+        let userUpdatedRooms = getCurUserRooms(user.userID);
+        io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
+    });
+    //leave room
+    socket.leave(selectedRoom.roomID);
+}
+
 io.on('connect',(socket) => {
     console.log('Socket: Client Connected');
     let roomsCurUser = null;
@@ -148,8 +189,16 @@ io.on('connect',(socket) => {
             io.sockets.emit('availableUsers', availableUsers);
         }
     });
-    //user leaving chat (remove from availableUsers)
+    //user leaving chat
     socket.on('leaveApp', function(userData){
+        //remove from all associated rooms
+        let roomsCurUser = getCurUserRooms(userData.userID);
+        roomsCurUser.forEach(selectedRoom=>{
+            //handle leaving each room
+            handleLeaveRoom(selectedRoom, userData, socket);
+        });
+        console.log(availableRooms);
+        //remove from available users
         let userToRemove = availableUsers.find(user=>{return user.username === userData.username;});
         availableUsers.splice(availableUsers.indexOf(userToRemove), 1);
         //update available user list after leaving
@@ -206,43 +255,8 @@ io.on('connect',(socket) => {
     });
     //leave a room
     socket.on('leaveRoom', function(leaveRoomData){
-        //find associated room in availableRooms
-        let foundRoom = getRoomByID(leaveRoomData.selectedRoom.roomID);
-        //keep safe copy of room users
-        let roomUsersSafe = [].concat(foundRoom.users);
-        //get users in room who have accepted
-        let roomUsersAccepted = getAcceptedRoomUsers(foundRoom);
-        //remove user from room in availableRooms and update room data
-        foundRoom = removeUserInRoom(foundRoom, leaveRoomData.userLeaving.userID);
-        //update user list to users in room
-        io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
-        //send system message to room that user has left
-        sendSystemMessage(foundRoom, leaveRoomData.userLeaving.username + ' has left the room.');
-        //check if no active users in chat (only one user in chat + leave event)
-        if(roomUsersAccepted.length === 1){
-            //find users in room with pending requests (difference between roomUsersAvailable and og user list)
-            let roomUsersPendingRequest = roomUsersSafe.filter(user=>{
-                return roomUsersAccepted.indexOf(user) === -1;
-            });
-            //delete request for this room for all users with pending request
-            roomUsersPendingRequest.forEach(user=>{
-                //delete request from user's pending list
-                user.requests = user.requests.filter(request=>{
-                    return request.room.roomID !== leaveRoomData.selectedRoom.roomID;
-                });
-                //update request list for user
-                io.to(user.userID).emit('roomRequest', user.requests);
-            });
-        }
-        //delete room if empty (update all original users) or update accepted users if not empty (don't delete)
-        let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe, 'leave');
-        //individually send updated user rooms (each belongs to unique set of rooms)
-        usersToEmitUpdate.forEach(user=>{
-            let userUpdatedRooms = getCurUserRooms(user.userID);
-            io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
-        });
-        //leave room
-        socket.leave(leaveRoomData.selectedRoom.roomID);
+        //handle leaving room
+        handleLeaveRoom(leaveRoomData.selectedRoom, leaveRoomData.userLeaving, socket);
     });
     //send new request to specific user
     socket.on('newRequest', function(newRequestData){
