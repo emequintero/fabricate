@@ -119,7 +119,7 @@ export class ChatService {
     });
   }
   //leave chat
-  leave(userData:User){
+  leaveApp(userData:User){
     this.socket.emit('leaveApp', userData);
   }
 }

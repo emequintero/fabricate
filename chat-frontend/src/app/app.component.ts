@@ -25,6 +25,6 @@ export class AppComponent implements OnInit{
   @HostListener('window:beforeunload', ['$event'])
   beforeunloadHandler(event) {
     let user = this.userService.getUser().value;
-    this.chatService.leave(user);
+    this.chatService.leaveApp(user);
   }
 }
