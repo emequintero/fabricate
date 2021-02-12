@@ -1,8 +1,8 @@
-var app = require('express')();
+const app = require('express')();
 server = app.listen(5000, ()=>{
   console.log("server live on port 5000!");
 });
-var io = require('socket.io')(server, {cors: '*'});
+const io = require('socket.io')(server, {cors: '*'});
 /**
  * FRONTEND BOUND EVENTS:
  * join: returns user object with userID (socket.id)
@@ -40,8 +40,8 @@ var io = require('socket.io')(server, {cors: '*'});
  *          -even if they're currently in a different room
  * typing: emits typing event
  */
-var availableUsers = [];
-var availableRooms = [];
+let availableUsers = [];
+let availableRooms = [];
 
 /**
  * UTILITY FUNCTIONS

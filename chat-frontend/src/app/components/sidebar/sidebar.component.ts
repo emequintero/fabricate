@@ -89,14 +89,14 @@ export class SidebarComponent implements OnInit, OnDestroy{
     //close sidebar
     this.toggleSideBar();
     //open create room child-view
-    this.router.navigate(['main','handle-room', 'create']);
+    this.router.navigate(['handle-room', 'create']);
   }
 
   showNotifications(){
     //close sidebar
     this.toggleSideBar();
     //open create room child-view
-    this.router.navigate(['main','notifications']);
+    this.router.navigate(['notifications']);
   }
 
   enterRoom(viewFriendlyRoom:any){
@@ -111,8 +111,8 @@ export class SidebarComponent implements OnInit, OnDestroy{
       //update room in shareable resource
       this.roomService.setRoom(updatedRoom);
       //if user is on other page take them to chat
-      if(this.router.url !== '/main/chat-room'){
-        this.router.navigate(['main', 'chat-room']);
+      if(this.router.url !== '/chat-room'){
+        this.router.navigate(['chat-room']);
       }
     });
   }

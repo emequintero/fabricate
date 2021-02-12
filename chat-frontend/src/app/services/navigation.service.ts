@@ -33,7 +33,7 @@ export class NavigationService implements OnDestroy{
     }
     //send to root
     else{
-      this.router.navigate(['main']);
+      this.router.navigate(['home']);
     }
   }
 }

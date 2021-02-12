@@ -105,7 +105,7 @@ export class HandleroomComponent implements OnInit, OnDestroy{
       //update room in shareable resource
       this.roomService.setRoom(selectedRoom);
       //redirect to chat room
-      this.router.navigate(['main', 'chat-room']);
+      this.router.navigate(['chat-room']);
       //only send requests if room doesn't already exist
       if(!roomAlreadyExists){
         //send requests to other users added to room (not curUser)
@@ -128,7 +128,7 @@ export class HandleroomComponent implements OnInit, OnDestroy{
       }
     });
     //redirect to chat room
-    this.router.navigate(['main','chat-room']);
+    this.router.navigate(['chat-room']);
   }
 
   submit(){

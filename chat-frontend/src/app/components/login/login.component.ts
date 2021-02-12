@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
     let curUser = new User(this.selectedProfilePic,this.username);
     this.userService.setUser(curUser);
     //redirect to home
-    this.router.navigate(['main']);
+    this.router.navigate(['home']);
   }
 
 }

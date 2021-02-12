@@ -87,13 +87,13 @@ export class ChatroomComponent implements OnInit, OnDestroy {
   }
 
   addUser(){
-    this.router.navigate(['main','handle-room', 'add']);
+    this.router.navigate(['handle-room', 'add']);
   }
 
   leaveRoom(){
     this.chatService.leaveRoom(this.curUser, this.selectedRoom);
     //redirect to home page with prevRoomDeleted flag set to true
-    this.router.navigate(['main']);
+    this.router.navigate(['home']);
   }
 
   determineDateFormat(dateSent: Date): string {

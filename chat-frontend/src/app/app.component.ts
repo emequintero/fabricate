@@ -1,4 +1,5 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ChatService } from './services/chat.service';
 import { UserService } from './services/user.service';
 
@@ -7,9 +8,19 @@ import { UserService } from './services/user.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass']
 })
-export class AppComponent{
+export class AppComponent implements OnInit{
   title = 'chat-frontend';
-  constructor(private chatService: ChatService, private userService: UserService){}
+  showSidebar:boolean = false;
+  constructor(private chatService: ChatService, private userService: UserService, private router:Router, 
+    private activatedRoute:ActivatedRoute){}
+  ngOnInit(): void {
+    //leave showing sidebar to the router
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.showSidebar = this.activatedRoute.firstChild.snapshot.data.showSidebar !== false;
+      }
+    });
+  }
   //leave chat on window close
   @HostListener('window:beforeunload', ['$event'])
   beforeunloadHandler(event) {

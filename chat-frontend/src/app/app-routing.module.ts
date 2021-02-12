@@ -1,26 +1,38 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ChatroomComponent } from './components/chatroom/chatroom.component';
-import { HandleroomComponent } from './components/handleroom/handleroom.component';
-import { HomeComponent } from './components/home/home.component';
-import { LoginComponent } from './components/login/login.component';
-import { MainComponent } from './components/main/main.component';
-import { NotificationsComponent } from './components/notifications/notifications.component';
+import { ChatroomModule } from './components/chatroom/chatroom.module';
+import { HandleroomModule } from './components/handleroom/handleroom.module';
+import { HomeModule } from './components/home/home.module';
+import { LoginModule } from './components/login/login.module';
+import { NotificationsModule } from './components/notifications/notifications.module';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},
-  { path: 'main', component:  MainComponent, 
-  children: [
-    {path: '', component: HomeComponent},
-    {path: 'chat-room', component: ChatroomComponent},
-    {path: 'handle-room/:mode', component: HandleroomComponent},
-    {path: 'notifications', component: NotificationsComponent}
-  ]},
-  { path: 'login', component:  LoginComponent}
+  {
+    path: 'login',
+    loadChildren: () => LoginModule,
+    data: {showSidebar: false}
+  },
+  {
+    path: 'home',
+    loadChildren: () => HomeModule
+  },
+  {
+    path: 'handle-room/:mode',
+    loadChildren: () => HandleroomModule
+  },
+  {
+    path: 'chat-room',
+    loadChildren: () => ChatroomModule
+  },
+  {
+    path: 'notifications',
+    loadChildren: () => NotificationsModule
+  }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

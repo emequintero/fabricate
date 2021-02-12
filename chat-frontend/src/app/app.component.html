@@ -1,4 +1,11 @@
 <!-- header -->
 <app-header></app-header>
-<!-- ui routing view -->
-<router-outlet></router-outlet>
+<div class="d-flex justify-content-stretch w-100">
+    <!-- sidebar -->
+    <div *ngIf="showSidebar; then sidebar"></div>
+    <ng-template #sidebar>
+        <app-sidebar></app-sidebar>
+    </ng-template>
+    <!-- new room/chat room -->
+    <router-outlet></router-outlet>
+</div>
