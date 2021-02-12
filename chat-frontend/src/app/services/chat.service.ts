@@ -17,10 +17,10 @@ export class ChatService {
     this.socket = io(BASE_URL);
   }
   //join chat
-  join(userData:User):Observable<User>{
-    this.socket.emit('join', userData);
+  joinApp(userData:User):Observable<User>{
+    this.socket.emit('joinApp', userData);
     return new Observable((curUserObserver)=>{
-      this.socket.on('join', curUser=>{
+      this.socket.on('joinApp', curUser=>{
         curUserObserver.next(curUser);
       });
     });

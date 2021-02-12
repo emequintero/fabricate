@@ -19,7 +19,7 @@ export class SidebarComponent implements OnInit, OnDestroy{
   selectedRoom:Room = null;
   roomsCurUser:Array<Room> = new Array<Room>();
   formattedRoomsCurUser:Array<any> = new Array<any>();
-  joinSub:Subscription = new Subscription();
+  joinAppSub:Subscription = new Subscription();
   roomsCurUserSub:Subscription = new Subscription();
   watchRoomsCurUserSub:Subscription = new Subscription();
   requestsSub:Subscription = new Subscription();
@@ -38,7 +38,7 @@ export class SidebarComponent implements OnInit, OnDestroy{
     private roomService:RoomService, private router:Router) { }
   ngOnDestroy(): void {
     //unsubscribe from events/updates
-    this.joinSub.unsubscribe();
+    this.joinAppSub.unsubscribe();
     this.roomsCurUserSub.unsubscribe();
     this.watchRoomsCurUserSub.unsubscribe();
     this.requestsSub.unsubscribe();
@@ -49,7 +49,7 @@ export class SidebarComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     //join chat
     this.curUser = this.userService.getUser().value;
-    this.joinSub = this.chatService.join(this.curUser).subscribe(curUser=>{
+    this.joinAppSub = this.chatService.joinApp(this.curUser).subscribe(curUser=>{
       this.curUser = new User(curUser.profilePic, curUser.username, curUser.userID, curUser.role);
       this.userService.setUser(this.curUser);
     });

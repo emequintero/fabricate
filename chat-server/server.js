@@ -5,7 +5,7 @@ server = app.listen(5000, ()=>{
 const io = require('socket.io')(server, {cors: '*'});
 /**
  * FRONTEND BOUND EVENTS:
- * join: returns user object with userID (socket.id)
+ * joinApp: returns user object with userID (socket.id)
  * availableUsers: returns array of online users
  * selectedRoom: returns room object that user is currently in
  *      -if new room it adds actual roomID (socket.io room ID) to room object
@@ -16,7 +16,7 @@ const io = require('socket.io')(server, {cors: '*'});
  * typing: returns username of user typing in a room
  * 
  * BACKEND BOUND EVENTS:
- * join: assigns userID to current user and emits join event
+ * joinApp: assigns userID to current user and emits joinApp event
  *      -also emits availableUsers to all sockets if there is more than one person in the chat
  * leave: removes current user from available users and all associated rooms
  *      -also sends system message to all previously associated rooms saying they left
@@ -176,12 +176,12 @@ io.on('connect',(socket) => {
     console.log('Socket: Client Connected');
     let roomsCurUser = null;
     let roomVisitHistory = [];
-    //user joining chat (add to availableUsers)
-    socket.on('join', (userData)=>{
+    //user joining app (add to availableUsers)
+    socket.on('joinApp', (userData)=>{
         //emit join event with added userID
         userData.userID = socket.id;
         availableUsers.push(userData);
-        socket.emit('join', userData);
+        socket.emit('joinApp', userData);
         //more than one user available, so update list in UI
         if(availableUsers.length > 1){
             io.sockets.emit('availableUsers', availableUsers);
