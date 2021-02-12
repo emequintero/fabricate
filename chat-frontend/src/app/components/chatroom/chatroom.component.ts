@@ -134,10 +134,20 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-    let element = document.getElementById(elementId);
-    //focus on element if exists in DOM
-    if(element){
-      document.getElementById(elementId).focus();
+    //all users left element gets focus priority
+    let allUsersLeftEl = document.getElementById('allUsersLeft');
+    //check if all users left element exists in DOM
+    if(allUsersLeftEl){
+      //focus on all users left alert
+      document.getElementById('allUsersLeft').focus();
+    }
+    //handle focusing on appropriate element
+    else{
+      let element = document.getElementById(elementId);
+      //focus on element if exists in DOM
+      if(element){
+        document.getElementById(elementId).focus();
+      }
     }
   }
 

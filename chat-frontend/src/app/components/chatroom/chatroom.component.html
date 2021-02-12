@@ -64,7 +64,7 @@
                 id="typingMessage">{{typingMessage}} is typing a message...</h5>
             </span>
             <span id="alertContainer" class="d-flex justify-content-center w-100 px-5" *ngIf="!headerUsers.length">
-                <span class="alert alert-primary fade show mb-0" role="alert">
+                <span id="allUsersLeft" class="alert alert-primary fade show mb-0" role="alert" tabindex="0">
                     <h4 class="alert-header font-weight-normal">All users have left the room.</h4>
                     <p><a routerLink="/home">Return to home page</a> or <a routerLink="/handle-room/create">Create a new room</a></p>
                 </span>
