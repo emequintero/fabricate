@@ -46,7 +46,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
         //filters out curUser
         this.headerUsers = this.selectedRoom.users.filter(user => { return user.username !== this.curUser.username });
         //focus on last message on init
-        this.focusElement('lastMsg');
+        this.focusElement('lastMsg', 150);
       }
     });
     //watch changes in messages
@@ -110,14 +110,8 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleMsgTabIndex(){
-    //last message will be -1 initially
-    let tabIndex = '-1';
-    //switch to 0 once more messages come in
-    if(document.activeElement.id !== 'lastMsg'){
-      tabIndex = '0';
-    }
-    return tabIndex;
+  isLastMsg(message:Message){
+    return this.selectedRoom.messages.indexOf(message) === this.selectedRoom.messages.length-1 ? 'lastMsg' : undefined;
   }
 
   //broadcast username of user typing
@@ -129,7 +123,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  focusElement(elementId:string){
+  focusElement(elementId:string, delay?:number){
     //clear blur for focused element
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
@@ -143,11 +137,14 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     }
     //handle focusing on appropriate element
     else{
-      let element = document.getElementById(elementId);
-      //focus on element if exists in DOM
-      if(element){
-        document.getElementById(elementId).focus();
-      }
+      //add delay if provided or default to 100ms
+      setTimeout(()=>{
+        let element = document.getElementById(elementId);
+        if(element){
+          //focus on element if exists in DOM
+          element.focus();
+        }
+      }, delay || 100);
     }
   }
 
