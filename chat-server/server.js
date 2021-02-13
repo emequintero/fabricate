@@ -189,17 +189,20 @@ io.on('connect',(socket) => {
     });
     //user leaving chat
     socket.on('leaveApp', (userData)=>{
-        //remove from all associated rooms
-        let roomsCurUser = getCurUserRooms(userData.userID);
-        roomsCurUser.forEach(selectedRoom=>{
-            //handle leaving each room
-            handleLeaveRoom(selectedRoom, userData, socket);
-        });
-        //remove from available users
-        let userToRemove = availableUsers.find(user=>{return user.username === userData.username;});
-        availableUsers.splice(availableUsers.indexOf(userToRemove), 1);
-        //update available user list after leaving
-        io.sockets.emit('availableUsers', availableUsers);
+        //only handle leaving if the user was logged in at one point
+        if(userData){
+            //remove from all associated rooms
+            let roomsCurUser = getCurUserRooms(userData.userID);
+            roomsCurUser.forEach(selectedRoom=>{
+                //handle leaving each room
+                handleLeaveRoom(selectedRoom, userData, socket);
+            });
+            //remove from available users
+            let userToRemove = availableUsers.find(user=>{return user.username === userData.username;});
+            availableUsers.splice(availableUsers.indexOf(userToRemove), 1);
+            //update available user list after leaving
+            io.sockets.emit('availableUsers', availableUsers);
+        }
     });
     //show available users
     socket.on('availableUsers', ()=>{
