@@ -1,14 +1,17 @@
 <div class="display">
-    <div class="section-header pb-2">
+    <div tabindex="0" class="section-header pb-2">
         <div id="handleRoomControls">
-            <span (click)="back()" class="btn btn-icon fa fa-arrow-circle-left approve"></span>
+            <button type="button" class="btn btn-icon border-0 rounded-sm" (click)="back()">
+                <span class="fa fa-arrow-circle-left approve"></span>
+            </button>
         </div>
-        <h3 class="font-weight-normal text-purple">Add Participants</h3>
+        <h3 tabindex="0" class="font-weight-normal text-purple m-0">Add Participants</h3>
     </div>
     <div class="section-content pt-3" *ngIf="availableUsers?.length">
         <div *ngFor="let user of availableUsers"
             [ngClass]="{'selected':isUserSelected(user)}"
-            class="d-flex align-items-center justify-content-between p-3 rounded-lg user">
+            class="d-flex align-items-center justify-content-between p-3 rounded-lg user"
+            tabindex="0">
             <span class="profile-pic" style="background-image: url({{user.profilePic.src}});">
                 <span class="fa fa-check"></span>
             </span>
@@ -22,8 +25,8 @@
         </div>
     </div>
     <div class="section-content pt-3" *ngIf="!availableUsers?.length">
-        <span class="font-weight-light h3 no-results ml-2" *ngIf="mode==='create'">No users available to chat</span>
-        <span class="font-weight-light h3 no-results ml-2" *ngIf="mode==='add'">All available users added to room</span>
+        <span tabindex="0" class="font-weight-light h3 no-results ml-2" *ngIf="mode==='create'">No users available to chat</span>
+        <span tabindex="0" class="font-weight-light h3 no-results ml-2" *ngIf="mode==='add'">All available users added to room</span>
     </div>
     <div class="section-footer">
         <div class="footer-content form-group">

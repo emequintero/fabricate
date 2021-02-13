@@ -1,13 +1,16 @@
 <div class="display">
     <div class="section-header pb-2">
         <div id="notificationsControls">
-            <span (click)="back()" class="btn btn-icon fa fa-arrow-circle-left approve"></span>
+            <button type="button" class="btn btn-icon border-0 rounded-sm" (click)="back()">
+                <span class="fa fa-arrow-circle-left approve"></span>
+            </button>
         </div>
-        <h3 class="font-weight-normal text-purple">Chat Requests</h3>
+        <h3 tabindex="0" class="font-weight-normal text-purple m-0">Chat Requests</h3>
     </div>
     <div class="section-content pt-3" *ngIf="curUser.requests?.length">
         <div *ngFor="let request of curUser.requests"
-            class="d-flex align-items-center justify-content-between p-3 rounded-lg request">
+            class="d-flex align-items-center justify-content-between p-3 rounded-lg request"
+            tabindex="0">
             <span class="request-info">
                 <span *ngIf="request.room.users.length === 2" class="profile-pic mr-3" 
                 style="background-image: url({{request.sentBy.profilePic.src}});">
@@ -19,12 +22,12 @@
                 </span>
             </span>
             <span class="request-controls">
-                <span (click)="handleRequest(request, 'accepted')" class="btn btn-icon fa fa-check-circle approve"></span>
-                <span (click)="handleRequest(request, 'denied')" class=" btn btn-icon fa fa-times-circle deny"></span>
+                <span tabindex="0" (click)="handleRequest(request, 'accepted')" class="btn btn-icon fa fa-check-circle approve"></span>
+                <span tabindex="0" (click)="handleRequest(request, 'denied')" class=" btn btn-icon fa fa-times-circle deny"></span>
             </span>
         </div>
     </div>
     <div class="section-content pt-3" *ngIf="!curUser.requests?.length">
-        <span class="font-weight-light h3 no-results ml-2">No requests found</span>
+        <span tabindex="0" class="font-weight-light h3 no-results ml-2">No requests found</span>
     </div>
 </div>

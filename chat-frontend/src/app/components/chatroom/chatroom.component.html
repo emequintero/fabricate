@@ -1,7 +1,7 @@
 <div class="display">
     <div *ngIf="selectedRoom; then showChat"></div>
     <ng-template #showChat>
-        <div class="section-header">
+        <div tabindex="0" class="section-header">
             <div *ngIf="headerUsers.length; then showHeaderUsers"></div>
             <ng-template #showHeaderUsers>
                 <div *ngFor="let headerUser of headerUsers; let i = index"
@@ -23,17 +23,17 @@
                     </span>
                 </div>
                 <div id="roomControls" class="ml-auto">
-                    <span (click)="addUser()" class="btn btn-icon fa fa-plus-circle approve"></span>
-                    <span (click)="leaveRoom()" class="btn btn-icon fa fa-sign-out deny"></span>
+                    <span tabindex="0" (click)="addUser()" class="btn btn-icon fa fa-plus-circle approve"></span>
+                    <span tabindex="0" (click)="leaveRoom()" class="btn btn-icon fa fa-sign-out deny"></span>
                 </div>
             </ng-template>
             <div *ngIf="!headerUsers.length">
                 <div class="d-flex justify-content-around align-items-center">
-                    <span class="h3 text-danger font-weight-normal">No others in room</span>
+                    <span tabindex="0" class="h3 text-danger font-weight-normal">No others in room</span>
                 </div>
             </div>
         </div>
-        <div class="section-content">
+        <div tabindex="0" class="section-content">
             <span *ngFor="let message of selectedRoom.messages; let i = index">
                 <div *ngIf="message.sentBy.role === 'user'"
                 class="w-100 d-flex justify-content-start p-3" 

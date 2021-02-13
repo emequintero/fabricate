@@ -6,7 +6,7 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8 col-xs-12">
-            <div id="loginPage" class="mt-4 d-flex justify-content-center">
+            <div id="loginPage" class="mt-4 d-flex justify-content-center" tabindex="0">
                 <div class="form-group text-center mt-4">
                     <label for="usernameInput" class="h4">
                         <strong>Enter a display name</strong>
@@ -15,11 +15,10 @@
                     <p id="profilePicNote" class="h4">
                         <strong>Select a profile picture</strong>
                     </p>
-                    <span *ngFor="let image of images" aria-describedby="profilePicNote" 
-                    (click)="setProfilePic(image)">
-                        <img src="{{image.src}}" alt="{{image.description}}" class="btn p-0 mx-3" tabindex="0" 
-                        [ngClass]="{'active':selectedProfilePic?.src === image.src}">
-                    </span>
+                    <input *ngFor="let image of images" aria-describedby="profilePicNote" 
+                    (click)="setProfilePic(image)" src="{{image.src}}" alt="{{image.description}}"
+                    type="image" class="btn rounded-circle p-0 mx-3"
+                    [ngClass]="{'active':selectedProfilePic?.src === image.src}">
                     <button class="btn btn-success d-block mx-auto" 
                     [disabled]="!username.length || !selectedProfilePic"
                     (click)="submitUser()">Enter Chat!</button>

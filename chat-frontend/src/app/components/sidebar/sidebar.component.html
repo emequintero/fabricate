@@ -8,8 +8,10 @@
             </button>
         </div>
     </div>
-    <nav id="sidebar" [ngClass]="{'hidden':sideBarHidden, 'shadow':!sideBarHidden}" class="bg-light p-4 d-flex flex-column"
-        [ngStyle]="{'z-index': sideBarHidden ? '0' : '1000'}">
+    <nav id="sidebar" *ngIf="!sideBarHidden" 
+    [ngClass]="{'shadow':!sideBarHidden}" class="bg-light p-4 d-flex flex-column"
+        [ngStyle]="{'z-index': sideBarHidden ? '0' : '1000'}"
+        tabindex="0">
         <div class="sidebar-header d-flex justify-content-between">
             <h4 class="font-weight-normal text-purple">Chats</h4>
             <div id="room-controls">
@@ -23,6 +25,10 @@
                 class="btn btn-outline-dark border-0 text-purple rounded-sm"
                 (click)="createRoom()">
                     <i class="fa fa-pencil-square-o"></i>
+                </button>
+                <button type="button" id="homeBtn" class="btn btn-outline-dark border-0 text-purple rounded-sm"
+                (click)="sendHome()">
+                    <i class="fa fa-home"></i>
                 </button>
             </div>
         </div>

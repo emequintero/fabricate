@@ -1,14 +1,18 @@
 <nav class="navbar fixed-top navbar-light bg-purple">
     <div id="navbar">
         <ul class="navbar-right d-flex align-items-center list-inline pt-2">
-            <li class="list-inline-item"><h2 class="font-weight-light">Fabricate</h2></li>
+            <li class="list-inline-item">
+                <h2 class="font-weight-light">
+                    <a tabindex="0" routerLink="/home" class="text-light">Fabricate</a>
+                </h2>
+            </li>
         </ul>
     </div>
     <div id="main-navbar" *ngIf="user">
-        <ul class="navbar-right d-flex align-items-center list-inline pt-2">
+        <ul tabindex="0" class="navbar-right d-flex align-items-center list-inline pt-2">
             <li class="list-inline-item"><h3 class="font-weight-light">{{user.username}}</h3></li>
             <li class="list-inline-item">
-                <a href="">
+                <a>
                     <span class="profile-pic" style="background-image: url({{user.profilePic.src}});">
                         <span class="fa fa-check"></span>
                     </span>

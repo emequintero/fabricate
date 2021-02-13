@@ -92,6 +92,13 @@ export class SidebarComponent implements OnInit, OnDestroy{
     this.router.navigate(['handle-room', 'create']);
   }
 
+  sendHome(){
+    //close sidebar
+    this.toggleSideBar();
+    //open create room child-view
+    this.router.navigate(['home']);
+  }
+
   showNotifications(){
     //close sidebar
     this.toggleSideBar();
