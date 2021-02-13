@@ -9,11 +9,15 @@
                     <span *ngIf="i === 0" class="profile-pic mr-3" style="background-image: url({{headerUser.profilePic.src}});">
                         <span class="fa fa-check"></span>
                     </span>
-                    <span *ngIf="2 > i" class="username h3">
-                        <span *ngIf="i > 0 && headerUsers.length > 2" class="font-weight-light mx-1">,</span>
-                        <span *ngIf="i > 0 && headerUsers.length === 2" class="font-weight-light mx-2">and</span>
+                    <span *ngIf="i === 0" class="username h3 text-truncate">
                         <span class="font-weight-light">{{headerUser.username}}</span>
-                        <span *ngIf="headerUsers.length > 2 && i === 1">
+                        <span *ngIf="i === 0 && headerUsers.length > 2" class="font-weight-light">
+                            , <span class="font-weight-light">{{headerUsers[i+1].username}}</span>
+                        </span>
+                        <span *ngIf="i === 0 && headerUsers.length === 2" class="font-weight-light">
+                            and <span class="font-weight-light">{{headerUsers[i+1].username}}</span>
+                        </span>
+                        <span *ngIf="headerUsers.length > 2 && i === 0">
                             <span class="font-weight-light h3">, +{{headerUsers.length - 2}} Other(s)</span>
                         </span>
                     </span>

@@ -3,6 +3,9 @@
     .section-header
         padding-top: 0.5rem
         padding-bottom: 1rem
+        .username
+            white-space: nowrap
+            max-width: 25vw
     .section-content
         position: relative
         .typingMsg, #alertContainer, .alert
@@ -35,6 +38,20 @@
         .system-message
             line-height: 1.5
             width: fit-content
-@media screen and ( max-width:  720px)
+@media screen and ( max-width: 720px)
     .display .section-content .message
         width: 50%!important
+    .section-header
+        display: flex
+        flex-direction: column
+    .username
+        text-align: center !important
+        white-space: normal !important
+        max-width: 100% !important
+        width: 100% !important
+    .profile-pic
+        display: none !important
+    #roomControls
+        display: flex
+        margin: 0 !important
+        justify-content: center
