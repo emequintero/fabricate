@@ -1,28 +1,26 @@
 <div class="display">
-    <div class="row justify-content-center">
-        <div class="col-xs-12">
-            <h2 class="text-purple text-center">Welcome, lets Chat!</h2>
-        </div>
+    <div class="d-flex justify-content-center mb-3">
+        <h2 class="text-primary text-center">Welcome, lets Chat!</h2>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8 col-xs-12">
-            <div id="loginPage" class="mt-4 d-flex justify-content-center" tabindex="0">
-                <div class="form-group text-center mt-4">
-                    <label for="usernameInput" class="h4">
-                        <strong>Enter a display name</strong>
-                    </label>
-                    <input id="usernameInput" type="text" class="form-control mx-auto" [(ngModel)]="username" placeholder="Enter a username">
-                    <p id="profilePicNote" class="h4">
-                        <strong>Select a profile picture</strong>
-                    </p>
-                    <input *ngFor="let image of images" aria-describedby="profilePicNote" 
+    <div class="d-flex justify-content-center">
+        <div id="loginPage" class="mt-4 d-flex justify-content-center bg-secondary" tabindex="0">
+            <div class="form-group mt-4">
+                <label for="usernameInput" class="font-weight-normal ml-3">
+                    Enter a display name
+                </label>
+                <input id="usernameInput" type="text" class="form-control mx-auto" [(ngModel)]="username" placeholder="Enter a username">
+                <label for="profilePicSelection" class="font-weight-normal ml-3">
+                    Select a profile picture
+                </label>
+                <div id="profilePicSelection">
+                    <input *ngFor="let image of images" 
                     (click)="setProfilePic(image)" src="{{image.src}}" alt="{{image.description}}"
                     type="image" class="btn rounded-circle p-0 mx-3"
                     [ngClass]="{'active':selectedProfilePic?.src === image.src}">
-                    <button class="btn btn-success d-block mx-auto" 
-                    [disabled]="!username.length || !selectedProfilePic"
-                    (click)="submitUser()">Enter Chat!</button>
                 </div>
+                <button class="btn btn-primary d-block mx-auto mb-3" 
+                [disabled]="!username.length || !selectedProfilePic"
+                (click)="submitUser()">Enter Chat!</button>
             </div>
         </div>
     </div>

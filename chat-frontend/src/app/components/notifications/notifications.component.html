@@ -5,7 +5,7 @@
                 <span class="fa fa-arrow-circle-left approve"></span>
             </button>
         </div>
-        <h3 tabindex="0" class="font-weight-normal text-purple m-0">Chat Requests</h3>
+        <h3 tabindex="0" class="font-weight-normal text-primary m-0">Chat Requests</h3>
     </div>
     <div class="section-content pt-3" *ngIf="curUser.requests?.length">
         <div *ngFor="let request of curUser.requests"
@@ -16,9 +16,9 @@
                 style="background-image: url({{request.sentBy.profilePic.src}});">
                     <span class="fa fa-check"></span>
                 </span>
-                <span class="font-weight-light h3 username">{{request.sentBy.username}}</span>
+                <span class="font-weight-normal label username">{{request.sentBy.username}}</span>
                 <span *ngIf="request.room.users.length > 2">
-                    <span class="font-weight-light h3 username">, +{{request.room.users.length - 2}} Other(s)</span>
+                    <span class="font-weight-normal label username">, +{{request.room.users.length - 2}} Other(s)</span>
                 </span>
             </span>
             <span class="request-controls">

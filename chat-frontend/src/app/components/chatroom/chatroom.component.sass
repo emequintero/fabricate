@@ -4,6 +4,7 @@
         padding-top: 0.5rem
         padding-bottom: 1rem
         .username
+            color: $text-primary
             white-space: nowrap
             max-width: 25vw
     .section-content
@@ -32,7 +33,7 @@
             p
                 overflow-wrap: break-word
         .message.curUserMsg
-            background-color: $purple
+            background-color: $bg-primary
         .message.curUserMsg, .message.curUserMsg .username
             color: white
         .system-message
@@ -44,6 +45,9 @@
     .section-header
         display: flex
         flex-direction: column
+    .section-content
+        max-height: calc(75vh - 80px - 5rem) !important
+        min-height: calc(75vh - 80px - 5rem) !important
     .username
         text-align: center !important
         white-space: normal !important

@@ -4,11 +4,24 @@ $light-purple: #9697c8
 $light-grey: #edebe9
 $purple: #474c74
 $dark-purple: #313748
-$teal: #17a2b8
-$red: #dc3545
-$green: #28a745
+$teal: #5882ce
+$red: #e31c3d
+$green: #147453
 $light-blue: #ebf2ff
+$yellow: #ffae40
 
+$brand-primary: #6958ce !important
+$brand-error: $red !important
+$brand-secondary: $light-blue!important
+$bg-primary: #6958ce !important
+$bg-secondary: #2d303a !important
+$bg-dark: #1e1e25 !important
+$text-primary: white !important
+$text-secondary: black !important
+$text-danger: $red !important
+$text-warning: #3fefef !important
+$btn-primary: #6958ce !important
+$btn-secondary: #41a6d3 !important
 *
     box-sizing: border-box
 body
@@ -17,7 +30,7 @@ body
     margin: 0
     padding: 0
     padding-top: 80px
-    background-color: $light-grey
+    background-color: $bg-primary
     overflow: hidden
 .display
     position: absolute
@@ -25,7 +38,9 @@ body
     width: 100%
     padding: 0 10rem
     left: 3rem
+    background-color: $bg-secondary
     .section-content, .section-footer .footer-content
+        color: $text-primary
         min-width: 100%
         margin: 0
     .section-header
@@ -47,8 +62,10 @@ body
         min-width: calc(100% - 20rem)
         position: absolute
         bottom: 0
+.label.username, .username .label
+    font-size: 24px
 .btn-icon
-    color: $dark-purple
+    color: $text-primary
     font-size: 32px
 .btn-icon.approve:hover
     color: $teal
@@ -58,16 +75,33 @@ body
     line-height: 1.4
 .w-full-screen
     min-width: 100vw
-.bg-light-purple
-    background-color: $light-purple
-.bg-purple
-    background-color: $purple
-.bg-dark-purple
-    background-color: $dark-purple
-.text-purple
-    color: $purple
-.text-light-purple
-    color: $lighter-purple
+.btn-primary
+    background-color: $btn-primary
+    color: white
+.btn-primary[disabled]
+    background-color: #474c74
+.btn-secondary
+    background-color: $btn-secondary
+    color: $text-primary
+.bg-primary
+    background-color: $bg-primary
+.bg-secondary
+    background-color: $bg-secondary
+.bg-dark
+    background-color: $bg-dark
+.bg-error
+    background-color: $brand-error
+    color: $text-primary
+    a
+        color: $text-primary
+.text-primary
+    color: $text-primary
+.text-secondary
+    color: $text-secondary
+.text-danger
+    color: $text-danger
+.text-warning
+    color: $text-warning
 .profile-pic
     position: relative
     margin-left: 15px
@@ -82,7 +116,7 @@ body
         position: absolute
         bottom: -5px
         right: -5px
-        background-color: green
+        background-color: $green
         border-radius: 50%
         color: white
         padding: 1px
@@ -93,7 +127,7 @@ body
     padding-right: 1rem !important
 hr
     min-width: 100%
-.btn.text-purple:hover
+.btn.text-primary:hover
     color: white
 @media screen and ( max-width:  720px)
     .display

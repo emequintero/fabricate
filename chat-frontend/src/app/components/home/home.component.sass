@@ -1,8 +1,12 @@
+@import ../../../styles.sass
 p
     font-size: 20px
     margin-top: 1.5rem
     margin-bottom: 1.5rem
+.display
+    background-color: $bg-secondary
 .section-content
+    color: $text-primary
     max-height: calc(81vh - 80px)
     min-height: calc(81vh - 80px)
 .section-footer
@@ -12,6 +16,8 @@ ul
 h3
     font-size: 1rem
 @media screen and (max-width: 720px)
+    .display .section-header
+        padding-bottom: 0.5rem
     .display .section-content
-        max-height: calc(68vh - 80px)
-        min-height: calc(68vh - 80px)
+        max-height: calc(65vh - 80px)
+        min-height: calc(65vh - 80px)

@@ -1,8 +1,8 @@
 <div #sideBar class="wrapper">
     <div id="content" [ngClass]="{'hidden':!sideBarHidden}">
-        <div class="bg-dark-purple h-100 d-flex p-0 flex-column" id="content-container">
+        <div class="bg-dark h-100 d-flex p-0 flex-column" id="content-container">
             <button type="button" id="chatBtn" class="btn btn-block rounded-0"
-                [ngClass]="sideBarHidden ? 'btn-info' : 'btn-danger p-4 text-light'" (click)="toggleSideBar()">
+                [ngClass]="sideBarHidden ? 'btn-secondary' : 'btn-danger p-4 text-light'" (click)="toggleSideBar()">
                 <i [ngClass]="sideBarHidden ? 'fa fa-comment' : 'fa fa-close'"></i>
                 <span class="d-block mt-1" *ngIf="sideBarHidden">Menu</span>
             </button>
@@ -13,20 +13,20 @@
         [ngStyle]="{'z-index': sideBarHidden ? '0' : '1000'}"
         tabindex="0">
         <div class="sidebar-header d-flex justify-content-between">
-            <h4 class="font-weight-normal text-purple">Chats</h4>
+            <h4 class="font-weight-normal text-secondary">Chats</h4>
             <div id="room-controls">
                 <button type="button" id="notificationsBtn" 
-                class="btn btn-outline-dark border-0 text-purple rounded-sm"
+                class="btn btn-outline-dark border-0 text-secondary rounded-sm"
                 (click)="showNotifications()">
                     <i class="fa fa-bell-o"></i>
                 </button>
                 <span *ngIf="curUser.requests?.length" class="badge badge-danger" id="notificationBadge">{{curUser.requests.length}}</span>
                 <button type="button" id="createRoomBtn" 
-                class="btn btn-outline-dark border-0 text-purple rounded-sm"
+                class="btn btn-outline-dark border-0 text-secondary rounded-sm"
                 (click)="createRoom()">
                     <i class="fa fa-pencil-square-o"></i>
                 </button>
-                <button type="button" id="homeBtn" class="btn btn-outline-dark border-0 text-purple rounded-sm"
+                <button type="button" id="homeBtn" class="btn btn-outline-dark border-0 text-secondary rounded-sm"
                 (click)="sendHome()">
                     <i class="fa fa-home"></i>
                 </button>
@@ -43,12 +43,12 @@
                         style="background-image: url({{headerUser.profilePic.src}});">
                             <span class="fa fa-check"></span>
                         </span>
-                        <span *ngIf="i === 0" class="username h3 ml-3">
+                        <span *ngIf="i === 0" class="username label ml-3">
                             <span *ngIf="i > 0 && room.headerUsers.length > 1" class="font-weight-light mx-1">,</span>
                             <span *ngIf="i > 0 && room.headerUsers.length === 1" class="font-weight-light mx-2">and</span>
-                            <span class="font-weight-light">{{headerUser.username}}</span>
+                            <span class="font-weight-normal">{{headerUser.username}}</span>
                             <span *ngIf="room.headerUsers.length > 1">
-                                <span class="font-weight-light h3">, +{{room.headerUsers.length - 1}} Other(s)</span>
+                                <span class="font-weight-normal label">, +{{room.headerUsers.length - 1}} Other(s)</span>
                             </span>
                         </span>
                     </div>
