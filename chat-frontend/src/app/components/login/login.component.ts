@@ -13,16 +13,32 @@ export class LoginComponent implements OnInit {
 
   images:Array<object> = [
     {
-      src: '../../../assets/cat.jpg',
+      src: '../../../assets/cat.png',
       description: 'cat looking at camera'
     },
     {
-      src: '../../../assets/dog.jpg',
+      src: '../../../assets/dog.png',
       description: 'dog looking at camera'
     },
     {
-      src: '../../../assets/sloth.png',
+      src: '../../../assets/owl.png',
       description: 'sloth looking at camera'
+    },
+    {
+      src: '../../../assets/panda-bear.png',
+      description: 'panda bear looking at camera'
+    },
+    {
+      src: '../../../assets/guinea-pig.png',
+      description: 'guinea pig looking at camera'
+    },
+    {
+      src: '../../../assets/koala.png',
+      description: 'koala looking at camera'
+    },
+    {
+      src: '../../../assets/bear.png',
+      description: 'bear looking at camera'
     }
   ];
 
