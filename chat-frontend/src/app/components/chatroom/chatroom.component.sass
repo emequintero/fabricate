@@ -30,12 +30,15 @@
                 justify-content: space-between
                 width: 100%
                 color: $text-secondary
+            .username span:first-of-type
+                color: $brand-primary
             p
                 overflow-wrap: break-word
+                color: $text-secondary
         .message.curUserMsg
             background-color: $bg-primary
-        .message.curUserMsg, .message.curUserMsg .username
-            color: white
+        .message.curUserMsg, .message.curUserMsg .username span, .message.curUserMsg p
+            color: $text-primary
         .system-message
             line-height: 1.5
             width: fit-content
@@ -50,8 +53,8 @@
         display: flex
         flex-direction: column
     .section-content
-        max-height: calc(75vh - 80px - 5rem) !important
-        min-height: calc(75vh - 80px - 5rem) !important
+        max-height: calc(70vh - 80px - 5rem) !important
+        min-height: calc(70vh - 80px - 5rem) !important
     .username
         text-align: center !important
         white-space: normal !important
