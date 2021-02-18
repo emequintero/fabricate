@@ -67,10 +67,16 @@
                 tabindex="0"
                 id="typingMessage">{{typingMessage}} is typing a message...</h5>
             </span>
-            <span id="alertContainer" class="d-flex justify-content-center w-100 px-5" *ngIf="!headerUsers.length">
-                <span id="allUsersLeft" class="alert alert-primary fade show bg-error mb-0" role="alert" tabindex="0">
+            <span class="d-flex justify-content-center w-100 px-5 alert-container" *ngIf="!headerUsers.length">
+                <span id="allUsersLeftAlert" class="alert alert-primary fade show bg-error mb-0" role="alert" tabindex="0">
                     <h4 class="alert-header font-weight-normal">All users have left the room.</h4>
-                    <p><a routerLink="/home">Return to home page</a> or <a routerLink="/handle-room/create">Create a new room</a></p>
+                    <p><a routerLink="/home" class="btn-link">Return to home page</a> or <a routerLink="/handle-room/create" class="btn-link">Create a new room</a>.</p>
+                </span>
+            </span>
+            <span class="d-flex justify-content-center w-100 px-5 alert-container" *ngIf="duplicateRoom">
+                <span id="duplicateRoomAlert" class="alert alert-primary fade show bg-error mb-0" role="alert" tabindex="0">
+                    <h4 class="alert-header font-weight-normal">Same users are present in another room.</h4>
+                    <p><a (click)="keepDuplicateRoom()" class="btn-link">Keep this room</a> or <a (click)="leaveRoom()" class="btn-link">Leave this room</a>.</p>
                 </span>
             </span>
         </div>

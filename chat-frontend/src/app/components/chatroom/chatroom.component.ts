@@ -25,6 +25,9 @@ export class ChatroomComponent implements OnInit, OnDestroy {
   watchMessagesSub:Subscription = new Subscription();
   watchRoomUsersSub:Subscription = new Subscription();
   watchForUsersTypingSub:Subscription = new Subscription();
+  watchRoomsCurUserSub:Subscription = new Subscription();
+  duplicateRoom:boolean = false;
+  ignoreDuplicateRoom:boolean = false;
   constructor(private roomService: RoomService, private userService: UserService, private chatService: ChatService,
     private router:Router) { }
   ngOnDestroy(): void {
@@ -34,6 +37,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     this.watchMessagesSub.unsubscribe();
     this.watchRoomUsersSub.unsubscribe();
     this.watchForUsersTypingSub.unsubscribe();
+    this.watchRoomsCurUserSub.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -75,6 +79,27 @@ export class ChatroomComponent implements OnInit, OnDestroy {
       else{
         this.focusElement('lastMsg');
       }
+    });
+    //watch changes for current user rooms event
+    this.watchRoomsCurUserSub = this.chatService.watchCurUserRooms().subscribe((roomsCurUser:Array<Room>)=>{
+        //update available rooms
+        let updatedRoomsCurUser = roomsCurUser.map(room=>{
+          return new Room(room.users, room.messages, room.roomID);
+        });
+        //check for duplicate user groups in rooms
+        let prevRoomUsers:Array<User> = new Array<User>();
+        updatedRoomsCurUser.forEach((room:Room)=>{
+          if(!this.ignoreDuplicateRoom && JSON.stringify(room.users.sort(this.compareUsers)) === JSON.stringify(prevRoomUsers.sort(this.compareUsers))){
+            //show duplicate room alert
+            this.duplicateRoom = true;
+          }
+          else{
+            this.duplicateRoom = false;
+          }
+          prevRoomUsers = room.users;
+        });
+        //update roomsCurUser in shareable resource
+        this.roomService.setRoomsCurUser(updatedRoomsCurUser);
     });
   }
 
@@ -123,6 +148,12 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+  //keep duplicate room
+  keepDuplicateRoom(){
+    this.duplicateRoom = false;
+    this.ignoreDuplicateRoom = true;
+  }
+
   focusElement(elementId:string, delay?:number){
     //clear blur for focused element
     if (document.activeElement instanceof HTMLElement) {
@@ -151,6 +182,11 @@ export class ChatroomComponent implements OnInit, OnDestroy {
   allControlsDisabled(){
     //disable all controls if only user in chat is curUser
     return this.headerUsers.length === 0;
+  }
+
+  //sort user array by username
+  compareUsers = (a,b) =>{
+    return a.username.localeCompare(b.username);
   }
 
 }
