@@ -64,10 +64,28 @@ getCurUserRooms = (userID) =>{
     });
 }
 
+//filter rooms by userID with accepted room request
+getCurUserAcceptedRooms = (userID) =>{
+    let curUserRooms = getCurUserRooms(userID);
+    let userRequestRoomIDs = getUser(userID).requests.map(request=>{
+        return request.room.roomID;
+    });
+    return curUserRooms.filter(room=>{
+        return userRequestRoomIDs.indexOf(room.roomID) === -1;
+    });
+}
+
 //get room from available rooms by roomID
 getRoomByID = (roomID) =>{
     return availableRooms.find(room=>{
         return room.roomID === roomID;
+    });
+}
+
+//get user from availableUsers
+getUser = (userID) =>{
+    return availableUsers.find(user=>{
+        return user.userID === userID;
     });
 }
 
@@ -107,11 +125,16 @@ removeUserInRoom = (selectedRoom, userLeavingID) =>{
 
 //get users in a room who have accepted the room request
 getAcceptedRoomUsers = (selectedRoom) =>{
-    return selectedRoom.users.filter(user=>{
-        //request match for room should be false
-        return !user.requests.some(request=>{
+    //get userIDs of users associated with room
+    let roomUserIDs = selectedRoom.users.map(user=>{
+        return user.userID;
+    });
+    //return only users associated with room who have accepted the request 
+    //(requests are stored globally in availableUsers)
+    return availableUsers.filter(user=>{
+        return roomUserIDs.indexOf(user.userID) !== -1 && !user.requests.some(request=>{
             return request.room.roomID === selectedRoom.roomID;
-        });
+        }); 
     });
 }
 
@@ -163,9 +186,9 @@ handleLeaveRoom = (selectedRoom, userLeaving, socket) =>{
     }
     //delete room if empty (update all original users) or update accepted users if not empty (don't delete)
     let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe, 'leave');
-    //individually send updated user rooms (each belongs to unique set of rooms)
+    //individually send updated user rooms with accepted room requests (each belongs to unique set of rooms)
     usersToEmitUpdate.forEach(user=>{
-        let userUpdatedRooms = getCurUserRooms(user.userID);
+        let userUpdatedRooms = getCurUserAcceptedRooms(user.userID);
         io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
     });
     //leave room
@@ -240,8 +263,8 @@ io.on('connect',(socket) => {
         let postJoinSocketRooms = Array.from(socket.rooms);
         //set actual roomID based on socket io hashed value (second element because first is default socket room)
         foundRoom.roomID = postJoinSocketRooms.pop();
-        //get rooms with user in it
-        roomsCurUser = getCurUserRooms(enterRoomData.userEntering.userID);
+        //get rooms with user in it with accepted room requests
+        roomsCurUser = getCurUserAcceptedRooms(enterRoomData.userEntering.userID);
         //send room with ID to frontend (only to cur user so others don't get UI changes when they haven't performed actions)
         io.to(enterRoomData.userEntering.userID).emit('selectedRoom', foundRoom);
         //send rooms for curUser to frontend to curUser
@@ -263,14 +286,16 @@ io.on('connect',(socket) => {
         //get room by id
         let foundRoom = getRoomByID(newRequestData.selectedRoom.roomID);
         //get user request is sent to
-        let foundUser = getUserInRoom(foundRoom, newRequestData.userTo.userID);
+        let userInRoom = getUserInRoom(foundRoom, newRequestData.userTo.userID);
         //check if current user is in selected room
-        if(!foundUser){
+        if(!userInRoom){
             //add user to room in availableRooms if they don't exist (needed for handling add user)
             foundRoom.users.push(newRequestData.userTo);
             //update found user
-            foundUser = newRequestData.userTo;
+            userInRoom = newRequestData.userTo;
         }
+        //find user in available users
+        let foundUser = getUser(newRequestData.userTo.userID);
         //add new request with new requestID
         foundUser.requests.push({
             sentBy: newRequestData.userFrom,
@@ -286,7 +311,7 @@ io.on('connect',(socket) => {
         //find associated room
         let foundRoom = getRoomByID(updateRequestData.request.room.roomID);
         //find user-who-updated in found room
-        let foundUser = getUserInRoom(foundRoom, updateRequestData.curUser.userID);
+        let foundUser = getUser(updateRequestData.curUser.userID);
         //keep safe copy of room users
         let roomUsersSafe = [].concat(foundRoom.users);
         //remove request from list
@@ -301,9 +326,10 @@ io.on('connect',(socket) => {
             let roomUsersAccepted = getAcceptedRoomUsers(foundRoom);
             //update user list to users in room
             io.to(foundRoom.roomID).emit('updatedRoomUsers', foundRoom.users);
-            //individually send updated user rooms to all other users who accepted in room (each belongs to unique set of rooms)
+            //individually send updated user rooms with accepted room request to all other users 
+            //(each belongs to unique set of rooms)
             roomUsersAccepted.forEach(user=>{
-                let userUpdatedRooms = getCurUserRooms(user.userID);
+                let userUpdatedRooms = getCurUserAcceptedRooms(user.userID);
                 io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
             });
         }
@@ -321,7 +347,7 @@ io.on('connect',(socket) => {
             let usersToEmitUpdate = handleRoomUserCount(foundRoom, roomUsersAccepted, roomUsersSafe, 'deniedRequest');
             //individually send updated user rooms to all users originally associated in room (each belongs to unique set of rooms)
             usersToEmitUpdate.forEach(user=>{
-                let userUpdatedRooms = getCurUserRooms(user.userID);
+                let userUpdatedRooms = getCurUserAcceptedRooms(user.userID);
                 io.to(user.userID).emit('updatedCurUserRooms', userUpdatedRooms);
             });
         }
