@@ -50,7 +50,7 @@
                             <span class="font-weight-bold">{{message.sentBy.username}}</span>
                             <span>{{message.dateSent | date: determineDateFormat(message.dateSent)}}</span>
                         </div>
-                        <p>{{message.content}}</p>
+                        <p class="m-0 p-0">{{message.content}}</p>
                     </span>
                 </div>
                 <div *ngIf="message.sentBy.role === 'system'">

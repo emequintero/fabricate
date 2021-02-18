@@ -11,21 +11,21 @@
         width: 20rem
         margin: auto
         background-color: white
-        border: 7px solid $light-purple
         margin-bottom: 1rem
-        .profile-pic
-            border: 6px solid $light-purple
         .username
             color: $text-secondary
     .user.selected
-        background-color: $light-purple
+        background-color: $btn-secondary
         .username
             color: $text-primary
         .profile-pic
-            border-color: $text-primary
-        border-color: $text-primary
+            background-color: $text-primary
     .btn-icon
         color: $text-secondary
+    .btn-icon.approve:hover
+        color: $teal !important
+    .btn-icon.deny:hover
+        color: $red !important
 @media screen and ( max-width:  720px)
     .section-content
         max-height: calc(76vh - 80px - 1.5rem) !important

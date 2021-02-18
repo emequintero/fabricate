@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 $lighter-purple: #e2e2f6
 $light-purple: #9697c8
-$light-grey: #edebe9
+$light-grey: #dbd9d6
 $purple: #4A37BC
 $dark-purple: #313748
 $teal: #41a6d3
@@ -17,7 +17,7 @@ $bg-primary: #6958ce !important
 $bg-secondary: #2d303a !important
 $bg-dark: #1e1e25 !important
 $text-primary: white !important
-$text-secondary: black !important
+$text-secondary: #34415e !important
 $text-danger: $red !important
 $text-warning: #3fefef !important
 $btn-primary: #6958ce !important
@@ -62,15 +62,21 @@ body
         min-width: calc(100% - 20rem)
         position: absolute
         bottom: 0
+.section-content p, li p
+    font-size: 24px
+    margin-top: 1.5rem
+    margin-bottom: 1.5rem
+    padding-left: 50px
+    padding-right: 50px
 .label.username, .username .label
     font-size: 24px
 .btn-icon
     color: $text-primary
     font-size: 32px
 .btn-icon.approve:hover
-    color: $teal
+    color: $teal !important
 .btn-icon.deny:hover
-    color: $red
+    color: $red !important
 .h3.no-results
     line-height: 1.4
 .w-full-screen
@@ -111,6 +117,7 @@ body
     background-repeat: no-repeat
     background-position: center
     background-size: 100%
+    background-color: $light-purple
     display: block
     span
         position: absolute

@@ -1,5 +1,5 @@
 <div class="display">
-    <div class="section-header pb-2">
+    <div class="section-header pt-0 pb-2">
         <div id="notificationsControls">
             <button type="button" class="btn btn-icon border-0 rounded-sm" (click)="back()">
                 <span class="fa fa-arrow-circle-left approve"></span>
@@ -9,7 +9,7 @@
     </div>
     <div class="section-content pt-3" *ngIf="curUser.requests?.length">
         <div *ngFor="let request of curUser.requests"
-            class="d-flex align-items-center justify-content-between p-3 rounded-lg request"
+            class="d-flex align-items-center justify-content-between py-4 px-3 rounded-lg request"
             tabindex="0">
             <span class="request-info">
                 <span *ngIf="request.room.users.length === 2" class="profile-pic mr-3" 
@@ -27,7 +27,7 @@
             </span>
         </div>
     </div>
-    <div class="section-content pt-3" *ngIf="!curUser.requests?.length">
-        <span tabindex="0" class="font-weight-light h3 no-results ml-2">No requests found</span>
+    <div class="section-content" *ngIf="!curUser.requests?.length">
+        <p tabindex="0">No requests found</p>
     </div>
 </div>

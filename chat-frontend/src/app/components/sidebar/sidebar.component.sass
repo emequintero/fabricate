@@ -9,6 +9,8 @@
     max-width: 330px
     color: $text-secondary
     margin-left: 5.1rem
+    p
+        color: $text-secondary
 nav
     height: calc(100vh - 80px)
 i
@@ -26,9 +28,9 @@ i
     #content-container
         justify-content: flex-start
     button
-        padding: 1.1rem 1.5rem
-#content.hidden button
-    padding: 2rem 1.7rem !important
+        padding: 2rem 1.7rem !important
+#content button:focus, #content.hidden button:focus
+    outline: 2px solid white
 #room-controls 
     button
         margin-left: 0.5rem
@@ -52,16 +54,19 @@ i
         min-width: 100vw !important
         max-height: 5.9rem
     #content
+        top: 8px
         width: 100%
         height: auto
         #content-container
             justify-content: space-around
-    #content.hidden button
+    #content button
         padding: 2rem 1.5rem !important
+    #content button:focus, #content.hidden button:focus
+        outline: 2px solid white
     #sidebar
         position: absolute
         left: 0
-        top: 6.2rem
+        top: 6.73rem
         min-width: 100vw !important
         margin-left: 0 !important
         height: calc(100vh - 80px - 6.2rem)

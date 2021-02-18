@@ -1,10 +1,9 @@
 <div #sideBar class="wrapper">
     <div id="content" [ngClass]="{'hidden':!sideBarHidden}">
         <div class="bg-dark h-100 d-flex p-0 flex-column" id="content-container">
-            <button type="button" id="chatBtn" class="btn btn-block rounded-0"
-                [ngClass]="sideBarHidden ? 'btn-secondary' : 'btn-danger p-4 text-light'" (click)="toggleSideBar()">
-                <i [ngClass]="sideBarHidden ? 'fa fa-comment' : 'fa fa-close'"></i>
-                <span class="d-block mt-1" *ngIf="sideBarHidden">Menu</span>
+            <button type="button" id="chatBtn" class="btn btn-block rounded-0 p-4 text-light"
+                [ngClass]="sideBarHidden ? 'btn-secondary' : 'btn-danger'" (click)="toggleSideBar()">
+                <i [ngClass]="sideBarHidden ? 'fa fa-bars' : 'fa fa-close'"></i>
             </button>
         </div>
     </div>
@@ -13,7 +12,7 @@
         [ngStyle]="{'z-index': sideBarHidden ? '0' : '1000'}"
         tabindex="0">
         <div class="sidebar-header d-flex justify-content-between">
-            <h4 class="font-weight-normal text-secondary">Chats</h4>
+            <h3 class="font-weight-normal text-secondary m-0">Chats</h3>
             <div id="room-controls">
                 <button type="button" id="notificationsBtn" 
                 class="btn btn-outline-dark border-0 text-secondary rounded-sm"
@@ -56,8 +55,8 @@
             </li>
         </ul>
         <ul class="list-unstyled components" *ngIf="!sideBarHidden && !formattedRoomsCurUser?.length">
-            <li class="btn py-3 px-0 m-0 user w-100">
-                <span class="font-weight-light h3 no-results">No rooms available</span>
+            <li class="btn px-0 m-0 user w-100 text-left">
+                <p tabindex="0" class="m-0 p-0">No rooms available</p>
             </li>
         </ul>
     </nav>

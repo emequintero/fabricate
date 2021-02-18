@@ -1,5 +1,5 @@
 <div class="display">
-    <div tabindex="0" class="section-header pb-2">
+    <div tabindex="0" class="section-header pt-0 pb-2">
         <div id="handleRoomControls">
             <button type="button" class="btn btn-icon border-0 rounded-sm" (click)="back()">
                 <span class="fa fa-arrow-circle-left approve"></span>
@@ -16,17 +16,21 @@
                 <span class="fa fa-check"></span>
             </span>
             <span class="font-weight-normal label username">{{user.username}}</span>
-            <span *ngIf="!isUserSelected(user)" (click)="handleUser(user, 'add')" class="btn btn-icon fa fa-plus-circle approve"></span>
-            <span *ngIf="isUserSelected(user)" (click)="handleUser(user, 'remove')" class=" btn btn-icon fa fa-minus-circle deny"></span>
+            <button *ngIf="!isUserSelected(user)" (click)="handleUser(user, 'add')" class="btn btn-icon approve">
+                <i class="fa fa-plus-circle "></i>
+            </button>
+            <button *ngIf="isUserSelected(user)" (click)="handleUser(user, 'remove')" class=" btn btn-icon deny">
+                <i class="fa fa-minus-circle"></i>
+            </button>
         </div>
         <div class="w-100 requestMatch px-2 d-flex flex-column justify-content-center" *ngIf="requestMatch">
             <h5 class="text-primary text-center font-weight-light">These users are in a pending request</h5>
             <a routerLink="/notifications" class="text-center">View Request(s)</a>
         </div>
     </div>
-    <div class="section-content pt-3" *ngIf="!availableUsers?.length">
-        <span tabindex="0" class="font-weight-light h3 no-results ml-2" *ngIf="mode==='create'">No users available to chat</span>
-        <span tabindex="0" class="font-weight-light h3 no-results ml-2" *ngIf="mode==='add'">All available users added to room</span>
+    <div class="section-content" *ngIf="!availableUsers?.length">
+        <p tabindex="0" *ngIf="mode==='create'">No users available to chat</p>
+        <p tabindex="0" *ngIf="mode==='add'">All available users added to room</p>
     </div>
     <div class="section-footer">
         <div class="footer-content form-group">
