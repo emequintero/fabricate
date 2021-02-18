@@ -181,7 +181,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
 
   allControlsDisabled(){
     //disable all controls if only user in chat is curUser
-    return this.headerUsers.length === 0;
+    return this.headerUsers.length === 0 || this.duplicateRoom;
   }
 
   //sort user array by username
