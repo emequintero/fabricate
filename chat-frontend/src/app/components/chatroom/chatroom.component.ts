@@ -49,8 +49,14 @@ export class ChatroomComponent implements OnInit, OnDestroy {
       if (this.selectedRoom) {
         //filters out curUser
         this.headerUsers = this.selectedRoom.users.filter(user => { return user.username !== this.curUser.username });
-        //focus on last message on init
-        this.focusElement('lastMsg', 150);
+        //no other users in room
+        if(!this.headerUsers.length){
+          this.focusElement('allUsersLeftAlert', 150);
+        }
+        else{
+          //focus on last message on init
+          this.focusElement('lastMsg', 150);
+        }
       }
     });
     //watch changes in messages
@@ -92,6 +98,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
           if(!this.ignoreDuplicateRoom && JSON.stringify(room.users.sort(this.compareUsers)) === JSON.stringify(prevRoomUsers.sort(this.compareUsers))){
             //show duplicate room alert
             this.duplicateRoom = true;
+            this.focusElement('duplicateRoomAlert', 150);
           }
           else{
             this.duplicateRoom = false;
@@ -159,24 +166,15 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-    //all users left element gets focus priority
-    let allUsersLeftEl = document.getElementById('allUsersLeft');
-    //check if all users left element exists in DOM
-    if(allUsersLeftEl){
-      //focus on all users left alert
-      document.getElementById('allUsersLeft').focus();
-    }
-    //handle focusing on appropriate element
-    else{
-      //add delay if provided or default to 100ms
-      setTimeout(()=>{
-        let element = document.getElementById(elementId);
-        if(element){
-          //focus on element if exists in DOM
-          element.focus();
-        }
-      }, delay || 100);
-    }
+    //add delay if provided or default to 100ms
+    setTimeout(()=>{
+      //handle focusing on appropriate element
+      let element = document.getElementById(elementId);
+      if(element){
+        //focus on element if exists in DOM
+        element.focus();
+      }
+    }, delay || 100);
   }
 
   allControlsDisabled(){
