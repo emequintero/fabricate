@@ -3,7 +3,7 @@
         <ul class="navbar-right d-flex align-items-center list-inline pt-2">
             <li class="list-inline-item">
                 <h2 class="font-weight-light">
-                    <a tabindex="0" routerLink="/home" class="text-light">Fabricate</a>
+                    <a tabindex="0" routerLink="/home" class="text-light" [ngClass]="{'disabled': !user}">Fabricate</a>
                 </h2>
             </li>
         </ul>
