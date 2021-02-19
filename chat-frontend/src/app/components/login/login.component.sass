@@ -11,6 +11,18 @@ h2
     width: 380px
     label
         font-size: 24px
+    input[type="text"].available
+        box-shadow: none
+    input[type="text"].unavailable
+        box-shadow: 0 0 0 5px $red
+    .input-container
+        position: relative
+    .error-message
+        position: absolute
+        bottom: 2.5rem
+        left: -9.5rem
+        width: max-content
+        color: $red
     input[type="image"]
         height: 80px
         width: 80px

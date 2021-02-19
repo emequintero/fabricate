@@ -8,7 +8,14 @@
                 <label for="usernameInput" class="font-weight-normal ml-3">
                     Enter a display name
                 </label>
-                <input id="usernameInput" type="text" class="form-control mx-auto" [(ngModel)]="username" placeholder="Enter a username">
+                <span class="input-container">
+                    <div *ngIf="username.length && isUsernameUnavailable" class="error-message">
+                        Not available
+                    </div>
+                    <input id="usernameInput" type="text" class="form-control mx-auto" 
+                    [ngClass]="{'unavailable': username.length && isUsernameUnavailable, 'available': username.length && !isUsernameUnavailable}"
+                    [(ngModel)]="username" placeholder="Enter a username" (keydown)="checkAvailability()" required>
+                </span>
                 <label for="profilePicSelection" class="font-weight-normal ml-3">
                     Select a profile picture
                 </label>
@@ -31,7 +38,7 @@
                     </a>
                 </div>
                 <button class="btn btn-primary d-block mx-auto mb-3" 
-                [disabled]="!username.length || !selectedProfilePic"
+                [disabled]="!username.length || !selectedProfilePic || isUsernameUnavailable"
                 (click)="submitUser()">Enter Chat!</button>
             </div>
         </div>

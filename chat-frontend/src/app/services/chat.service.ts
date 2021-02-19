@@ -30,10 +30,14 @@ export class ChatService {
     this.socket.emit('availableUsers');
     return new Observable((availableUsersObserver)=>{
       this.socket.on('availableUsers', users=>{
-        var curUser = this.userService.getUser().value;
-        let availableUsers = users.filter(user=>{
-          return user.username !== curUser.username;
-        });
+        let curUser = this.userService.getUser().value;
+        let availableUsers = users;
+        //if user is logged in filter them out from availableUsers
+        if(curUser){
+          availableUsers = users.filter(user=>{
+            return user.username !== curUser.username;
+          });
+        }
         availableUsersObserver.next(availableUsers);
       })
     });
