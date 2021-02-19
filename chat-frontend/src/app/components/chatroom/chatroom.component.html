@@ -86,9 +86,14 @@
         </div>
         <div class="section-footer">
             <div class="footer-content form-group">
-                <input type="text" [(ngModel)]="messageContent" class="form-control rounded-0" 
-                placeholder="Type a message"
-                (keydown)="userIsTyping()" (keydown.enter)="sendMessage()" [disabled]="allControlsDisabled()">
+                <span class="element-wrapper">
+                    <input type="text" [(ngModel)]="messageContent" class="form-control rounded-0" 
+                    placeholder="Type a message"
+                    (keydown)="userIsTyping()" (keydown.enter)="sendMessage()" [disabled]="allControlsDisabled()">
+                    <div *ngIf="true" class="error-message top">
+                        Form is invalid
+                    </div>
+                </span>
                 <button class="btn btn-block btn-primary text-light rounded-0" [disabled]="allControlsDisabled() || !messageContent.length"
                     (click)="sendMessage()">SEND</button>
             </div>
