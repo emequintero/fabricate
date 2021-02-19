@@ -65,6 +65,9 @@ export class LoginComponent implements OnInit, OnDestroy{
   }
 
   checkAvailability(){
+    //reset form error message
+    if(!this.isFormValid)
+      this.isFormValid = true;
     setTimeout(()=>{
       //check if username is available
       this.isUsernameUnavailable = this.unavailableUsernames.indexOf(this.username) !== -1;
