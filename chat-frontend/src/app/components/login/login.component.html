@@ -8,13 +8,13 @@
                 <label for="usernameInput" class="font-weight-normal ml-3">
                     Enter a display name
                 </label>
-                <span class="input-container">
-                    <div *ngIf="username.length && isUsernameUnavailable" class="error-message bottom" tabindex="0">
-                        Not available
-                    </div>
+                <span class="element-wrapper">
                     <input id="usernameInput" type="text" class="form-control mx-auto" 
                     [ngClass]="{'unavailable': username.length && isUsernameUnavailable, 'available': username.length && !isUsernameUnavailable}"
                     [(ngModel)]="username" placeholder="Enter a username" (keydown)="checkAvailability()" required>
+                    <div *ngIf="username.length && isUsernameUnavailable" class="error-message bottom" tabindex="0">
+                        Username not available
+                    </div>
                 </span>
                 <label for="profilePicSelection" class="font-weight-normal ml-3">
                     Select a profile picture
@@ -37,9 +37,14 @@
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
-                <button class="btn btn-primary d-block mx-auto mb-3" 
-                [disabled]="!username.length || !selectedProfilePic || isUsernameUnavailable"
-                (click)="submitUser()">Enter Chat!</button>
+                <span class="element-wrapper">
+                    <button class="btn btn-primary d-block mx-auto mb-3" 
+                    [disabled]="!username.length || !selectedProfilePic || isUsernameUnavailable || !isFormValid"
+                    (click)="submitUser()">Enter Chat!</button>
+                    <div *ngIf="!isFormValid" class="error-message top" tabindex="0">
+                        Form is not valid
+                    </div>
+                </span>
             </div>
         </div>
     </div>

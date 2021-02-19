@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit, OnDestroy{
   username:string = "";
   selectedProfilePic = null;
   isUsernameUnavailable:boolean = true;
+  isFormValid:boolean = true;
   availableUsersSub:Subscription = new Subscription();
   unavailableUsernames:Array<string> = new Array<string>();
 
@@ -71,10 +72,13 @@ export class LoginComponent implements OnInit, OnDestroy{
   }
 
   submitUser():void{
-    let curUser = new User(this.selectedProfilePic, this.username);
-    this.userService.setUser(curUser);
-    //redirect to home
-    this.router.navigate(['home']);
+    this.isFormValid = !this.isUsernameUnavailable && this.selectedProfilePic !== null && this.username.length !== 0;
+    if(this.isFormValid){
+      let curUser = new User(this.selectedProfilePic, this.username);
+      this.userService.setUser(curUser);
+      //redirect to home
+      this.router.navigate(['home']);
+    }
   }
 
 }
