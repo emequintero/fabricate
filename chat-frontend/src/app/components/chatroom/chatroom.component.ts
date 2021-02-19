@@ -20,6 +20,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
   curUser: User = null;
   headerUsers: Array<User> = null;
   typingMessage:string = null;
+  isFormValid:boolean = true;
   curUserSub:Subscription = new Subscription();
   selectedRoomSub:Subscription = new Subscription();
   watchMessagesSub:Subscription = new Subscription();
@@ -111,11 +112,14 @@ export class ChatroomComponent implements OnInit, OnDestroy {
   }
 
   sendMessage() {
-    var newMessage = new Message(this.curUser, this.messageContent, new Date());
-    this.selectedRoom.addMessage(newMessage);
-    this.chatService.sendMessage(this.selectedRoom);
-    //clear message input box text
-    this.messageContent = "";
+    this.isFormValid = this.messageContent.length !== 0 && this.headerUsers.length !== 0 && !this.duplicateRoom;
+    if(this.isFormValid){
+      var newMessage = new Message(this.curUser, this.messageContent, new Date());
+      this.selectedRoom.addMessage(newMessage);
+      this.chatService.sendMessage(this.selectedRoom);
+      //clear message input box text
+      this.messageContent = "";
+    }
   }
 
   addUser(){
@@ -148,6 +152,9 @@ export class ChatroomComponent implements OnInit, OnDestroy {
 
   //broadcast username of user typing
   userIsTyping(){
+    //reset form error message
+    if(!this.isFormValid)
+      this.isFormValid = true;
     //emit username only if message isn't empty (sending null clears 'typingMessage' display)
     setTimeout(() => {
       let typingData:string = this.messageContent.length ? this.curUser.username : null;

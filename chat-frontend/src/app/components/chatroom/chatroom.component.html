@@ -90,7 +90,7 @@
                     <input type="text" [(ngModel)]="messageContent" class="form-control rounded-0" 
                     placeholder="Type a message"
                     (keydown)="userIsTyping()" (keydown.enter)="sendMessage()" [disabled]="allControlsDisabled()">
-                    <div *ngIf="true" class="error-message top">
+                    <div *ngIf="!isFormValid" class="error-message top">
                         Form is invalid
                     </div>
                 </span>

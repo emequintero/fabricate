@@ -22,6 +22,7 @@ export class HandleroomComponent implements OnInit, OnDestroy{
   selectedRoom:Room = null;
   requestMatch:boolean = false;
   mode:string;
+  isFormValid:boolean = true;
   enterRoomSub:Subscription = new Subscription();
   curUserSub:Subscription = new Subscription();
   roomsCurUserSub:Subscription = new Subscription();
@@ -132,15 +133,21 @@ export class HandleroomComponent implements OnInit, OnDestroy{
   }
 
   submit(){
-    if(this.mode === 'create'){
-      this.enterRoom();
-    }
-    else if(this.mode === 'add'){
-      this.addRoomUsers();
+    this.isFormValid = this.selectedUsers.length !== 0;
+    if(this.isFormValid){
+      if(this.mode === 'create'){
+        this.enterRoom();
+      }
+      else if(this.mode === 'add'){
+        this.addRoomUsers();
+      }
     }
   }
 
   handleUser(user:User, op:string){
+    //reset form error message
+    if(!this.isFormValid)
+      this.isFormValid = true;
     if(op === 'add'){
       this.selectedUsers.push(user);
     }

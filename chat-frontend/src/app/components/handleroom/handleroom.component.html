@@ -34,8 +34,13 @@
     </div>
     <div class="section-footer">
         <div class="footer-content form-group">
-            <button class="btn btn-block btn-primary text-light rounded-0" (click)="submit()" 
-            [disabled]="handleDisableSubmit()">DONE</button>
+            <span class="element-wrapper">
+                <button class="btn btn-block btn-primary text-light rounded-0" (click)="submit()" 
+                [disabled]="handleDisableSubmit()">DONE</button>
+                <div *ngIf="!isFormValid" class="error-message top">
+                    Form is invalid
+                </div>
+            </span>
         </div>
     </div>
 </div>

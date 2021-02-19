@@ -54,9 +54,12 @@ export class LoginComponent implements OnInit, OnDestroy{
 
   ngOnInit(): void {
     this.availableUsersSub = this.chatService.getAvailableUsers().subscribe((users:Array<User>)=>{
+      //list of usernames already in use
       this.unavailableUsernames = users.map((user:User)=>{
         return user.username;
       });
+      //check if selected username is still available
+      this.checkAvailability();
     });
   }
 
