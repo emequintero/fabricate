@@ -1,6 +1,6 @@
 <div class="display">
     <div class="d-flex justify-content-center mb-3">
-        <h2 class="text-primary text-center">Welcome, lets Chat!</h2>
+        <h2 class="text-primary text-center" tabindex="0">Welcome, lets Chat!</h2>
     </div>
     <div class="d-flex justify-content-center">
         <div id="loginPage" class="mt-4 d-flex justify-content-center bg-secondary" tabindex="0">
@@ -9,7 +9,7 @@
                     Enter a display name
                 </label>
                 <span class="input-container">
-                    <div *ngIf="username.length && isUsernameUnavailable" class="error-message bottom">
+                    <div *ngIf="username.length && isUsernameUnavailable" class="error-message bottom" tabindex="0">
                         Not available
                     </div>
                     <input id="usernameInput" type="text" class="form-control mx-auto" 
