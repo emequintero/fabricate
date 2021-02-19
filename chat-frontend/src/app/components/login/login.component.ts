@@ -46,13 +46,13 @@ export class LoginComponent implements OnInit, OnDestroy{
   availableUsersSub:Subscription = new Subscription();
   unavailableUsernames:Array<string> = new Array<string>();
 
-  constructor(private userService:UserService, private router:Router, private chatService:ChatService) { }
+  constructor(private userService:UserService, public router:Router, private chatService:ChatService) { }
 
-  ngOnDestroy(): void{
+  public ngOnDestroy(): void{
     this.availableUsersSub.unsubscribe();
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.availableUsersSub = this.chatService.getAvailableUsers().subscribe((users:Array<User>)=>{
       //list of usernames already in use
       this.unavailableUsernames = users.map((user:User)=>{
@@ -63,11 +63,11 @@ export class LoginComponent implements OnInit, OnDestroy{
     });
   }
 
-  setProfilePic(image):void{
+  public setProfilePic(image):void{
     this.selectedProfilePic = image;
   }
 
-  checkAvailability(){
+  public checkAvailability(){
     //reset form error message
     if(!this.isFormValid)
       this.isFormValid = true;
@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit, OnDestroy{
     }, 0)
   }
 
-  submitUser():void{
+  public submitUser():void{
     this.isFormValid = !this.isUsernameUnavailable && this.selectedProfilePic !== null && this.username.length !== 0;
     if(this.isFormValid){
       let curUser = new User(this.selectedProfilePic, this.username);

@@ -15,24 +15,25 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./handleroom.component.sass']
 })
 export class HandleroomComponent implements OnInit, OnDestroy{
-  availableUsers:Array<User> = null;
-  selectedUsers:Array<User> = new Array<User>();
-  curUser:User = null;
-  roomsCurUser:Array<Room> = new Array<Room>();
-  selectedRoom:Room = null;
-  requestMatch:boolean = false;
-  mode:string;
-  isFormValid:boolean = true;
-  enterRoomSub:Subscription = new Subscription();
-  curUserSub:Subscription = new Subscription();
-  roomsCurUserSub:Subscription = new Subscription();
-  watchRoomsCurUserSub:Subscription = new Subscription();
-  availableUsersSub:Subscription = new Subscription();
-  selectedRoomSub = new Subscription();
+  public availableUsers:Array<User> = null;
+  public selectedUsers:Array<User> = new Array<User>();
+  public curUser:User = null;
+  public roomsCurUser:Array<Room> = new Array<Room>();
+  public selectedRoom:Room = null;
+  public requestMatch:boolean = false;
+  public duplicateRoom:boolean = false;
+  public mode:string;
+  public isFormValid:boolean = true;
+  public enterRoomSub:Subscription = new Subscription();
+  public curUserSub:Subscription = new Subscription();
+  public roomsCurUserSub:Subscription = new Subscription();
+  public watchRoomsCurUserSub:Subscription = new Subscription();
+  public availableUsersSub:Subscription = new Subscription();
+  public selectedRoomSub = new Subscription();
   constructor(private chatService:ChatService, private roomService:RoomService, 
-    private userService:UserService, private router:Router, private route:ActivatedRoute, 
+    private userService:UserService, public router:Router, private route:ActivatedRoute, 
     private navigationService:NavigationService) { }
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     //unsubscribe to events/updates
     this.enterRoomSub.unsubscribe();
     this.curUserSub.unsubscribe();
@@ -42,7 +43,7 @@ export class HandleroomComponent implements OnInit, OnDestroy{
     this.selectedRoomSub.unsubscribe();
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     //reset selected users on load
     this.selectedUsers = new Array<User>();
     //get handle room mode (create/add)
@@ -87,7 +88,7 @@ export class HandleroomComponent implements OnInit, OnDestroy{
     });
   }
 
-  enterRoom(){
+  public enterRoom(){
     //add current user to list of included users
     this.selectedUsers.push(this.curUser);
     //pre-check if room already exists (avoids duplicates if user combination exists)
@@ -119,7 +120,7 @@ export class HandleroomComponent implements OnInit, OnDestroy{
     });
   }
 
-  addRoomUsers(){
+  public addRoomUsers(){
     //combine selected users and user list in selected room for complete list of included users
     this.selectedRoom.users = [...this.selectedRoom.users, ...this.selectedUsers];
     //send requests to other users added to room (not curUser)
@@ -132,7 +133,7 @@ export class HandleroomComponent implements OnInit, OnDestroy{
     this.router.navigate(['chat-room']);
   }
 
-  submit(){
+  public submit(){
     this.isFormValid = this.selectedUsers.length !== 0;
     if(this.isFormValid){
       if(this.mode === 'create'){
@@ -144,7 +145,7 @@ export class HandleroomComponent implements OnInit, OnDestroy{
     }
   }
 
-  handleUser(user:User, op:string){
+  public handleUser(user:User, op:string){
     //reset form error message
     if(!this.isFormValid)
       this.isFormValid = true;
@@ -154,39 +155,50 @@ export class HandleroomComponent implements OnInit, OnDestroy{
     else if(op === 'remove'){
       this.selectedUsers.splice(this.selectedUsers.indexOf(user), 1);
     }
-  }
-
-  handleDisableSubmit(){
-    //check requests to see if users match
-    let duplicateRoom = this.curUser.requests.filter((request:Request)=>{
-      //use only userIDs to compare correctly
-      let roomUserIDs:Array<string> = request.room.users.map((user:User)=>{
-        return user.userID;
-      });
-      let selectedUserIDs:Array<string> = this.selectedUsers.map((user:User)=>{
-        return user.userID;
-      });
-      selectedUserIDs.push(this.curUser.userID);
-      return JSON.stringify(roomUserIDs.sort()) === JSON.stringify(selectedUserIDs.sort());
+    this.duplicateRoom = this.roomsCurUser.some((room:Room)=>{
+      let roomUserIDs = room.users.map((user:User)=>{return user.userID});
+      let selectedUserIDs = this.selectedUsers.map((user:User)=>{return user.userID});
+      return JSON.stringify(roomUserIDs.sort()) !== JSON.stringify(selectedUserIDs.sort());
     });
-    //handle displaying found request message
-    this.requestMatch = duplicateRoom.length !== 0;
-    //disable if request with same users exists
-    if(this.requestMatch) return true;
-    //if no request matches check if some users are selected
-    else return !this.selectedUsers?.length;
   }
 
-  isUserSelected(user:User){
+  public handleDisableSubmit(){
+    //check if user exists
+    if(this.curUser){
+      //check requests to see if users match
+      let duplicateRoom = this.curUser.requests.filter((request:Request)=>{
+        //use only userIDs to compare correctly
+        let roomUserIDs:Array<string> = request.room.users.map((user:User)=>{
+          return user.userID;
+        });
+        let selectedUserIDs:Array<string> = this.selectedUsers.map((user:User)=>{
+          return user.userID;
+        });
+        selectedUserIDs.push(this.curUser.userID);
+        return JSON.stringify(roomUserIDs.sort()) === JSON.stringify(selectedUserIDs.sort());
+      });
+      //handle displaying found request message
+      this.requestMatch = duplicateRoom.length !== 0;
+      //disable if request with same users exists or there is a duplicate room
+      if(this.requestMatch || this.duplicateRoom) return true;
+      //if no request matches check if some users are selected
+      else return !this.selectedUsers?.length;
+    }
+    else{
+      return false;
+    }
+  }
+
+  public isUserSelected(user:User){
     return this.selectedUsers.indexOf(user) !== -1;
   }
 
   //sort user array by username
-  compareUsers = (a,b) =>{
+  private compareUsers = (a,b) =>{
     return a.username.localeCompare(b.username);
   }
 
-  back(){
+  public back(){
     this.navigationService.back();
   }
 

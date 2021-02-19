@@ -15,23 +15,23 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ChatroomComponent implements OnInit, OnDestroy {
 
-  selectedRoom: Room = null;
-  messageContent: string = "";
-  curUser: User = null;
-  headerUsers: Array<User> = null;
-  typingMessage:string = null;
-  isFormValid:boolean = true;
-  curUserSub:Subscription = new Subscription();
-  selectedRoomSub:Subscription = new Subscription();
-  watchMessagesSub:Subscription = new Subscription();
-  watchRoomUsersSub:Subscription = new Subscription();
-  watchForUsersTypingSub:Subscription = new Subscription();
-  watchRoomsCurUserSub:Subscription = new Subscription();
-  duplicateRoom:boolean = false;
-  ignoreDuplicateRoom:boolean = false;
+  public selectedRoom: Room = null;
+  public messageContent: string = "";
+  public curUser: User = null;
+  public headerUsers: Array<User> = null;
+  public typingMessage:string = null;
+  public isFormValid:boolean = true;
+  public curUserSub:Subscription = new Subscription();
+  public selectedRoomSub:Subscription = new Subscription();
+  public watchMessagesSub:Subscription = new Subscription();
+  public watchRoomUsersSub:Subscription = new Subscription();
+  public watchForUsersTypingSub:Subscription = new Subscription();
+  public watchRoomsCurUserSub:Subscription = new Subscription();
+  public duplicateRoom:boolean = false;
+  public ignoreDuplicateRoom:boolean = false;
   constructor(private roomService: RoomService, private userService: UserService, private chatService: ChatService,
-    private router:Router) { }
-  ngOnDestroy(): void {
+    public router:Router) { }
+  public ngOnDestroy(): void {
     //unsubscribe to events/updates
     this.curUserSub.unsubscribe();
     this.selectedRoomSub.unsubscribe();
@@ -41,7 +41,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     this.watchRoomsCurUserSub.unsubscribe();
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.curUserSub = this.userService.getUser().subscribe((user) => {
       this.curUser = user;
     });
@@ -111,7 +111,7 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendMessage() {
+  public sendMessage() {
     this.isFormValid = this.messageContent.length !== 0 && this.headerUsers.length !== 0 && !this.duplicateRoom;
     if(this.isFormValid){
       var newMessage = new Message(this.curUser, this.messageContent, new Date());
@@ -122,17 +122,17 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     }
   }
 
-  addUser(){
+  public addUser(){
     this.router.navigate(['handle-room', 'add']);
   }
 
-  leaveRoom(){
+  public leaveRoom(){
     this.chatService.leaveRoom(this.curUser, this.selectedRoom);
     //redirect to home page with prevRoomDeleted flag set to true
     this.router.navigate(['home']);
   }
 
-  determineDateFormat(dateSent: Date): string {
+  public determineDateFormat(dateSent: Date): string {
     //set up end of yesterday to compare
     let endOfYesterday = new Date();
     endOfYesterday.setHours(0, 0, 0, 0);
@@ -140,18 +140,18 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     return (new Date(dateSent)) > endOfYesterday ? 'shortTime' : 'shortDate';
   }
 
-  isNextMsgSameUser(curMsg: Message, nextMsg: Message): boolean {
+  public isNextMsgSameUser(curMsg: Message, nextMsg: Message): boolean {
     if (curMsg && nextMsg) {
       return curMsg.sentBy.userID === nextMsg.sentBy.userID;
     }
   }
 
-  isLastMsg(message:Message){
+  public isLastMsg(message:Message){
     return this.selectedRoom.messages.indexOf(message) === this.selectedRoom.messages.length-1 ? 'lastMsg' : undefined;
   }
 
   //broadcast username of user typing
-  userIsTyping(){
+  public userIsTyping(){
     //reset form error message
     if(!this.isFormValid)
       this.isFormValid = true;
@@ -163,12 +163,12 @@ export class ChatroomComponent implements OnInit, OnDestroy {
   }
 
   //keep duplicate room
-  keepDuplicateRoom(){
+  public keepDuplicateRoom(){
     this.duplicateRoom = false;
     this.ignoreDuplicateRoom = true;
   }
 
-  focusElement(elementId:string, delay?:number){
+  public focusElement(elementId:string, delay?:number){
     //clear blur for focused element
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
@@ -184,13 +184,13 @@ export class ChatroomComponent implements OnInit, OnDestroy {
     }, delay || 100);
   }
 
-  allControlsDisabled(){
+  public allControlsDisabled(){
     //disable all controls if only user in chat is curUser
     return this.headerUsers.length === 0 || this.duplicateRoom;
   }
 
   //sort user array by username
-  compareUsers = (a,b) =>{
+  private compareUsers = (a,b) =>{
     return a.username.localeCompare(b.username);
   }
 

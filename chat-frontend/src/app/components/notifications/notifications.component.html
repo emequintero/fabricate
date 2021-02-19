@@ -7,7 +7,7 @@
         </div>
         <h3 tabindex="0" class="font-weight-normal text-primary m-0">Chat Requests</h3>
     </div>
-    <div class="section-content pt-3" *ngIf="curUser.requests?.length">
+    <div class="section-content pt-3" *ngIf="curUser && curUser.requests?.length">
         <div *ngFor="let request of curUser.requests"
             class="d-flex align-items-center justify-content-between py-4 px-3 rounded-lg request"
             tabindex="0">
@@ -27,7 +27,7 @@
             </span>
         </div>
     </div>
-    <div class="section-content" *ngIf="!curUser.requests?.length">
+    <div class="section-content" *ngIf="!curUser?.requests?.length">
         <p tabindex="0">No requests found</p>
     </div>
 </div>

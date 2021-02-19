@@ -14,17 +14,17 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./sidebar.component.sass']
 })
 export class SidebarComponent implements OnInit, OnDestroy{
-  sideBarHidden = true;
-  curUser:User = null;
-  selectedRoom:Room = null;
-  roomsCurUser:Array<Room> = new Array<Room>();
-  formattedRoomsCurUser:Array<any> = new Array<any>();
-  joinAppSub:Subscription = new Subscription();
-  roomsCurUserSub:Subscription = new Subscription();
-  watchRoomsCurUserSub:Subscription = new Subscription();
-  requestsSub:Subscription = new Subscription();
-  enterRoomSub:Subscription = new Subscription();
-  selectedRoomSub:Subscription = new Subscription();
+  public sideBarHidden = true;
+  public curUser:User = null;
+  public selectedRoom:Room = null;
+  public roomsCurUser:Array<Room> = new Array<Room>();
+  public formattedRoomsCurUser:Array<any> = new Array<any>();
+  public joinAppSub:Subscription = new Subscription();
+  public roomsCurUserSub:Subscription = new Subscription();
+  public watchRoomsCurUserSub:Subscription = new Subscription();
+  public requestsSub:Subscription = new Subscription();
+  public enterRoomSub:Subscription = new Subscription();
+  public selectedRoomSub:Subscription = new Subscription();
   @ViewChild('sideBar') sidebar:ElementRef;
   //listens for mousedown in document and injects event to callback function
   @HostListener('document:mousedown', ['$event'])
@@ -35,8 +35,8 @@ export class SidebarComponent implements OnInit, OnDestroy{
     }
   }
   constructor(private chatService:ChatService, private userService:UserService, 
-    private roomService:RoomService, private router:Router) { }
-  ngOnDestroy(): void {
+    private roomService:RoomService, public router:Router) { }
+  public ngOnDestroy(): void {
     //unsubscribe from events/updates
     this.joinAppSub.unsubscribe();
     this.roomsCurUserSub.unsubscribe();
@@ -46,7 +46,7 @@ export class SidebarComponent implements OnInit, OnDestroy{
     this.selectedRoomSub.unsubscribe();
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     //join chat
     this.curUser = this.userService.getUser().value;
     this.joinAppSub = this.chatService.joinApp(this.curUser).subscribe(curUser=>{
@@ -81,32 +81,32 @@ export class SidebarComponent implements OnInit, OnDestroy{
     });
   }
 
-  toggleSideBar(){
+  public toggleSideBar(){
     this.sideBarHidden = !this.sideBarHidden;
   }
 
-  createRoom(){
+  public createRoom(){
     //close sidebar
     this.toggleSideBar();
     //open create room child-view
     this.router.navigate(['handle-room', 'create']);
   }
 
-  sendHome(){
+  public sendHome(){
     //close sidebar
     this.toggleSideBar();
     //open create room child-view
     this.router.navigate(['home']);
   }
 
-  showNotifications(){
+  public showNotifications(){
     //close sidebar
     this.toggleSideBar();
     //open create room child-view
     this.router.navigate(['notifications']);
   }
 
-  enterRoom(viewFriendlyRoom:any){
+  public enterRoom(viewFriendlyRoom:any){
     //close sidebar
     this.toggleSideBar();
     //format room properly (no view related properties)
@@ -124,7 +124,7 @@ export class SidebarComponent implements OnInit, OnDestroy{
     });
   }
 
-  isRoomSelected(roomID:string){
+  public isRoomSelected(roomID:string){
     if(this.selectedRoom){
       return this.selectedRoom.roomID === roomID;
     }
@@ -133,7 +133,7 @@ export class SidebarComponent implements OnInit, OnDestroy{
     }
   }
 
-  formatRooms(rooms:Array<any>){
+  public formatRooms(rooms:Array<any>){
     return rooms.map(room=>{
       room.headerUsers = room.users.filter((user:User)=>{
         return user.userID !== this.curUser.userID;

@@ -23,9 +23,13 @@
                 <i class="fa fa-minus-circle"></i>
             </button>
         </div>
-        <div class="w-100 requestMatch px-2 d-flex flex-column justify-content-center" *ngIf="requestMatch">
+        <div id="requestMatchAlert" class="w-100 block-action px-2 d-flex flex-column justify-content-center" *ngIf="requestMatch">
             <h5 class="text-primary text-center font-weight-light">These users are in a pending request</h5>
             <a routerLink="/notifications" class="text-center">View Request(s)</a>
+        </div>
+        <div id="duplicateRoomAlert" class="w-100 block-action px-2 d-flex flex-column justify-content-center" *ngIf="duplicateRoom">
+            <h5 class="text-primary text-center font-weight-light">These users are in a room with you</h5>
+            <a routerLink="/chat-room" class="text-center">Go to Chat</a>
         </div>
     </div>
     <div class="section-content" *ngIf="!availableUsers?.length">
