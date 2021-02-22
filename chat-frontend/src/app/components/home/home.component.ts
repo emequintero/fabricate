@@ -10,6 +10,8 @@ export class HomeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    //header present
+    document.body.style.paddingTop = "80px";
   }
 
 }
