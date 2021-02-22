@@ -1,4 +1,4 @@
-<nav class="navbar fixed-top navbar-light bg-primary" *ngIf="user">
+<nav class="navbar fixed-top navbar-light bg-primary">
     <div id="navbar">
         <ul class="navbar-right d-flex align-items-center list-inline pt-2">
             <li class="list-inline-item">
@@ -8,7 +8,7 @@
             </li>
         </ul>
     </div>
-    <div id="main-navbar">
+    <div id="main-navbar" *ngIf="user">
         <ul tabindex="0" class="navbar-right d-flex align-items-center list-inline pt-2">
             <li class="list-inline-item">
                 <h2>{{user.username}}</h2>

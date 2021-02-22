@@ -11,7 +11,7 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => LoginModule,
-    data: {showSidebar: false}
+    data: {showSidebar: false, showHeader: false}
   },
   {
     path: 'home',

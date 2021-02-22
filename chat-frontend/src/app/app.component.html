@@ -1,5 +1,8 @@
 <!-- header -->
-<app-header></app-header>
+<div *ngIf="showHeader; then header"></div>
+<ng-template #header>
+    <app-header></app-header>
+</ng-template>
 <div class="d-flex justify-content-stretch w-100">
     <!-- sidebar -->
     <div *ngIf="showSidebar; then sidebar"></div>

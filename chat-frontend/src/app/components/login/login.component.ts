@@ -53,8 +53,6 @@ export class LoginComponent implements OnInit, OnDestroy{
   }
 
   public ngOnInit(): void {
-    //no header
-    document.body.style.paddingTop = "0";
     this.availableUsersSub = this.chatService.getAvailableUsers().subscribe((users:Array<User>)=>{
       //list of usernames already in use
       this.unavailableUsernames = users.map((user:User)=>{

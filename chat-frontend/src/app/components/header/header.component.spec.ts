@@ -56,12 +56,4 @@ describe('HeaderComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should redirect to login if user is not logged in', ()=>{
-    let navigateSpy = spyOn(component.router, 'navigate');
-    component.ngOnInit();
-    if(!component.user){
-      expect(navigateSpy).toHaveBeenCalledWith(['login']);
-    }
-  });
 });

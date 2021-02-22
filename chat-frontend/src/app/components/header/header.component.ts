@@ -10,12 +10,9 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class HeaderComponent implements OnInit {
   user:User = null;
-  constructor(private userService:UserService, public router:Router) { }
+  constructor(private userService:UserService) { }
 
   public ngOnInit(): void {
-    if(!this.user){
-      this.router.navigate(['login']);
-    }
     this.userService.getUser().subscribe(user=>{
       this.user = user;
     });

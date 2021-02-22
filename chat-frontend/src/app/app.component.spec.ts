@@ -59,4 +59,14 @@ describe('AppComponent', () => {
     const app = fixture.componentInstance;
     expect(app.title).toEqual('chat-frontend');
   });
+
+  it('should redirect to login if user is not logged in', ()=>{
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    let navigateSpy = spyOn(app.router, 'navigate');
+    app.ngOnInit();
+    if(!app.user){
+      expect(navigateSpy).toHaveBeenCalledWith(['login']);
+    }
+  });
 });
