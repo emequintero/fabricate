@@ -14,11 +14,16 @@
                 <h2>{{user.username}}</h2>
             </li>
             <li class="list-inline-item">
-                <a>
-                    <span class="profile-pic" style="background-image: url({{user.profilePic.src}});">
-                        <span class="fa fa-check"></span>
-                    </span>
-                </a>
+                <div class="dropdown">
+                    <input id="profileControlBtn" type="image" class="profile-pic" 
+                    src="{{user.profilePic.src}}" alt="{{user.profilePic.description}}"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="profileControlBtn">
+                        <button class="dropdown-item px-0 py-3 text-menu" (click)="logout()">
+                            <p>Log Out <i class="fa fa-times"></i></p>
+                        </button>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>
