@@ -3,6 +3,7 @@ h2
     margin-top: 5vh
     font-weight: 400
 .display
+    padding-top: 60px
     background-color: $bg-primary
     left: 0
 #loginPage
@@ -21,9 +22,12 @@ h2
         border-radius: 50%
         border: 5px solid $brand-secondary
         background-color: $light-purple
+    input[type="image"]:hover
+        opacity: 0.8
+        transition: all .25s ease-in-out
     input[type="image"].selected
-        border: 5px solid $btn-secondary
-        background-color: $btn-secondary
+        border: 5px solid $btn-secondary !important
+        background-color: $btn-secondary !important
     .form-group
         span, input
             margin-bottom: 6vh
@@ -42,12 +46,18 @@ input+.error-message
 button+.error-message
     left: -3rem
 @media screen and (max-width: 720px)
+    #loginHeader
+        padding-left: 5px
+        padding-right: 5px
     .display
+        padding-top: 0 !important
         margin-top: 0 !important
+        background-color: $bg-secondary
     .col-xs-12, .row
         margin: 0 !important
         padding: 0 !important
     #loginPage
+        background-color: $bg-primary
         min-height: calc(100vh - 80px)
         width: 100vw !important
         margin: 0 !important

@@ -21,7 +21,11 @@ $text-secondary: #34415e !important
 $text-danger: $red !important
 $text-warning: #3fefef !important
 $btn-primary: #6958ce !important
-$btn-secondary: $teal !important
+$btn-primary-disabled:#474c74
+$btn-primary-hover: #7e70cc
+$btn-secondary: $teal
+$btn-secondary-hover: #2A8BB7
+
 *
     box-sizing: border-box
 body
@@ -89,8 +93,10 @@ body
     font-size: 32px
 .btn-icon.approve:hover
     color: $teal !important
+    transition: all .25s ease-in-out
 .btn-icon.deny:hover
     color: $red !important
+    transition: all .25s ease-in-out
 .h3.no-results
     line-height: 1.4
 .w-full-screen
@@ -99,10 +105,16 @@ body
     background-color: $btn-primary
     color: white
 .btn-primary[disabled]
-    background-color: #474c74
-.btn-secondary
-    background-color: $btn-secondary
-    color: $text-primary
+    background-color: $btn-primary-disabled !important
+.btn-primary:hover:enabled
+    background-color: $btn-primary-hover !important
+    transition: all .25s ease-in-out
+.btn-secondary, .btn-secondary:active
+    background-color: $btn-secondary !important
+    color: $text-primary !important
+.btn-secondary:hover
+    background-color: $btn-secondary-hover !important
+    transition: all .25s ease-in-out
 .bg-primary
     background-color: $bg-primary
 .bg-secondary
