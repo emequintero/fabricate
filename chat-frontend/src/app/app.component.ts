@@ -22,7 +22,7 @@ export class AppComponent implements OnInit{
         this.showSidebar = this.activatedRoute.firstChild.snapshot.data.showSidebar !== false;
         this.showHeader = this.activatedRoute.firstChild.snapshot.data.showHeader !== false;
         document.body.style.paddingTop = this.showHeader ? '80px' : '0';
-        let user:User = JSON.parse(sessionStorage.getItem('user'));
+        let user:User = JSON.parse(localStorage.getItem('user'));
         if(!user){
           if(this.activatedRoute.firstChild.snapshot.routeConfig.path !== "login"){
             this.router.navigate(['login']);

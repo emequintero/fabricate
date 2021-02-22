@@ -10,7 +10,7 @@ export class UserService {
   constructor() { }
   setUser(userData:User):void{
     this.user.next(userData);
-    sessionStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(userData));
   }
   getUser():BehaviorSubject<User>{
     return this.user;
