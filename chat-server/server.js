@@ -7,7 +7,7 @@ const init = () => {
     running = true;
     /**
      * FRONTEND BOUND EVENTS:
-     * joinApp: returns user object with userID (socket.id)
+     * joinApp: returns user object with userID (socket.id) and availableUsers
      * availableUsers: returns array of online users
      * selectedRoom: returns room object that user is currently in
      *      -if new room it adds actual roomID (socket.io room ID) to room object
