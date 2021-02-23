@@ -23,7 +23,6 @@ export class HeaderComponent implements OnInit {
     this.chatService.leaveApp(this.user);
     this.router.navigate(['login']);
     this.userService.setUser(null);
-    localStorage.clear();
   }
 
 }

@@ -1,8 +1,9 @@
+const port = process.env.PORT || 5000;
 let app, server, io, running;
 //used for prod initialization and automated testing
 const init = () => {
     app = require('express')();
-    server = app.listen(5000, () => { });
+    server = app.listen(port, () => { });
     io = require('socket.io')(server, { cors: '*' });
     running = true;
     /**

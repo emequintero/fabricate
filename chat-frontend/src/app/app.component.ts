@@ -13,25 +13,29 @@ export class AppComponent implements OnInit{
   title = 'chat-frontend';
   showSidebar:boolean;
   showHeader:boolean;
+  user:User;
   constructor(private chatService: ChatService, private userService: UserService, public router:Router, 
     private activatedRoute:ActivatedRoute){}
   public ngOnInit(): void {
+    this.userService.getUser().subscribe((curUser:User)=>{
+      this.user = curUser;
+      if(!this.user){
+        this.router.navigate(['login']);
+      }
+    });
     //leave showing sidebar to the router
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.showSidebar = this.activatedRoute.firstChild.snapshot.data.showSidebar !== false;
         this.showHeader = this.activatedRoute.firstChild.snapshot.data.showHeader !== false;
         document.body.style.paddingTop = this.showHeader ? '80px' : '0';
-        let user:User = JSON.parse(localStorage.getItem('user'));
-        if(!user){
-          if(this.activatedRoute.firstChild.snapshot.routeConfig.path !== "login"){
-            this.router.navigate(['login']);
-          }
-        }
-        else{
-          this.userService.setUser(new User(user.profilePic, user.username, user.userID, user.role, user.requests));
-        }
       }
     });
+  }
+  @HostListener('window:beforeunload', ['$event'])
+  function() {
+    this.chatService.leaveApp(this.user);
+    this.router.navigate(['login']);
+    this.userService.setUser(null);
   }
 }
