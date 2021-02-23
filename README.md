@@ -34,6 +34,9 @@ npm test
 ## Frontend Testing
 
 ```node
+cd chat-server
+npm install
+npm test
 cd frontend-server
 npm install
 npm install -g angular-cli
