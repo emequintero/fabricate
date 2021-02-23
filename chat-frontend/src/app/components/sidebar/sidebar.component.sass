@@ -5,22 +5,20 @@
     align-items: stretch
     position: relative
 #sidebar
-    min-width: 250px
-    max-width: 250px
-    color: black
-    min-width: 250px
-    max-width: 250px
+    min-width: 330px
+    max-width: 330px
+    color: $text-secondary
     margin-left: 5.1rem
-#sidebar.active 
-    margin-left: -300vw
+    p
+        color: $text-secondary
 nav
     height: calc(100vh - 80px)
 i
     font-size: 32px
 .user:hover
     background-color: $light-grey
-.user.active
-    border-left: 5px $dark-purple solid
+.user.selected
+    border-left: 5px solid $bg-secondary
     background-color: $light-grey
 #content 
     top: 0
@@ -30,31 +28,54 @@ i
     #content-container
         justify-content: flex-start
     button
-        padding: 1.1rem 1.5rem
-#content.active button
-    padding: 2rem 1.7rem !important
-#createRoomBtn i
+        padding: 2rem 1.7rem !important
+#content button:focus, #content.hidden button:focus
+    outline: 2px solid white
+#room-controls 
+    button
+        margin-left: 0.5rem
+    #notificationsBtn, #homeBtn
+        padding: 0.13rem 0.25rem
+    #createRoomBtn
+        padding: .25rem 0 0 .25rem
+    i
         font-size: 28px
+    button:hover
+        background-color: $bg-primary
+        i
+            color: $text-primary
+    #notificationBadge
+        position: relative
+        left: -15px
+        top: -10px
 @media screen and ( max-width:  720px)
     .wrapper
         z-index: 20 !important
         min-width: 100vw !important
         max-height: 5.9rem
     #content
+        top: 8px
         width: 100%
         height: auto
         #content-container
             justify-content: space-around
-    #content.active button
+    #content button
         padding: 2rem 1.5rem !important
+    #content button:focus, #content.hidden button:focus
+        outline: 2px solid white
     #sidebar
         position: absolute
         left: 0
-        top: 6.2rem
+        top: 6.73rem
         min-width: 100vw !important
         margin-left: 0 !important
         height: calc(100vh - 80px - 6.2rem)
-    #sidebar.active
+    #sidebar.hidden
         position: relative
         margin-left: -300vw !important
+@media screen and ( max-width:  385px)
+    .username
+        margin-left: 1.75rem !important
+    .profile-pic
+        display: none !important
             

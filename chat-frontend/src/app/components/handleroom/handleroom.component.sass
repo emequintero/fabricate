@@ -1,0 +1,36 @@
+@import ../../../styles.sass
+.section-content
+    position: relative
+    max-height: calc(85.6vh - 80px) !important
+    min-height: calc(85.6vh - 80px) !important
+    overflow-y: auto
+    .block-action
+        position: absolute
+        bottom: 2rem
+    .user
+        width: 20rem
+        margin: auto
+        background-color: white
+        margin-bottom: 1rem
+        .username
+            color: $text-secondary
+    .user.selected
+        background-color: $btn-secondary
+        .username
+            color: $text-primary
+        .profile-pic
+            background-color: $text-primary
+    .btn-icon
+        color: $text-secondary
+    .btn-icon.approve:hover
+        color: $teal !important
+    .btn-icon.deny:hover
+        color: $red !important
+@media screen and ( max-width:  720px)
+    .section-content
+        max-height: calc(76vh - 80px - 1.5rem) !important
+        min-height: calc(76vh - 80px - 1.5rem) !important
+@media screen and ( max-width:  325px)
+    .user
+        width: 100% !important
+    

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BASE_URL } from 'src/environments/environment';
+import { Request } from '../models/request';
 import { Room } from '../models/room';
 import { User } from '../models/user';
 import { UserService } from './user.service';
@@ -16,10 +17,10 @@ export class ChatService {
     this.socket = io(BASE_URL);
   }
   //join chat
-  join(userData:User):Observable<User>{
-    this.socket.emit('join', userData);
+  joinApp(userData:User):Observable<User>{
+    this.socket.emit('joinApp', userData);
     return new Observable((curUserObserver)=>{
-      this.socket.on('join', curUser=>{
+      this.socket.on('joinApp', curUser=>{
         curUserObserver.next(curUser);
       });
     });
@@ -29,10 +30,14 @@ export class ChatService {
     this.socket.emit('availableUsers');
     return new Observable((availableUsersObserver)=>{
       this.socket.on('availableUsers', users=>{
-        var curUser = this.userService.getUser().value;
-        let availableUsers = users.filter(user=>{
-          return user.username !== curUser.username;
-        });
+        let curUser = this.userService.getUser().value;
+        let availableUsers = users;
+        //if user is logged in filter them out from availableUsers
+        if(curUser){
+          availableUsers = users.filter(user=>{
+            return user.username !== curUser.username;
+          });
+        }
         availableUsersObserver.next(availableUsers);
       })
     });
@@ -44,8 +49,31 @@ export class ChatService {
       selectedRoom: room
     });
     return new Observable((roomObserver)=>{
-      this.socket.on('roomData', roomData=>{
-        roomObserver.next(roomData);
+      this.socket.on('selectedRoom', selectedRoomData=>{
+        roomObserver.next(selectedRoomData);
+      })
+    });
+  }
+  //leave room
+  leaveRoom(userLeaving:User, selectedRoom:Room){
+    this.socket.emit('leaveRoom', {
+      userLeaving: userLeaving,
+      selectedRoom: selectedRoom
+    });
+  }
+  //watch users in room
+  watchRoomUsers(){
+    return new Observable((roomUsersObserver)=>{
+      this.socket.on('updatedRoomUsers', roomUsersData=>{
+        roomUsersObserver.next(roomUsersData);
+      })
+    });
+  }
+  //watch rooms for current user
+  watchCurUserRooms(){
+    return new Observable((curUserRoomsObserver)=>{
+      this.socket.on('updatedCurUserRooms', curUserRoomsData=>{
+        curUserRoomsObserver.next(curUserRoomsData);
       })
     });
   }
@@ -53,9 +81,49 @@ export class ChatService {
   sendMessage(room:Room){
     this.socket.emit('sendMessage', room);
   }
-  //TODO: leave room (delete room data)
+  watchMessages(){
+    return new Observable((msgObserver)=>{
+      this.socket.on('newMsg', selectedRoomMsgs=>{
+        msgObserver.next(selectedRoomMsgs);
+      });
+    });
+  }
+  sendRequest(userFrom:User, userTo:User, selectedRoom:Room){
+    this.socket.emit('newRequest', {
+      userFrom: userFrom,
+      userTo: userTo,
+      selectedRoom: selectedRoom
+    });
+  }
+  watchRequests(){
+    return new Observable((requestObserver)=>{
+      this.socket.on('roomRequest', curUserRequests=>{
+        requestObserver.next(curUserRequests);
+      });
+    });
+  }
+  updateRequest(request:Request, curUser:User, operation:string){
+    this.socket.emit('updateRequest', {
+      request: request,
+      curUser: curUser, 
+      operation: operation
+    });
+  }
+  userIsTyping(username:string, roomID:string){
+    this.socket.emit('userIsTyping', {
+      username: username,
+      roomID: roomID
+    });
+  }
+  watchForUsersTyping(){
+    return new Observable((typingObserver)=>{
+      this.socket.on('userIsTyping', typingData=>{
+        typingObserver.next(typingData);
+      });
+    });
+  }
   //leave chat
-  leave(userData:User){
-    this.socket.emit('leave', userData);
+  leaveApp(userData:User){
+    this.socket.emit('leaveApp', userData);
   }
 }

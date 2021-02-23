@@ -1,41 +1,101 @@
 <div class="display">
     <div *ngIf="selectedRoom; then showChat"></div>
     <ng-template #showChat>
-        <div class="section-header">
-            <span class="profile-pic"
-            style="background-image: url({{headerUser.profilePic.src}});">
-                <span class="fa fa-check"></span>
-            </span>
-            <span class="username ml-5 h3">
-                <span class="font-weight-light">{{headerUser.username}}</span>
-            </span>
-        </div>
-        <div class="section-content">
-            <div *ngFor="let message of selectedRoom.messages; let i = index" 
-            class="w-100 d-flex justify-content-start p-3"
-            [ngClass]="{'userGroupMsg':isNextMsgSameUser(message, selectedRoom.messages[i+1]), 
-            'curUserMsg':message.sentBy.username === curUser.username}">
-                <span class="profile-pic" 
-                *ngIf="message.sentBy.username !== curUser.username"
-                style="background-image: url({{message.sentBy.profilePic.src}});">
-                    <span class="fa fa-check"></span>
-                </span>
-                <span class="message" 
-                [ngClass]="{'curUserMsg':message.sentBy.username === curUser.username}">
-                    <div class="username">
-                        <span class="font-weight-bold">{{message.sentBy.username}}</span>
-                        <span>{{message.dateSent | date: determineDateFormat(message.dateSent)}}</span>
-                    </div>
-                    <p>{{message.content}}</p>
-                </span>
+        <div tabindex="0" class="section-header">
+            <div *ngIf="headerUsers.length; then showHeaderUsers"></div>
+            <ng-template #showHeaderUsers>
+                <div *ngFor="let headerUser of headerUsers; let i = index"
+                    class="d-flex justify-content-around align-items-center">
+                    <span *ngIf="i === 0" class="profile-pic mr-3" style="background-image: url({{headerUser.profilePic.src}});">
+                        <span class="fa fa-check"></span>
+                    </span>
+                    <span *ngIf="i === 0" class="username h3 text-truncate">
+                        <span class="font-weight-light">{{headerUser.username}}</span>
+                        <span *ngIf="i === 0 && headerUsers.length > 2" class="font-weight-light">
+                            , <span class="font-weight-light">{{headerUsers[i+1].username}}</span>
+                        </span>
+                        <span *ngIf="i === 0 && headerUsers.length === 2" class="font-weight-light">
+                            and <span class="font-weight-light">{{headerUsers[i+1].username}}</span>
+                        </span>
+                        <span *ngIf="headerUsers.length > 2 && i === 0">
+                            <span class="font-weight-light h3">, +{{headerUsers.length - 2}} Other(s)</span>
+                        </span>
+                    </span>
+                </div>
+                <div id="roomControls" class="ml-auto">
+                    <span tabindex="0" (click)="addUser()" class="btn btn-icon fa fa-plus-circle approve"></span>
+                    <span tabindex="0" (click)="leaveRoom()" class="btn btn-icon fa fa-sign-out deny"></span>
+                </div>
+            </ng-template>
+            <div *ngIf="!headerUsers.length">
+                <div id="noUsers" class="d-flex justify-content-around align-items-center">
+                    <span tabindex="0" class="h3 text-warning font-weight-normal">No others in room</span>
+                </div>
             </div>
+        </div>
+        <div tabindex="0" class="section-content">
+            <span *ngFor="let message of selectedRoom.messages; let i = index">
+                <div *ngIf="message.sentBy.role === 'user'"
+                class="w-100 d-flex justify-content-start p-3" 
+                [ngClass]="{'userGroupMsg':isNextMsgSameUser(message, selectedRoom.messages[i+1]), 
+                'curUserMsg':message.sentBy.userID === curUser.userID}">
+                    <span class="profile-pic" *ngIf="message.sentBy.userID !== curUser.userID"
+                        style="background-image: url({{message.sentBy.profilePic.src}});">
+                        <span class="fa fa-check"></span>
+                    </span>
+                    <span class="message" [tabindex]="0" 
+                    [attr.id]="isLastMsg(message)"
+                    [ngClass]="{'curUserMsg':message.sentBy.userID === curUser.userID}">
+                        <div class="username">
+                            <span class="font-weight-bold">{{message.sentBy.username}}</span>
+                            <span>{{message.dateSent | date: determineDateFormat(message.dateSent)}}</span>
+                        </div>
+                        <p class="m-0 p-0">{{message.content}}</p>
+                    </span>
+                </div>
+                <div *ngIf="message.sentBy.role === 'system'">
+                    <span class="w-100 d-flex justify-content-center flex-column my-3">
+                        <h5 class="text-primary font-weight-light text-center system-message mx-auto"
+                        [tabindex]="0"
+                        [attr.id]="isLastMsg(message)">{{message.content}}</h5>
+                        <hr class="text-primary my-1">
+                    </span>
+                </div>
+            </span>
+            <span class="w-100 typingMsg" *ngIf="typingMessage && headerUsers.length">
+                <h5 class="text-primary text-center system-message font-weight-light mx-auto"
+                tabindex="0"
+                id="typingMessage">{{typingMessage}} is typing a message...</h5>
+            </span>
+            <span class="w-100" *ngIf="!headerUsers.length">
+                <span class="d-flex justify-content-center w-100 px-5 alert-container">
+                    <span id="allUsersLeftAlert" class="alert alert-primary fade show bg-error px-3 py-3" role="alert" tabindex="0">
+                        <h4 class="alert-header font-weight-normal">All users have left the room.</h4>
+                        <p class="m-0 p-0"><a routerLink="/home" class="btn-link">Return to home page</a> or <a routerLink="/handle-room/create" class="btn-link">Create a new room</a>.</p>
+                    </span>
+                </span>
+            </span>
+            <span class="w-100" *ngIf="duplicateRoom && headerUsers.length">
+                <span class="d-flex justify-content-center w-100 px-5 alert-container">
+                    <span id="duplicateRoomAlert" class="alert alert-primary fade show bg-error px-3 py-3" role="alert" tabindex="0">
+                        <h4 class="alert-header font-weight-normal">Same users in another room.</h4>
+                        <p class="m-0 p-0"><a (click)="keepDuplicateRoom()" class="btn-link">Keep this room</a> or <a (click)="leaveRoom()" class="btn-link">Leave this room</a>.</p>
+                    </span>
+                </span>
+            </span>
         </div>
         <div class="section-footer">
             <div class="footer-content form-group">
-                <input type="text" [(ngModel)]="messageContent" class="form-control rounded-0" 
-                (keydown.enter)="sendMessage()">
-                <button class="btn btn-block bg-purple text-light rounded-0" [disabled]="!messageContent.length" 
-                (click)="sendMessage()">SEND</button>
+                <span class="element-wrapper">
+                    <input type="text" [(ngModel)]="messageContent" class="form-control rounded-0" 
+                    placeholder="Type a message"
+                    (keydown)="userIsTyping()" (keydown.enter)="sendMessage()" [disabled]="allControlsDisabled()">
+                    <div *ngIf="!isFormValid" class="error-message top">
+                        Form is invalid
+                    </div>
+                </span>
+                <button class="btn btn-block btn-primary text-light rounded-0" [disabled]="allControlsDisabled() || !messageContent.length"
+                    (click)="sendMessage()">SEND</button>
             </div>
         </div>
     </ng-template>

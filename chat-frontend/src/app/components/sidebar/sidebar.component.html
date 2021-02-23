@@ -1,39 +1,62 @@
-<div class="wrapper">
-    <div id="content" [ngClass]="{'active':!sideBarHidden}">
-        <div class="bg-dark-purple h-100 d-flex p-0 flex-column" id="content-container">
-            <button type="button" id="chatBtn" class="btn btn-block rounded-0"
-                [ngClass]="sideBarHidden ? 'btn-info' : 'btn-danger p-4 text-light'" (click)="toggleSideBar()">
-                <i [ngClass]="sideBarHidden ? 'fa fa-comment' : 'fa fa-close'"></i>
-                <span class="d-block mt-1" *ngIf="sideBarHidden">Chat</span>
+<div #sideBar class="wrapper">
+    <div id="content" [ngClass]="{'hidden':!sideBarHidden}">
+        <div class="bg-dark h-100 d-flex p-0 flex-column" id="content-container">
+            <button type="button" id="chatBtn" class="btn btn-block rounded-0 p-4 text-light"
+                [ngClass]="sideBarHidden ? 'btn-secondary' : 'btn-danger'" (click)="toggleSideBar()">
+                <i [ngClass]="sideBarHidden ? 'fa fa-bars' : 'fa fa-close'"></i>
             </button>
         </div>
     </div>
-    <nav id="sidebar" [ngClass]="{'active':sideBarHidden}" class="bg-light p-4 d-flex flex-column"
-        [ngStyle]="{'z-index': sideBarHidden ? '0' : '1000'}">
+    <nav id="sidebar" *ngIf="!sideBarHidden" 
+    [ngClass]="{'shadow':!sideBarHidden}" class="bg-light p-4 d-flex flex-column"
+        [ngStyle]="{'z-index': sideBarHidden ? '0' : '1000'}"
+        tabindex="0">
         <div class="sidebar-header d-flex justify-content-between">
-            <h4 class="font-weight-normal text-purple">Chats</h4>
+            <h3 class="font-weight-normal text-secondary m-0">Chats</h3>
             <div id="room-controls">
+                <button type="button" id="notificationsBtn" 
+                class="btn btn-outline-dark border-0 text-secondary rounded-sm"
+                (click)="showNotifications()">
+                    <i class="fa fa-bell-o"></i>
+                </button>
+                <span *ngIf="curUser.requests?.length" class="badge badge-danger" id="notificationBadge">{{curUser.requests.length}}</span>
                 <button type="button" id="createRoomBtn" 
-                class="btn btn-outline-dark border-0 pl-1 pt-1 pb-0 pr-0 text-purple rounded-sm"
+                class="btn btn-outline-dark border-0 text-secondary rounded-sm"
                 (click)="createRoom()">
                     <i class="fa fa-pencil-square-o"></i>
+                </button>
+                <button type="button" id="homeBtn" class="btn btn-outline-dark border-0 text-secondary rounded-sm"
+                (click)="sendHome()">
+                    <i class="fa fa-home"></i>
                 </button>
             </div>
         </div>
         <hr class="mb-3">
-        <ul class="list-unstyled components" *ngIf="!sideBarHidden">
-            <li *ngFor="let room of availableRooms" (click)="enterRoom(room.users)"
-                [ngClass]="{'active': isRoomSelected(room.users)}" class="btn py-3 px-0 m-0 user w-100" tabindex="0">
+        <ul class="list-unstyled components" *ngIf="!sideBarHidden && formattedRoomsCurUser?.length">
+            <li *ngFor="let room of formattedRoomsCurUser" (click)="enterRoom(room)"
+                [ngClass]="{'selected': isRoomSelected(room.roomID)}" class="btn py-3 px-0 m-0 user w-100" tabindex="0">
                 <div class="row align-items-center">
-                    <!-- <div class="col-md-4 col-sm-2">
-                        <span class="profile-pic" style="background-image: url({{user.profilePic.src}});">
+                    <div *ngFor="let headerUser of room.headerUsers; let i = index" class="d-flex justify-content-around align-items-center">
+                        <!-- only display first user for each room and shorthand version of any remainder users in room (e.g., +1) -->
+                        <span *ngIf="i === 0" class="profile-pic ml-4"
+                        style="background-image: url({{headerUser.profilePic.src}});">
                             <span class="fa fa-check"></span>
                         </span>
-                    </div> -->
-                    <div class="col-md-8 col-sm-10" *ngFor="let user of room.users">
-                        <p class="font-weight-light h4">{{user.username}}</p>
+                        <span *ngIf="i === 0" class="username label ml-3">
+                            <span *ngIf="i > 0 && room.headerUsers.length > 1" class="font-weight-light mx-1">,</span>
+                            <span *ngIf="i > 0 && room.headerUsers.length === 1" class="font-weight-light mx-2">and</span>
+                            <span class="font-weight-normal">{{headerUser.username}}</span>
+                            <span *ngIf="room.headerUsers.length > 1">
+                                <span class="font-weight-normal label">, +{{room.headerUsers.length - 1}} Other(s)</span>
+                            </span>
+                        </span>
                     </div>
                 </div>
+            </li>
+        </ul>
+        <ul class="list-unstyled components" *ngIf="!sideBarHidden && !formattedRoomsCurUser?.length">
+            <li class="btn px-0 m-0 user w-100 text-left">
+                <p tabindex="0" class="m-0 p-0">No rooms available</p>
             </li>
         </ul>
     </nav>

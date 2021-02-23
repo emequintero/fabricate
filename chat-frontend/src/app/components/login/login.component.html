@@ -1,29 +1,50 @@
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-xs-12">
-            <h2 class="text-purple">Welcome, lets Chat!</h2>
-        </div>
+<div class="display">
+    <div class="d-flex justify-content-center mb-3">
+        <h2 id="loginHeader" class="text-primary text-center" tabindex="0">Welcome to Fabricate, lets Chat!</h2>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8 col-xs-12">
-            <div id="loginPage" class="mt-4 d-flex justify-content-center">
-                <div class="form-group text-center mt-4">
-                    <label for="usernameInput" class="h4">
-                        <strong>Enter a display name</strong>
+    <div class="d-flex justify-content-center">
+        <div id="loginPage" class="mt-4 d-flex justify-content-center bg-secondary" tabindex="0">
+            <div class="form-group mt-4">
+                <span class="element-wrapper">
+                    <label for="usernameInput" class="font-weight-normal ml-3">
+                        Enter a display name
                     </label>
-                    <input id="usernameInput" type="text" class="form-control mx-auto" [(ngModel)]="username" placeholder="Enter a username">
-                    <p id="profilePicNote" class="h4">
-                        <strong>Select a profile picture</strong>
-                    </p>
-                    <span *ngFor="let image of images" aria-describedby="profilePicNote" 
-                    (click)="setProfilePic(image)">
-                        <img src="{{image.src}}" alt="{{image.description}}" class="btn p-0 mx-3" tabindex="0" 
-                        [ngClass]="{'active':selectedProfilePic?.src === image.src}">
-                    </span>
-                    <button class="btn btn-success d-block mx-auto" 
-                    [disabled]="!username.length || !selectedProfilePic"
-                    (click)="submitUser()">Enter Chat!</button>
+                    <input id="usernameInput" type="text" class="form-control mx-auto" 
+                    [ngClass]="{'unavailable': username.length && isUsernameUnavailable, 'available': username.length && !isUsernameUnavailable}"
+                    [(ngModel)]="username" placeholder="Enter a username" (keydown)="checkAvailability()" required>
+                    <div *ngIf="username.length && isUsernameUnavailable" class="error-message bottom" tabindex="0">
+                        Username not available
+                    </div>
+                </span>
+                <label for="profilePicSelection" class="font-weight-normal ml-3">
+                    Select a profile picture
+                </label>
+                <div id="profilePicSelection" class="carousel slide" data-interval="false">
+                    <a class="carousel-control-prev" href="#profilePicSelection" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <div class="carousel-inner">
+                        <div *ngFor="let image of images; let i = index" class="carousel-item text-center" 
+                        [ngClass]="{'active':i===0}">
+                            <input (click)="setProfilePic(image)" src="{{image.src}}" alt="{{image.description}}"
+                            type="image" class="btn rounded-circle p-0"
+                            [ngClass]="{'selected':selectedProfilePic?.src === image.src}">
+                        </div>
+                    </div>
+                    <a class="carousel-control-next" href="#profilePicSelection" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
                 </div>
+                <span class="element-wrapper">
+                    <button class="btn btn-primary d-block mx-auto mb-3" 
+                    [disabled]="!username.length || !selectedProfilePic || isUsernameUnavailable || !isFormValid"
+                    (click)="submitUser()">Enter Chat!</button>
+                    <div *ngIf="!isFormValid" class="error-message top" tabindex="0">
+                        Form is not valid
+                    </div>
+                </span>
             </div>
         </div>
     </div>

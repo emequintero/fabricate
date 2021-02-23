@@ -1,0 +1,33 @@
+<div class="display">
+    <div class="section-header pt-0 pb-2">
+        <div id="notificationsControls">
+            <button type="button" class="btn btn-icon border-0 rounded-sm" (click)="back()">
+                <span class="fa fa-arrow-circle-left approve"></span>
+            </button>
+        </div>
+        <h3 tabindex="0" class="font-weight-normal text-primary m-0">Chat Requests</h3>
+    </div>
+    <div class="section-content pt-3" *ngIf="curUser && curUser.requests?.length">
+        <div *ngFor="let request of curUser.requests"
+            class="d-flex align-items-center justify-content-between py-4 px-3 rounded-lg request"
+            tabindex="0">
+            <span class="request-info">
+                <span *ngIf="request.room.users.length === 2" class="profile-pic mr-3" 
+                style="background-image: url({{request.sentBy.profilePic.src}});">
+                    <span class="fa fa-check"></span>
+                </span>
+                <span class="font-weight-normal label username">{{request.sentBy.username}}</span>
+                <span *ngIf="request.room.users.length > 2">
+                    <span class="font-weight-normal label username">, +{{request.room.users.length - 2}} Other(s)</span>
+                </span>
+            </span>
+            <span class="request-controls">
+                <span tabindex="0" (click)="handleRequest(request, 'accepted')" class="btn btn-icon fa fa-check-circle approve"></span>
+                <span tabindex="0" (click)="handleRequest(request, 'denied')" class=" btn btn-icon fa fa-times-circle deny"></span>
+            </span>
+        </div>
+    </div>
+    <div class="section-content" *ngIf="!curUser?.requests?.length">
+        <p tabindex="0">No requests found</p>
+    </div>
+</div>

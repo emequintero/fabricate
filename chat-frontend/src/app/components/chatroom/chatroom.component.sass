@@ -3,7 +3,20 @@
     .section-header
         padding-top: 0.5rem
         padding-bottom: 1rem
+        .username
+            color: $text-primary
+            white-space: nowrap
+            max-width: 25vw
     .section-content
+        position: relative
+        .typingMsg
+            position: absolute
+            bottom: auto
+        .alert 
+            a, p
+                font-size: 16px
+            a
+                cursor: pointer
         .userGroupMsg
             padding-bottom: 0 !important
         .userGroupMsg~div
@@ -13,7 +26,7 @@
         .message
             margin-left: 1.5rem!important
             padding: .5rem!important
-            width: 50%!important
+            width: 35%!important
             border-radius: .25rem!important
             background-color: white
             .username
@@ -21,10 +34,44 @@
                 display: inline-flex
                 justify-content: space-between
                 width: 100%
-                color: $purple
+                color: $text-secondary
+            .username span:first-of-type
+                color: $brand-primary
             p
                 overflow-wrap: break-word
+                color: $text-secondary
+                font-size: 16px !important
         .message.curUserMsg
-            background-color: $purple
-        .message.curUserMsg, .message.curUserMsg .username
-            color: white
+            background-color: $bg-primary
+        .message.curUserMsg, .message.curUserMsg .username span, .message.curUserMsg p
+            color: $text-primary
+        .system-message
+            line-height: 1.5
+            width: fit-content
+        hr
+            border-color: rgba(white, 0.1)
+            min-width: 300px
+            margin: auto
+@media screen and ( max-width: 720px)
+    .display .section-content .message
+        width: 50%!important
+    .section-header
+        display: flex
+        flex-direction: column
+    .section-content
+        max-height: calc(70vh - 80px - 5rem) !important
+        min-height: calc(70vh - 80px - 5rem) !important
+    .username
+        text-align: center !important
+        white-space: normal !important
+        max-width: 100% !important
+        width: 100% !important
+    .profile-pic
+        display: none !important
+    #roomControls
+        display: flex
+        margin: 0 !important
+        justify-content: center
+    #noUsers
+        margin-top: 1.5rem
+        margin-bottom: 1.5rem

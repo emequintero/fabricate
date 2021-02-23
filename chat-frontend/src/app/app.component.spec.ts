@@ -1,12 +1,50 @@
 import { TestBed } from '@angular/core/testing';
+import { Routes } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { ChatroomModule } from './components/chatroom/chatroom.module';
+import { HandleroomModule } from './components/handleroom/handleroom.module';
+import { HeaderComponent } from './components/header/header.component';
+import { HomeModule } from './components/home/home.module';
+import { LoginModule } from './components/login/login.module';
+import { NotificationsModule } from './components/notifications/notifications.module';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 describe('AppComponent', () => {
+  const routes: Routes = [
+    { path: '', redirectTo: '/login', pathMatch: 'full'},
+    {
+      path: 'login',
+      loadChildren: () => LoginModule,
+      data: {showSidebar: false}
+    },
+    {
+      path: 'home',
+      loadChildren: () => HomeModule
+    },
+    {
+      path: 'handle-room/:mode',
+      loadChildren: () => HandleroomModule
+    },
+    {
+      path: 'chat-room',
+      loadChildren: () => ChatroomModule
+    },
+    {
+      path: 'notifications',
+      loadChildren: () => NotificationsModule
+    }
+  ];
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [
-        AppComponent
+        AppComponent,
+        HeaderComponent,
+        SidebarComponent
       ],
+      imports: [
+        RouterTestingModule.withRoutes(routes)
+      ]
     }).compileComponents();
   });
 
@@ -22,10 +60,13 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('chat-frontend');
   });
 
-  it('should render title', () => {
+  it('should redirect to login if user is not logged in', ()=>{
     const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('chat-frontend app is running!');
+    const app = fixture.componentInstance;
+    let navigateSpy = spyOn(app.router, 'navigate');
+    app.ngOnInit();
+    if(!app.user){
+      expect(navigateSpy).toHaveBeenCalledWith(['login']);
+    }
   });
 });
