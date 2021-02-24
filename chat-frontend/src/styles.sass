@@ -31,12 +31,11 @@ $btn-secondary-hover: #2A8BB7
     box-sizing: border-box
 body
     width: 100vw
-    height: 100vh
+    height: calc(100vh - 80px)
     margin: 0
     padding: 0
     padding-top: 80px
     background-color: $bg-primary
-    overflow: hidden
 .element-wrapper
     position: relative
 .error-message
@@ -53,10 +52,12 @@ body
     pointer-events: none
 .display
     position: absolute
-    min-height: calc(100vh - 80px)
-    width: 100%
+    min-height: calc(100% - 85px)
+    max-height: calc(100% - 85px)
+    width: calc(100% - 85px)
     padding: 0 10rem
-    left: 3rem
+    left: 85px
+    top: 85px
     background-color: $bg-secondary
     .section-content, .section-footer .footer-content
         color: $text-primary
@@ -68,19 +69,19 @@ body
         align-items: center
         justify-content: flex-start
         width: 100% !important
-        margin-top: 1rem
+        height: 75px
+        padding-top: 1rem
         padding-left: 1rem
         padding-right: 1rem
     .section-content
         top: 0
-        max-height: calc(76vh - 80px)
-        min-height: calc(76vh - 80px)
         overflow-y: auto
         max-width: 100%
     .section-footer
         min-width: calc(100% - 20rem)
         position: absolute
         bottom: 0
+        height: 77px
 .section-content p, li p
     font-size: 24px
     margin-top: 1.5rem
@@ -170,14 +171,16 @@ hr
 @media screen and ( max-width:  720px)
     .display
         left: 0
+        top: 179px
         padding: 0
-        margin-top: 5rem
-        min-height: calc(100vh - 5rem - 80px)
-        .section-header
-            margin-top: 1.75rem
+        margin-top: 0
+        min-height: calc(100vh - 179px)
+        max-height: calc(100vh - 179px)
+        width: 100vw
         .section-content
-            max-height: calc(76vh - 80px - 5rem)
-            min-height: calc(76vh - 80px - 5rem)
+            max-height: calc(100vh - 346px)
+            min-height: calc(100vh - 346px)
+            overflow-y: scroll !important
         .section-footer
             min-width: 100% !important
 

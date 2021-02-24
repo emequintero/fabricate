@@ -37,9 +37,9 @@
         <p tabindex="0" *ngIf="mode==='add'">All available users added to room</p>
     </div>
     <div class="section-footer">
-        <div class="footer-content form-group">
+        <div class="footer-content form-group h-100">
             <span class="element-wrapper">
-                <button class="btn btn-block btn-primary text-light rounded-0" (click)="submit()" 
+                <button class="btn btn-block btn-primary text-light rounded-0 h-100" (click)="submit()" 
                 [disabled]="handleDisableSubmit()">DONE</button>
                 <div *ngIf="!isFormValid" class="error-message top">
                     Form is invalid
