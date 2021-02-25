@@ -6,7 +6,7 @@ export const environment = {
   production: false
 };
 
-export const BASE_URL = 'http://ec2-18-217-164-221.us-east-2.compute.amazonaws.com:5000';
+export const BASE_URL = 'http://localhost:5000';
 
 /*
  * For easier debugging in development mode, you can import the following file
