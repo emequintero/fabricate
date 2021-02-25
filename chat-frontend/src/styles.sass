@@ -5,28 +5,32 @@ $light-grey: #dbd9d6
 $purple: #4A37BC
 $dark-purple: #313748
 $teal: #41a6d3
-$red: #e31c3d
+$red: #D01C1FFF
 $green: #147453
 $light-blue: #ebf2ff
 $yellow: #ffae40
 
-$brand-primary: #6958ce !important
+$brand-primary: #184A45FF !important
 $brand-error: $red !important
-$brand-secondary: $light-blue!important
-$bg-primary: #6958ce !important
-$bg-secondary: #2d303a !important
-$bg-dark: #1e1e25 !important
+$brand-secondary: #FC766AFF!important
+$brand-light: white !important
+$bg-primary: #184A45FF !important
+$bg-secondary: #1e1e25 !important
+$bg-dark: #343148FF !important 
 $bg-menu: white
 $text-primary: white !important
-$text-secondary: #34415e !important
-$text-menu: #34415e
+$text-secondary: black !important
+$text-light: white
+$text-menu: #1e1e25
 $text-danger: $red !important
-$text-warning: #3fefef !important
-$btn-primary: #6958ce !important
-$btn-primary-disabled:#474c74
-$btn-primary-hover: #7e70cc
-$btn-secondary: $teal
-$btn-secondary-hover: #2A8BB7
+$text-warning: $red !important
+$btn-primary: #00539CFF !important
+$btn-primary-disabled:#5c6268
+$btn-primary-hover: #144672
+$btn-secondary: #FC766AFF
+$btn-secondary-hover: #a8635d
+$btn-secondary-disabled: white
+$btn-icon-hover: #036bc7 !important
 *
     box-sizing: border-box
 body
@@ -90,15 +94,12 @@ body
     padding-right: 50px
 .label.username, .username .label
     font-size: 24px
+.btn-icon:hover
+    color: $btn-icon-hover
+    transition: all .25s ease-in-out
 .btn-icon
     color: $text-primary
     font-size: 32px
-.btn-icon.approve:hover
-    color: $teal !important
-    transition: all .25s ease-in-out
-.btn-icon.deny:hover
-    color: $red !important
-    transition: all .25s ease-in-out
 .h3.no-results
     line-height: 1.4
 .w-full-screen
@@ -140,6 +141,8 @@ body
     color: $text-warning
 .text-menu
     color: $text-menu !important
+.text-light
+    color: $text-light !important
 .profile-pic
     position: relative
     margin-left: 15px

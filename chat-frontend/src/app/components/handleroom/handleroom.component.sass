@@ -20,12 +20,12 @@
             color: $text-primary
         .profile-pic
             background-color: $text-primary
-    .btn-icon
-        color: $text-secondary
-    .btn-icon.approve:hover
-        color: $teal !important
-    .btn-icon.deny:hover
-        color: $red !important
+    .user .btn-icon:hover, .user.selected .btn-icon:hover
+        color: $btn-icon-hover
+    .user .btn-icon
+        color: black !important
+    .user.selected .btn-icon
+        color: white !important
 @media screen and ( max-width:  720px)
     .section-content
         max-height: calc(100vh - 331px) !important

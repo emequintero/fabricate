@@ -11,7 +11,7 @@ h2
 #loginHeaderContainer
     height: 120px
 #loginPage
-    color: $text-primary
+    color: $text-light
     padding-top: 1vh
     width: 380px
     label
@@ -24,14 +24,17 @@ h2
         height: 80px
         width: 80px
         border-radius: 50%
-        border: 5px solid $brand-secondary
-        background-color: $light-purple
+        border: 5px solid $btn-secondary-disabled
+        background-color: $brand-light
     input[type="image"]:hover
         opacity: 0.8
         transition: all .25s ease-in-out
     input[type="image"].selected
+        outline: 1px white
         border: 5px solid $btn-secondary !important
         background-color: $btn-secondary !important
+    input[type="image"]:focus
+        box-shadow: 0 0 0 0.1rem #ffffff !important
     .form-group
         span, input
             margin-bottom: 6vh
@@ -42,6 +45,8 @@ h2
             padding: 1vh 4vw 1vh 4vw
         input[type="text"], button
             width: 95%
+    .carousel-item
+        height: 125px
 .error-message
     width: 22rem
     left: -3rem

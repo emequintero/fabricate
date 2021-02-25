@@ -24,7 +24,7 @@
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="sr-only">Previous</span>
                     </a>
-                    <div class="carousel-inner">
+                    <div class="carousel-inner pt-1">
                         <div *ngFor="let image of images; let i = index" class="carousel-item text-center" 
                         [ngClass]="{'active':i===0}">
                             <input (click)="setProfilePic(image)" src="{{image.src}}" alt="{{image.description}}"
