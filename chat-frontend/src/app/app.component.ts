@@ -20,7 +20,14 @@ export class AppComponent implements OnInit, OnDestroy{
     private activatedRoute:ActivatedRoute){}
   ngOnDestroy(): void {
     this.curUserSub.unsubscribe();
-    this.chatService.leaveApp(this.user);
+  }
+  @HostListener('window:unload', ['$event'])
+  regularLeave() {
+    this.leaveApp();
+  }
+  @HostListener('window:pagehide', ['$event'])
+  iosLeave() {
+    this.leaveApp();
   }
   public ngOnInit(): void {
     this.curUserSub = this.userService.getUser().subscribe((curUser:User)=>{
@@ -38,8 +45,7 @@ export class AppComponent implements OnInit, OnDestroy{
       }
     });
   }
-  @HostListener('window:beforeunload', ['$event'])
-  function() {
+  leaveApp(){
     this.chatService.leaveApp(this.user);
     this.router.navigate(['login']);
     this.userService.setUser(null);
