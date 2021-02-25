@@ -1,5 +1,6 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { User } from './models/user';
 import { ChatService } from './services/chat.service';
 import { UserService } from './services/user.service';
@@ -9,15 +10,20 @@ import { UserService } from './services/user.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit, OnDestroy{
   title = 'chat-frontend';
   showSidebar:boolean;
   showHeader:boolean;
   user:User;
+  curUserSub = new Subscription();
   constructor(private chatService: ChatService, private userService: UserService, public router:Router, 
     private activatedRoute:ActivatedRoute){}
+  ngOnDestroy(): void {
+    this.curUserSub.unsubscribe();
+    this.chatService.leaveApp(this.user);
+  }
   public ngOnInit(): void {
-    this.userService.getUser().subscribe((curUser:User)=>{
+    this.curUserSub = this.userService.getUser().subscribe((curUser:User)=>{
       this.user = curUser;
       if(!this.user){
         this.router.navigate(['login']);
