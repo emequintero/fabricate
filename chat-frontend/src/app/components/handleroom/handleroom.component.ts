@@ -149,17 +149,21 @@ export class HandleroomComponent implements OnInit, OnDestroy{
     //reset form error message
     if(!this.isFormValid)
       this.isFormValid = true;
+    if(this.duplicateRoom)
+        this.duplicateRoom = false;
     if(op === 'add'){
       this.selectedUsers.push(user);
     }
     else if(op === 'remove'){
       this.selectedUsers.splice(this.selectedUsers.indexOf(user), 1);
     }
-    this.duplicateRoom = this.roomsCurUser.some((room:Room)=>{
+    this.duplicateRoom = this.roomsCurUser.find((room:Room)=>{
       let roomUserIDs = room.users.map((user:User)=>{return user.userID});
       let selectedUserIDs = this.selectedUsers.map((user:User)=>{return user.userID});
-      return JSON.stringify(roomUserIDs.sort()) !== JSON.stringify(selectedUserIDs.sort());
-    });
+      selectedUserIDs.push(this.curUser.userID);
+      console.log(roomUserIDs.sort(), selectedUserIDs.sort())
+      return JSON.stringify(roomUserIDs.sort()) === JSON.stringify(selectedUserIDs.sort());
+    }) !== undefined;
   }
 
   public handleDisableSubmit(){

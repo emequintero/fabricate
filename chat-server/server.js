@@ -223,6 +223,27 @@ const init = () => {
                     //handle leaving each room
                     handleLeaveRoom(selectedRoom, userData, socket);
                 });
+                availableUsers.forEach(user=>{
+                    user.requests.forEach(request=>{
+                        let foundUserLeaving = request.room.users.find(userInRequest=>{return userInRequest.userID === userData.userID;});
+                        if(foundUserLeaving){
+                            //remove user leaving from room
+                            request.room.users.splice(request.room.users.indexOf(foundUserLeaving), 1);
+                        }
+                        //replace sentBy if user who sent left
+                        if(request.sentBy.username === userData.username){
+                            let nonCurUser = request.room.users.find(userInRequest=>{return userInRequest.userID !== user.userID;});
+                            if(nonCurUser){
+                                request.sentBy = Object.assign({}, nonCurUser);
+                            }
+                        }
+                        if(request.room.users.length === 1){
+                            //remove request if no other users in it
+                            user.requests.splice(user.requests.indexOf(request), 1);
+                        }
+                    });
+                    io.to(user.userID).emit('roomRequest', user.requests);
+                });
                 //remove from available users
                 let userToRemove = availableUsers.find(user => { return user.username === userData.username; });
                 availableUsers.splice(availableUsers.indexOf(userToRemove), 1);
