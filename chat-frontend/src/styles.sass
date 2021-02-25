@@ -13,6 +13,7 @@ $yellow: #ffae40
 $brand-primary: #184A45FF !important
 $brand-error: $red !important
 $brand-secondary: #FC766AFF!important
+$brand-accent: #00539CFF !important
 $brand-light: white !important
 $bg-primary: #184A45FF !important
 $bg-secondary: #1e1e25 !important
@@ -49,7 +50,7 @@ body
     color: $red
     left: -10rem
 .error-message.bottom
-    bottom: 2.5rem
+    bottom: 2.3rem
 .error-message.top
     top: -2rem
 .disabled
@@ -152,7 +153,7 @@ body
     background-repeat: no-repeat
     background-position: center
     background-size: 100%
-    background-color: $light-purple
+    background-color: $brand-accent
     display: block
     span
         position: absolute
@@ -171,6 +172,9 @@ hr
     min-width: 100%
 .btn.text-primary:hover
     color: white
+@media screen and ( max-height:  640px)
+    .error-message.bottom
+        bottom: 2rem
 @media screen and ( max-width:  720px)
     .display
         left: 0
@@ -183,7 +187,7 @@ hr
         .section-content
             max-height: calc(100vh - 346px)
             min-height: calc(100vh - 346px)
-            overflow-y: scroll !important
+            overflow-y: auto !important
         .section-footer
             min-width: 100% !important
 
