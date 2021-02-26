@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { BASE_URL } from 'src/environments/environment';
 import { Request } from '../models/request';
@@ -13,7 +14,7 @@ declare var io;
 export class ChatService {
   private socket:any = null;
   //connect to express socket
-  constructor(private userService:UserService) {
+  constructor(private userService:UserService, private router:Router) {
     this.socket = io(BASE_URL);
   }
   //join chat
@@ -125,5 +126,11 @@ export class ChatService {
   //leave chat
   leaveApp(userData:User){
     this.socket.emit('leaveApp', userData);
+  }
+  watchConnectionErrors(){
+    this.socket.on('connect_error', ()=>{
+      this.socket.disconnect();
+      this.router.navigate(['error']);
+    });
   }
 }

@@ -1,0 +1,46 @@
+@import ../../../styles.sass
+h2
+    margin-top: 5vh
+    font-weight: 400
+.display
+    padding-top: 60px
+    background-color: $bg-primary
+    left: 0
+    top: 0
+    width: 100%
+#errorHeaderContainer
+    height: 120px
+#errorPage
+    flex-direction: column
+    color: white
+    width: 380px
+    height: 420px
+    text-align: center
+    div
+        line-height: 70px
+        padding-top: 38px
+        padding-bottom: 10px
+        i
+            font-size: 70px
+    p
+        font-size: 22px
+@media screen and (max-width: 720px)
+    #errorHeader
+        padding-left: 5px
+        padding-right: 5px
+    .display
+        padding-top: 0 !important
+        margin-top: 0 !important
+        background-color: $bg-secondary
+    .col-xs-12, .row
+        margin: 0 !important
+        padding: 0 !important
+    #errorPage
+        background-color: $bg-primary
+        min-height: calc(100vh - 190px)
+        width: 100vw !important
+        height: calc(100vh - 120px) !important
+        margin: 0 !important
+        padding-top: 70px
+        h2
+            padding-top: 2vh !important
