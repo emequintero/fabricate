@@ -199,6 +199,41 @@ const init = () => {
         socket.leave(selectedRoom.roomID);
     }
 
+    handleLeaveApp = (userData, socket) =>{
+        //remove from all associated rooms
+        let roomsCurUser = getCurUserRooms(userData.userID);
+        roomsCurUser.forEach(selectedRoom => {
+            //handle leaving each room
+            handleLeaveRoom(selectedRoom, userData, socket);
+        });
+        availableUsers.forEach(user=>{
+            user.requests.forEach(request=>{
+                let foundUserLeaving = request.room.users.find(userInRequest=>{return userInRequest.userID === userData.userID;});
+                if(foundUserLeaving){
+                    //remove user leaving from room
+                    request.room.users.splice(request.room.users.indexOf(foundUserLeaving), 1);
+                }
+                //replace sentBy if user who sent left
+                if(request.sentBy.username === userData.username){
+                    let nonCurUser = request.room.users.find(userInRequest=>{return userInRequest.userID !== user.userID;});
+                    if(nonCurUser){
+                        request.sentBy = Object.assign({}, nonCurUser);
+                    }
+                }
+                if(request.room.users.length === 1){
+                    //remove request if no other users in it
+                    user.requests.splice(user.requests.indexOf(request), 1);
+                }
+            });
+            io.to(user.userID).emit('roomRequest', user.requests);
+        });
+        //remove from available users
+        let userToRemove = availableUsers.find(user => { return user.username === userData.username; });
+        availableUsers.splice(availableUsers.indexOf(userToRemove), 1);
+        //update available user list after leaving
+        io.sockets.emit('availableUsers ', availableUsers);
+    }
+
     io.on('connect', (socket) => {
         let roomsCurUser = null;
         let roomVisitHistory = [];
@@ -213,42 +248,19 @@ const init = () => {
                 io.sockets.emit('availableUsers', availableUsers);
             }
         });
-        //user leaving chat
+        //socket disconnecting (fallback handle logout)
+        socket.on('disconnect', ()=>{
+            //get user based on socket.id
+            let foundUser = getUser(socket.id);
+            if(foundUser){
+                handleLeaveApp(foundUser, socket);
+            }
+        });
+        //user leaving app (logout)
         socket.on('leaveApp', (userData) => {
             //only handle leaving if the user was logged in at one point
             if (userData) {
-                //remove from all associated rooms
-                let roomsCurUser = getCurUserRooms(userData.userID);
-                roomsCurUser.forEach(selectedRoom => {
-                    //handle leaving each room
-                    handleLeaveRoom(selectedRoom, userData, socket);
-                });
-                availableUsers.forEach(user=>{
-                    user.requests.forEach(request=>{
-                        let foundUserLeaving = request.room.users.find(userInRequest=>{return userInRequest.userID === userData.userID;});
-                        if(foundUserLeaving){
-                            //remove user leaving from room
-                            request.room.users.splice(request.room.users.indexOf(foundUserLeaving), 1);
-                        }
-                        //replace sentBy if user who sent left
-                        if(request.sentBy.username === userData.username){
-                            let nonCurUser = request.room.users.find(userInRequest=>{return userInRequest.userID !== user.userID;});
-                            if(nonCurUser){
-                                request.sentBy = Object.assign({}, nonCurUser);
-                            }
-                        }
-                        if(request.room.users.length === 1){
-                            //remove request if no other users in it
-                            user.requests.splice(user.requests.indexOf(request), 1);
-                        }
-                    });
-                    io.to(user.userID).emit('roomRequest', user.requests);
-                });
-                //remove from available users
-                let userToRemove = availableUsers.find(user => { return user.username === userData.username; });
-                availableUsers.splice(availableUsers.indexOf(userToRemove), 1);
-                //update available user list after leaving
-                io.sockets.emit('availableUsers', availableUsers);
+                handleLeaveApp(userData, socket);
             }
         });
         //show available users
@@ -378,10 +390,13 @@ const init = () => {
         });
         //relay chat data (handle & message) to sockets in room
         socket.on('sendMessage', (selectedRoom) => {
-            //add messages to room
-            getRoomByID(selectedRoom.roomID).messages = selectedRoom.messages;
-            //return room to allowed users
-            io.to(selectedRoom.roomID).emit('newMsg', selectedRoom.messages);
+            let selectedRoom = getRoomByID(selectedRoom.roomID);
+            if(selectedRoom){
+                //add messages to room
+                selectedRoom.messages = selectedRoom.messages;
+                //return room to allowed users
+                io.to(selectedRoom.roomID).emit('newMsg', selectedRoom.messages);
+            }
         });
         //broadcast handle that is typing to available sockets
         //goes to all except the socket that emitted the typing event

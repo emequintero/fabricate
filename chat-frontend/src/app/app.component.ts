@@ -21,14 +21,6 @@ export class AppComponent implements OnInit, OnDestroy{
   ngOnDestroy(): void {
     this.curUserSub.unsubscribe();
   }
-  @HostListener('window:unload', ['$event'])
-  regularLeave() {
-    this.leaveApp();
-  }
-  @HostListener('window:pagehide', ['$event'])
-  iosLeave() {
-    this.leaveApp();
-  }
   public ngOnInit(): void {
     this.curUserSub = this.userService.getUser().subscribe((curUser:User)=>{
       this.user = curUser;
@@ -44,10 +36,5 @@ export class AppComponent implements OnInit, OnDestroy{
         document.body.style.paddingTop = this.showHeader ? '80px' : '0';
       }
     });
-  }
-  leaveApp(){
-    this.chatService.leaveApp(this.user);
-    this.router.navigate(['login']);
-    this.userService.setUser(null);
   }
 }
