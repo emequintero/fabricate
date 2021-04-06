@@ -1,6 +1,6 @@
 @import ../../../styles.sass
 .section-content
-    min-height: calc(100vh - 80px)
+    min-height: calc(100vh - 160px)
     overflow-y: auto
     .request
         width: 25rem
@@ -13,10 +13,14 @@
             color: $text-secondary
         .btn-icon
             color: $text-secondary
-        .btn-icon.approve:hover
-            color: $teal !important
-        .btn-icon.deny:hover
-            color: $red !important
+    .request .btn-icon:hover
+            color: $btn-icon-hover
+@media screen and ( max-width:  860px)
+    .section-content
+        max-height: calc(100vh - 254px) !important
+        min-height: calc(100vh - 254px) !important
+    .request
+        width: 100% !important
 @media screen and ( max-width:  425px)
     .request
         width: 100% !important

@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
   imports: [
     FormsModule,
     BrowserModule,
+    CommonModule,
     RouterModule.forRoot([]),
     AppRoutingModule
   ],

@@ -8,6 +8,8 @@
             white-space: nowrap
             max-width: 25vw
     .section-content
+        max-height: calc(100vh - 236px)
+        min-height: calc(100vh - 236px)
         position: relative
         .typingMsg
             position: absolute
@@ -42,7 +44,7 @@
                 color: $text-secondary
                 font-size: 16px !important
         .message.curUserMsg
-            background-color: $bg-primary
+            background-color: $brand-accent
         .message.curUserMsg, .message.curUserMsg .username span, .message.curUserMsg p
             color: $text-primary
         .system-message
@@ -58,9 +60,10 @@
     .section-header
         display: flex
         flex-direction: column
+        height: 110px !important
     .section-content
-        max-height: calc(70vh - 80px - 5rem) !important
-        min-height: calc(70vh - 80px - 5rem) !important
+        max-height: calc(100vh - 365px) !important
+        min-height: calc(100vh - 365px) !important
     .username
         text-align: center !important
         white-space: normal !important

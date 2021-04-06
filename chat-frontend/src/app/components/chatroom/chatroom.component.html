@@ -1,7 +1,7 @@
 <div class="display">
     <div *ngIf="selectedRoom; then showChat"></div>
     <ng-template #showChat>
-        <div tabindex="0" class="section-header">
+        <div tabindex="0" class="section-header pt-3">
             <div *ngIf="headerUsers.length; then showHeaderUsers"></div>
             <ng-template #showHeaderUsers>
                 <div *ngFor="let headerUser of headerUsers; let i = index"
