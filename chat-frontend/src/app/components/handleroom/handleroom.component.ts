@@ -161,7 +161,6 @@ export class HandleroomComponent implements OnInit, OnDestroy{
       let roomUserIDs = room.users.map((user:User)=>{return user.userID});
       let selectedUserIDs = this.selectedUsers.map((user:User)=>{return user.userID});
       selectedUserIDs.push(this.curUser.userID);
-      console.log(roomUserIDs.sort(), selectedUserIDs.sort())
       return JSON.stringify(roomUserIDs.sort()) === JSON.stringify(selectedUserIDs.sort());
     }) !== undefined;
   }
