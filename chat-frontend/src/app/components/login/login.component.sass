@@ -8,12 +8,19 @@ h2
     left: 0
     top: 0
     width: 100%
+    min-height: 100%
+    overflow: hidden
 #loginHeaderContainer
-    height: 120px
+    height: 130px
+    z-index: 10
+#loginContentContainer
+    overflow: hidden
 #loginPage
+    z-index: 10
     color: $text-light
     padding-top: 1vh
     width: 380px
+    border-radius: 10px
     label
         font-size: 24px
     input[type="text"].available
@@ -53,10 +60,47 @@ h2
 .error-message
     width: 22rem
     left: -3rem
+.bg-decoration
+    background-color: $brand-secondary
+    height: 60%
+    width: 110%
+    bottom: calc(-10rem + 75px)
+    left: calc(-10rem + 75px)
+    position: absolute
+    z-index: 5
+.decoration-circle-primary
+    background-color: gray
+    height: 35em
+    width: 35em
+    border-radius: 50%
+    position: absolute
+    z-index: 5
+.decoration-circle-primary.right
+    right: -12em
+    bottom: -10em
+.decoration-circle-primary.left
+    left: -12em
+    bottom: -10em
+.decoration-circle-primary.left.inner
+    background-color: $brand-secondary
+    height: 27em
+    width: 27em
+    left: -11.85em
+    bottom: -9.15em
+.decoration-circle-secondary
+    background-color: $brand-light
+    opacity: 0.5
+    height: 35em
+    width: 35em
+    border-radius: 50%
+    position: absolute
+    right: -12em
+    bottom: 5em
 @media screen and (max-width: 720px)
     #loginHeader
         padding-left: 5px
         padding-right: 5px
+        padding-bottom: 5px
     .display
         padding-top: 0 !important
         margin-top: 0 !important
@@ -70,9 +114,14 @@ h2
         width: 100vw !important
         margin: 0 !important
         padding-top: 70px
+        border-radius: 0
         h2
             padding-top: 2vh !important
         .form-group
             margin: 0 !important
         input[type="image"]
             border-color: transparent !important
+    .bg-decoration, .decoration-circle-primary, .decoration-circle-secondary
+        display: none
+    #loginContentContainer
+        height: calc(100vh - 122px)

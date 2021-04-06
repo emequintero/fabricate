@@ -390,12 +390,12 @@ const init = () => {
         });
         //relay chat data (handle & message) to sockets in room
         socket.on('sendMessage', (selectedRoom) => {
-            let selectedRoom = getRoomByID(selectedRoom.roomID);
-            if(selectedRoom){
+            let foundRoom = getRoomByID(selectedRoom.roomID);
+            if(foundRoom){
                 //add messages to room
-                selectedRoom.messages = selectedRoom.messages;
+                foundRoom.messages = foundRoom.messages;
                 //return room to allowed users
-                io.to(selectedRoom.roomID).emit('newMsg', selectedRoom.messages);
+                io.to(foundRoom.roomID).emit('newMsg', foundRoom.messages);
             }
         });
         //broadcast handle that is typing to available sockets
